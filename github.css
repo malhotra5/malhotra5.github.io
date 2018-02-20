@@ -1,0 +1,21 @@
+/*body{
+	background-image: url("gitBackground1.jpg");
+}*/
+
+#nav-bot-mar{
+	margin-bottom: 0px;
+}
+
+#cruzHacks{
+	width: 80%;
+	height: 60%;
+	float: right;
+	border-left: 0px;
+	margin-left: 0px;
+}
+
+div.half-left{
+	line-height: 50px;
+	float: left;
+	text-align: left;
+}

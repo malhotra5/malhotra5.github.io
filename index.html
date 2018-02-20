@@ -1,9 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>About me</title>
+  
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>About me</title>
+  
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="github.css" rel="stylesheet">
+
 </head>
 <body>
-	<h1>I love to program!!</h1>
+  <!-- Navigation bar -->
+  <nav class="navbar navbar-default navbar-top" id="nav-bot-mar">
+    <div class="container">
+      
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#AbtMe">About Me</a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav active">
+          <li class="active"><a href="#">Hackathons</a></li>
+          <li><a href="#">Repositories</a></li>
+          <li class="active"><a href="#">This Project</a></li>
+        </ul>
+      </div>
+    
+    </div>
+  </nav> <!--Navigation bar end-->
+  
+  <!--Jumbotron-->
+  <div class="jumbotron" style="height: 30%">
+    <div class="container text-center">
+      <div class="page-header"><h1>About Me</h1></div>
+      <p><a class="btn btn-primary btn-lg" href="#AbtMe" role="button">Learn more</a></p>
+    </div>
+  </div> <!--Jumbotron end-->
+
+
+  <!--2 columns with picture and text-->
+  <section>
+    <div class="container">
+      
+      <div class="row">
+        
+        <div class="col-md-8 col-sm-4">
+           <!--About me section-->
+          <div class="showcase-right" id="AbtMe">
+            <p><h3>I am a high school programmer specializing in Python. I work extensively in problem solving and image analysis.I am a high school programmer specializing in Python. I work extensively in problem solving and image analysis. </h3></p>
+          </div><!--About me section end-->
+        </div><!--Column end-->
+        
+        <div class="col-md-4 col-sm-8">
+          <!--CruzHacks image-->
+          <div class="showcase-left">
+            <img src="Cruzhacks.jpg" id="cruzHacks">
+          </div><!--CruzHacks image end -->
+        </div><!--Column end -->
+      
+      </div>
+    
+    </div>
+  </section>
+
+
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="js/bootstrap.min.js"></script>
+  <script src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
+
 </body>
 </html>
