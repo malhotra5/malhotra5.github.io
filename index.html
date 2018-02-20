@@ -55,15 +55,15 @@
         
         <div class="col-md-8 col-sm-4">
            <!--About me section-->
-          <div class="showcase-right" id="AbtMe">
+          <div class="showcase-left" id="AbtMe">
             <p><h3>I am a high school programmer specializing in Python. I work extensively in problem solving and image analysis.I am a high school programmer specializing in Python. I work extensively in problem solving and image analysis. </h3></p>
           </div><!--About me section end-->
         </div><!--Column end-->
         
         <div class="col-md-4 col-sm-8">
           <!--CruzHacks image-->
-          <div class="showcase-left">
-            <img src="Cruzhacks.jpg" id="cruzHacks">
+          <div class="showcase-right">
+            <img src="mem\CruzHacks\Cruzhacks.jpg" id="cruzHacks">
           </div><!--CruzHacks image end -->
         </div><!--Column end -->
       
@@ -79,6 +79,28 @@
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="js/bootstrap.min.js"></script>
   <script src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
+
+  <script>
+    window.sr = ScrollReveal();
+    sr.reveal(".navbar", {
+      duration: 2000,
+      origin: "bottom"
+    });
+    sr.reveal(".showcase-right", {
+      duration: 2000,
+      origin: "right",
+      distance: "300px",
+      delay: 2500,
+      viewFactor: 0.2
+    });
+    sr.reveal(".showcase-left", {
+      duration: 2000,
+      origin: "left",
+      distance: "300px",
+      delay: 2000,
+      viewFactor: 0.2
+    });
+  </script>
 
 </body>
 </html>
