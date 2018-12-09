@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+<script src="js/action.js"></script>
 <body>
 
 <!-- Navbar (sit on top) -->
@@ -56,7 +57,7 @@
 
     <div class="w3-col m6 w3-padding-large">
       <h1 class="w3-center">About Me</h1><br>
-      <p class="w3-large"> Hi, I am Rohit Malhotra. I got into programming when I was 9 years old. Now, I am a high student specializing in Deep Learning and Python. I work extensively in problem solving and image analysis. Additional skills include HTML, CSS, Javascript, Octave and Java. This website was made by me ;)</p>
+      <p class="w3-large"> Hi, I am Rohit Malhotra. I got into programming when I was 9 years old. Now, I am an experienced high school student specializing in Deep Learning, Python and Image Processing. Additional skills include HTML, CSS, Javascript, Octave, Graphics, Databases and Java. Fluent with popular frameworks such as Tensorflow, Keras, TfLearn, Numpy, OpenCV, etc. </p>
       <p class="w3-large">I love making tutorials and doing interesting projects. This will be an introduction to some of my works and interests. </p>
       <p class="w3-large w3-text-grey w3-hide-medium"></p>
     </div>
@@ -92,7 +93,10 @@
 
   <hr>
 
-  <!-- Team Container -->
+
+  <!-- Interests Section -->
+
+  <!-- Contact Section -->
   <div class="w3-container w3-padding-64 w3-center" id="contact">
   <h2>Check Me Out</h2>
 
@@ -130,6 +134,33 @@
   <p>Copyright &copy; Rohit Malhotra 2018</p>
 
 </footer>
+
+<script>
+// Modal Image Gallery
+function onClick(element) {
+  document.getElementById("img01").src = element.src;
+  document.getElementById("modal01").style.display = "block";
+  var captionText = document.getElementById("caption");
+  captionText.innerHTML = element.alt;
+}
+
+
+// Toggle between showing and hiding the sidebar when clicking the menu icon
+var mySidebar = document.getElementById("mySidebar");
+
+function w3_open() {
+    if (mySidebar.style.display === 'block') {
+        mySidebar.style.display = 'none';
+    } else {
+        mySidebar.style.display = 'block';
+    }
+}
+
+// Close the sidebar with the close button
+function w3_close() {
+    mySidebar.style.display = "none";
+}
+</script>
 
 </body>
 </html>
