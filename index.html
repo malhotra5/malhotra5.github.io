@@ -1,159 +1,121 @@
 <!DOCTYPE html>
 <html>
-<head>
-  
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <title>About Me</title>
-  
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  <link href="github.css" rel="stylesheet">
-
-</head>
+<title>Rohit Malhotra</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 <body>
-  <!-- Navigation bar -->
-  <nav class="navbar navbar-default navbar-top" id="nav-bot-mar">
-    <div class="container">
-      
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#AbtMe">About Me</a>
-      </div>
 
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav active">
-          <li class="active"><a href="#hacks">Hackathons</a></li>
-          <li><a href="#">Repositories</a></li>
-          <li class="active"><a href="#">This Project</a></li>
-        </ul>
-      </div>
-    
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-white w3-padding w3-card" style="letter-spacing:4px;">
+    <a href="#home" class="w3-bar-item w3-button">Rohit Malhotra</a>
+    <!-- Right-sided navbar links. Hide them on small screens -->
+    <div class="w3-right w3-hide-small">
+      <a href="#about" class="w3-bar-item w3-button">About Me</a>
+      <a href="#menu" class="w3-bar-item w3-button">Projects</a>
+      <a href="#contact" class="w3-bar-item w3-button">Contact</a>
     </div>
-  </nav> <!--Navigation bar end-->
+  </div>
+</div>
+
+<!-- Header -->
+<header class="w3-display-container w3-content w3-wide" style="max-width:1600px;min-width:500px" id="home">
+  <img class="w3-image" src="img/back2.JPG" width="100%" height="800">
+  <div class="w3-display-middle w3-padding-large w3-opacity">
+    <h1 class="w3-xxlarge"><b>Rohit Malhotra</b></h1><br>
+    <center><h2>My Journey</h2></center>
+  </div>
+</header>
+
+<!-- Page content -->
+<div class="w3-content" style="max-width:1100px">
+
+  <!-- About Section -->
+  <div class="w3-row w3-padding-64" id="about">
+    <div class="w3-col m6 w3-padding-large w3-hide-small">
+      <!-- w3-opacity-min -->
+     <img src="img/me2.JPG" class="w3-round w3-image" alt="Error loading Image" width="525" height="696">
+    </div>
+
+    <div class="w3-col m6 w3-padding-large">
+      <h1 class="w3-center">About Me</h1><br>
+      <p class="w3-large"> Hi, I am Rohit Malhotra. I got into programming when I was 9 years old. Now, I am a high student specializing in Deep Learning and Python. Additional skills include HTML, CSS, Javascript, Octave and Java. This website was made by me ;)</p>
+      <p class="w3-large">I love making tutorials and doing interesting projects. This will be an introduction to some of my works and interests. </p>
+      <p class="w3-large w3-text-grey w3-hide-medium"></p>
+    </div>
+  </div>
   
-  <!--Jumbotron-->
-  <div class="jumbotron" style="height: 100%">
-    <div class="container text-center">
-      <div class="page-header"><h1>About Me</h1></div>
-      <p><a class="btn btn-primary btn-lg" href="#AbtMe" role="button">Learn more</a></p>
-    </div>
-  </div> <!--Jumbotron end-->
-
-
-  <!--2 columns with picture and text about me-->
-  <section>
-    <div class="container">
-      
-      <div class="row">
-        
-        <div class="col-md-8 col-sm-4">
-           <!--About me section-->
-          <div class="showcase-left" id="AbtMe">
-            <p><h3>I am a high school programmer specializing in Python. I work extensively in problem solving and image analysis.I am a high school programmer specializing in Python. I work extensively in problem solving and image analysis. </h3></p>
-          </div><!--About me section end-->
-        </div><!--Column end-->
-        
-        <div class="col-md-4 col-sm-8">
-          <!--CruzHacks image-->
-          <div class="showcase-right">
-            <img src="Cruzhacks.jpg" id="cruzHacks">
-          </div><!--CruzHacks image end -->
-        </div><!--Column end -->
-      
-      </div>
+  <hr>
+  
+  <!-- Projects Section -->
+  <div class="w3-row w3-padding-small">
+    <div class="w3-col l6 w3-padding-small">
+      <h1 class="w3-center">My Projects</h1><br>
+      <h4>Navigation for The Blind</h4>
+      <p class="w3-text-grey">Program the help the blind navigate sidewalks using voice commands.</p><br>
     
+      <h4>Communication for the Deaf</h4>
+      <p class="w3-text-grey">A real time tool for translating sign language letters into alphabets</p><br>
+    
+      <h4>Keras Guide</h4>
+      <p class="w3-text-grey">A full guidline and tutorial on using Keras for intermediate and advanced learners</p><br>
+    
+      <h4>Flight Simulator</h4>
+      <p class="w3-text-grey">A flight simulator made from scratch, a tutorial on graphics</p><br>
+    
+      <h4>Open AI Gym CartPole Challenge</h4>
+      <p class="w3-text-grey">Deep learning approaches to get phenomenal results on the Cartx pole Challenge</p>    
     </div>
-  </section>
+    
+    <div class="w3-col l6 w3-padding-small">
+      <img src="img/project.PNG" class="w3-round w3-image" alt="Error Loading Image" style="width:100%">
+      <img src="img/code.PNG" class="w3-round w3-image" alt="Error Loading Image" style="width:100%">
+    </div>
+  </div>
+
   <hr>
 
-  <section>
-    <div class="container">
-      
-      <div class="row">        
-        <div class="col-md-6 col-sm-6">
-          
-          <div class="hack-right text-center">
-            <table>
-              <tr>
-                <th>
-                  <img src="better.jpg" class = "imageRatio" id="hacks">
-                </th>
-              </tr>
-              <tr>
-                <td><h3>Project Name - Navigation for the blind</h3></td>
-              </tr>
-              <tr>
-                <td><h3 class="act">Location- UCSC</h3></td>
-              </tr>     
-              <tr>
-                <td><a href="https://github.com/malhotra5/Navigation-for-the-blind" class="niceLink"><h3>Check out my code</h3></a></td>
-              </tr>  
-            </table>
-              
-          </div>
-          
-        </div>
-        
-        <div class="col-sm-6 col-md-6">
-          <div class="hack-left text-center">
-             <table>
-                <tr>
-                  <th>
-                    <img src="better.jpg" class = "imageRatio">
-                  </th>
-                </tr>
-                <tr>
-                  <td><h3>Project Name - Navigation for the blind</h3></td>
-                </tr>
-                <tr>
-                  <td class="act"><h3>Location- UCSC</h3></td>
-                </tr>     
-                <tr>
-                  <td><a href="https://github.com/malhotra5/Navigation-for-the-blind" class="niceLink"><h3>Check out my code</h3></a></td>
-                </tr>  
-            </table>
-          </div>
-        </div>
+  <!-- Team Container -->
+  <div class="w3-container w3-padding-64 w3-center" id="contact">
+  <h2>Check Me Out</h2>
 
-      </div>
-    </div>
-  </section>
+  <div class="w3-row"><br>
 
+  <div class="w3-third">
+    <a href="https://www.github.com/malhotra5"><img src="img/git2.PNG" alt="Boss" style="width:50%; height: 50%" class="w3-circle w3-hover-opacity">
+    <h3>GitHub</h3>
+    <p>Web Designer</p>
+  </div>
 
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="js/bootstrap.min.js"></script>
-  <script src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
+  <div class="w3-third">
+    <img src="img/yout.JPG" alt="Boss" style="width:50%; height: 50%" class="w3-circle w3-hover-opacity">
+    <h3>YouTube</h3>
+    <p>Support</p>
+  </div>
 
-  <script>
-    window.sr = ScrollReveal();
-    sr.reveal(".navbar", {
-      duration: 2000,
-      origin: "bottom"
-    });
-    sr.reveal(".showcase-right", {
-      duration: 2000,
-      origin: "right",
-      distance: "300px",
-      delay: 2500,
-      viewFactor: 0.2
-    });
-    sr.reveal(".showcase-left", {
-      duration: 2000,
-      origin: "left",
-      distance: "300px",
-      delay: 2000,
-      viewFactor: 0.2
-    });
-  </script>
+  <div class="w3-third">
+    <img src="img/in.JPG" alt="Boss" style="width:50%; height: 50%" class="w3-circle w3-hover-opacity">
+    <h3>LinkedIn</h3>
+    <p>Boss man</p>
+  </div>
+
+  </div>
+  </div>
+  
+<!-- End page content -->
+</div>
+
+<!-- Footer -->
+<footer class="w3-center w3-black w3-padding-32">
+  <a href="https://twitter.com/RohitMa42418876"><i class="fab fa-twitter w3-padding-large w3-circle w3-hover-opacity"></i></a>
+  <a href="https://www.linkedin.com/in/rohit-malhotra5/"><i class="fab fa-linkedin w3-padding-large w3-circle w3-hover-opacity"></i></a>
+  <a href="https://github.com/malhotra5"><i class="fab fa-github w3-padding-large w3-circle w3-hover-opacity"></i></a>
+  <p>Copyright &copy; Rohit Malhotra 2018</p>
+
+</footer>
 
 </body>
 </html>
