@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html> 
 <title>Rohit Malhotra</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-<script src="js/action.js"></script>
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <body>
 
 <!-- Navbar (sit on top) -->
@@ -15,10 +16,10 @@
     <a href="#home" class="w3-bar-item w3-button w3-wide">Rohit Malhotra</a>
     <!-- Right-sided navbar links -->
     <div class="w3-right w3-hide-small">
-      <a href="#about" class="w3-bar-item w3-button">ABOUT</a>
-      <a href="#project" class="w3-bar-item w3-button">PROJECTS</a>
-      <a href="#interest" class="w3-bar-item w3-button">INTERESTS</a>
-      <a href="#contact" class="w3-bar-item w3-button">CONTACT</a>
+      <a href="#about" class="w3-bar-item w3-button" id="abtThing">ABOUT</a>
+      <a href="#project" class="w3-bar-item w3-button" id="prjThing">PROJECTS</a>
+      <a href="#interest" class="w3-bar-item w3-button" id="intThing">INTERESTS</a>
+      <a href="#contact" class="w3-bar-item w3-button" id="contThing">CONTACT</a>
     </div>
     <!-- Hide right-floated links on small screens and replace them with a menu icon -->
 
@@ -38,7 +39,8 @@
 </nav>
 <!-- Header -->
 <header class="w3-display-container w3-content w3-wide" style="max-width:1600px;min-width:500px" id="home">
-  <img class="w3-image" src="img/back2.jpg" width="100%" height="800">
+  <img class="w3-image w3-hide-small" src="img/back2.jpg" width="100%" height="800">
+  <img class="w3-image w3-hide-large" src="img/back.jpg" width="80%" height="640  ">
   <div class="w3-display-middle w3-padding-large w3-opacity">
     <h1 class="w3-xxlarge"><b>Rohit Malhotra</b></h1><br>
     <center><h2>My Journey</h2></center>
@@ -58,71 +60,94 @@
     <div class="w3-col m6 w3-padding-large">
       <h1 class="w3-center">About Me</h1><br>
       <p class="w3-large"> Hi, I am Rohit Malhotra. I got into programming when I was 9 years old. Now, I am an experienced high school student specializing in Deep Learning, Python and Image Processing. Additional skills include HTML, CSS, Javascript, Octave, Graphics, Databases and Java. Fluent with popular frameworks such as Tensorflow, Keras, TfLearn, Numpy, OpenCV, etc. </p>
-      <p class="w3-large">I love making tutorials and doing interesting projects. This will be an introduction to some of my works and interests. </p>
-      <p class="w3-large w3-text-grey w3-hide-medium"></p>
+      <p class="w3-large">I love making tutorials on GitHub and YouTube, as well as doing interesting projects. This will be an introduction to some of my works and interests. </p>
+      
     </div>
   </div>
   
   <hr>
   
   <!-- Projects Section -->
-  <div class="w3-row w3-padding-small" id="project">
-    <div class="w3-col l6 w3-padding-small">
-      <h1 class="w3-center">My Projects</h1><br>
-      <h4>Navigation for The Blind</h4>
-      <p class="w3-text-grey">Program the help the blind navigate sidewalks using voice commands.</p><br>
-    
-      <h4>Communication for the Deaf</h4>
-      <p class="w3-text-grey">A real time tool for translating sign language letters into alphabets</p><br>
-    
-      <h4>Keras Guide</h4>
-      <p class="w3-text-grey">A full guidline and tutorial on using Keras for intermediate and advanced learners</p><br>
-    
-      <h4>Flight Simulator</h4>
-      <p class="w3-text-grey">A flight simulator made from scratch, a tutorial on graphics</p><br>
-    
-      <h4>Open AI Gym CartPole Challenge</h4>
-      <p class="w3-text-grey">Deep learning approaches to get phenomenal results on the Cartx pole Challenge</p>    
-    </div>
-    
-    <div class="w3-col l6 w3-padding-small">
-      <img src="img/project.png" class="w3-round w3-image" alt="Error Loading Image" style="width:100%">
-      <img src="img/code.png" class="w3-round w3-image" alt="Error Loading Image" style="width:100%">
-    </div>
-  </div>
-
-  <hr>
-
-
-  <!-- Interests Section -->
-
-  <!-- Contact Section -->
-  <div class="w3-container w3-padding-64 w3-center" id="contact">
-  <h2>Check Me Out</h2>
-
-  <div class="w3-row"><br>
-
-  <div class="w3-third">
-    <a href="https://www.github.com/malhotra5"><img src="img/git2.png" alt="Boss" style="width:50%; height: 50%" class="w3-circle w3-hover-opacity">
-    <h3>GitHub</h3>
-    <p>Web Designer</p>
-  </div>
-
-  <div class="w3-third">
-    <img src="img/yout.jpg" alt="Boss" style="width:50%; height: 50%" class="w3-circle w3-hover-opacity">
-    <h3>YouTube</h3>
-    <p>Support</p>
-  </div>
-
-  <div class="w3-third">
-    <img src="img/in.jpg" alt="Boss" style="width:50%; height: 50%" class="w3-circle w3-hover-opacity">
-    <h3>LinkedIn</h3>
-    <p>Boss man</p>
-  </div>
-
-  </div>
-  </div>
+  <div id="project">
   
+
+  <section>
+    <div class="w3-row-padding w3-padding-64 " id="work">
+
+        <div class="w3-half">
+        <h2 class="w3-right">Navigation for the Blind</h2>
+        <h4 class="w3-right" style="text-align: right;">Program that help the blind navigate sidewalks using voice commands. The program was tested on the road.</h4>
+        <div>
+          <a href="https://github.com/malhotra5/Navigation-for-the-blind"><button class="w3-btn w3-right w3-blue-grey w3-large w3-round w3-border-blue">Source Code</button></a>
+        </div>
+        </div>
+        <div class="w3-half">
+        <div>
+          <img src="img/nav.jpg" alt="Snow" style="width:100%" class="w3-leftbar w3-border-teal">
+          </div>
+        </div>
+  </section>
+
+   <section>
+    <div class="w3-row-padding w3-padding-64 " id="work">
+        <div class="w3-half">
+        <div class="w3-card w3-white">
+          <img src="img/cart.gif" alt="Snow" style="width:100%" class="w3-rightbar w3-border-teal">
+          <div class="w3-container">
+          </div>
+          </div>
+        </div>
+        <div class="w3-half">
+        <h2 class="w3-left">OpenAI Gym CartPole Challenge</h2>
+        <h4 class="w3-left" style="text-align: left;">Deep Learning approaches to get phenomenal results on the Cart Pole challenge</h4>
+        <div>
+          <a href="https://github.com/malhotra5/Navigation-for-the-blind"><button class="w3-btn w3-left w3-blue-grey w3-large w3-round w3-border-blue">Source Code</button></a>
+        </div>
+        </div>
+  </section>
+
+ <section>
+    <div class="w3-row-padding w3-padding-64 " id="work">
+
+        <div class="w3-half">
+        <h2 class="w3-right">Communication for the Deaf</h2>
+        <h4 class="w3-right" style="text-align: right;">A real time translation tool for translating sign language letters into readable alphabets and words.</h4>
+        <div>
+          <a href="https://github.com/malhotra5/Navigation-for-the-blind"><button class="w3-btn w3-right w3-blue-grey w3-large w3-round w3-border-blue">Source Code</button></a>
+        </div>
+        </div>
+        <div class="w3-half">
+        <div class="w3-card w3-white">
+          <img src="img/nav.jpg" alt="Snow" style="width:100%" class="w3-leftbar w3-border-teal">
+          </div>
+        </div>
+  </section>
+
+  <section>
+    <div class="w3-row-padding" id="work">
+        <div class="w3-half">
+        <div>
+          <img src="img/flight.gif" alt="Pic" style="width:100%" class="w3-rightbar w3-border-teal">
+          </div>
+        </div>
+        <div class="w3-half">
+        <h2 class="w3-left">Flight Simulator</h2>
+        <h4 class="w3-left" style="text-align: left;">A flight simulator made from scratch, a tutorial on graphics</h4>
+        <div>
+          <a href="https://github.com/malhotra5/Navigation-for-the-blind"><button class="w3-btn w3-left w3-blue-grey w3-large w3-round w3-border-blue">Source Code</button></a>
+        </div>
+        </div>
+    </div>
+  </section>
+   
+
+</div>
+<hr>
+  
+  <!-- Interests Section -->
+  
+
+
 <!-- End page content -->
 </div>
 
@@ -131,6 +156,7 @@
   <a href="https://twitter.com/RohitMa42418876"><i class="fab fa-twitter w3-padding-large w3-circle w3-hover-opacity"></i></a>
   <a href="https://www.linkedin.com/in/rohit-malhotra5/"><i class="fab fa-linkedin w3-padding-large w3-circle w3-hover-opacity"></i></a>
   <a href="https://github.com/malhotra5"><i class="fab fa-github w3-padding-large w3-circle w3-hover-opacity"></i></a>
+  <a href="https://www.youtube.com/channel/UCXJsKlsJYtx7xM_cs6oU-MA?view_as=subscriber"><i class="fab fa-youtube w3-padding-large w3-circle w3-hover-opacity"></i></a>
   <p>Copyright &copy; Rohit Malhotra 2018</p>
 
 </footer>
@@ -160,6 +186,40 @@ function w3_open() {
 function w3_close() {
     mySidebar.style.display = "none";
 }
+
+</script>
+<script>
+var top0 = $('#home').offset().top;
+var top1 = $('#about').offset().top;
+var top2 = $('#project').offset().top;
+
+$(document).scroll(function() {
+  var scrollPos = $(document).scrollTop()+200;
+  if(scrollPos>=top0 && scrollPos< top1){
+    var abt = document.getElementById("abtThing");
+    abt.classList.remove("w3-border-teal");
+    abt.classList.remove("w3-bottombar");
+    var pro = document.getElementById("prjThing");
+    pro.classList.remove("w3-border-teal");
+    pro.classList.remove("w3-bottombar");
+  } else if (scrollPos >= top1 && scrollPos < top2) {
+    var abt = document.getElementById("abtThing");
+    abt.classList.add("w3-border-teal");
+    abt.classList.add("w3-bottombar");
+    var pro = document.getElementById("prjThing");
+    pro.classList.remove("w3-border-teal");
+    pro.classList.remove("w3-bottombar");
+  } else if (scrollPos >= top2) {
+    var abt = document.getElementById("abtThing");
+    abt.classList.remove("w3-border-teal");
+    abt.classList.remove("w3-bottombar");
+    var pro = document.getElementById("prjThing");
+    pro.classList.add("w3-border-teal");
+    pro.classList.add("w3-bottombar");
+  } 
+});
+
+
 </script>
 
 </body>
