@@ -203,7 +203,7 @@ var top1 = $('#about').offset().top;
 var top2 = $('#project').offset().top;
 
 $(document).scroll(function() {
-  var scrollPos = $(document).scrollTop();
+  var scrollPos = $(document).scrollTop()+200;
   if(scrollPos>=top0 && scrollPos< top1){
     var abt = document.getElementById("abtThing");
     abt.classList.remove("w3-border-teal");
