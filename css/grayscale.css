@@ -5,7 +5,7 @@
  */
 
 #mainNav {
-  min-height: 56px;
+  min-height: 66px;
   background-color: #fff;
 }
 
@@ -70,7 +70,7 @@
   }
   #mainNav.navbar-shrink .nav-link {
     color: #161616;
-    padding: 1.5rem 1.5rem 1.25rem;
+    padding: 1.5rem 1.5rem 0.95rem;
     border-bottom: 0.25rem solid transparent;
   }
   #mainNav.navbar-shrink .nav-link:hover {
@@ -302,32 +302,4 @@ a:focus, a:hover {
 footer {
   padding: 5rem 0;
   background: #252934;
-}
-
-.fa {
-  padding: 20px;
-  font-size: 30px;
-  width: 50px;
-  text-align: center;
-  text-decoration: none;
-}
-
-.fa:hover {
-  opacity: 0.7;
-}
-
-
-.fa-twitter {
-  background: #55ACEE;
-  color: white;
-}
-
-.fa-youtube {
-  background: #bb0000;
-  color: white;
-}
-
-.fa-linkedin {
-  background: #007bb5;
-  color: white;
 }

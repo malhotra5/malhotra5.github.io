@@ -6,7 +6,7 @@
   src: url("../fonts/Raleway-SemiBold.ttf"); }
 @font-face {
   font-family: 'Raleway-bold';
-  src: url("fonts/Raleway-Bold.ttf"); }
+  src: url("../fonts/Raleway-Bold.ttf"); }
 @keyframes fadeIn {
   100% {
     opacity: 1; } }
@@ -960,10 +960,13 @@ footer {
 .fa {
   padding: 20px;
   font-size: 30px;
-  width: 50px;
+  width: 65px;
   text-align: center;
   text-decoration: none;
+  margin: 5px 2px;
+  border-radius: 50%;
 }
+
 
 .fa:hover {
   opacity: 0.7;
@@ -983,4 +986,8 @@ footer {
 .fa-linkedin {
   background: #007bb5;
   color: white;
+}
+
+.card{
+  background-image: linear-gradient(to top,#fbc2eb 0,#a6c1ee 100%);
 }
