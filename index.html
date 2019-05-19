@@ -179,7 +179,7 @@
               <img src="img/me2.jpg" alt"My Photo" height="400" width="300">
 
             </div>
-            <div class="col-lg-8">
+            <div class="col-lg-6">
 
               <h3>Technical Skills</h3>
 
@@ -189,6 +189,7 @@
 
               <div class="progress-bar bg-info " role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
+
 
             <div><center align="left">Java</center></div>
             <div class="progress">
@@ -212,8 +213,10 @@
               <div>Team Work</div>
               <div>Project Management</div>
             </div>
+            <div class="col-lg-1"></div>
           </div>
           <!--Grid column-->
+
   </section>
 
 
@@ -394,6 +397,38 @@
     function closeNav() {
       document.getElementById("mySidenav").style.width = "0";
     }
+  </script>
+  <script>
+  var bar = new ProgressBar.Line(progressbar, {
+strokeWidth: 4,
+easing: 'easeInOut',
+duration: 1400,
+color: '#FFEA82',
+trailColor: '#eee',
+trailWidth: 1,
+svgStyle: {width: '100%', height: '100%'},
+text: {
+  style: {
+    // Text color.
+    // Default: same as stroke color (options.color)
+    color: '#999',
+    position: 'absolute',
+    right: '0',
+    top: '30px',
+    padding: 0,
+    margin: 0,
+    transform: null
+  },
+  autoStyleContainer: false
+},
+from: {color: '#FFEA82'},
+to: {color: '#ED6A5A'},
+step: (state, bar) => {
+  bar.setText(Math.round(bar.value() * 100) + ' %');
+}
+});
+
+bar.animate(1.0);  // Number from 0.0 to 1.0
   </script>
 </body>
 
