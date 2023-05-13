@@ -27,7 +27,8 @@
       top: 0;
       /* Stay at the top */
       left: 0;
-      background-color: #111;
+      /* background-color: #111; */
+      background-color: #161616;
       /* Black*/
       overflow-x: hidden;
       /* Disable horizontal scroll */
@@ -72,6 +73,7 @@
         font-size: 18px;
       }
     }
+
   </style>
 
 
@@ -112,11 +114,9 @@
       <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" onclick="closeNav()" class="closebtn">Close &times;</a>
         <br>
-        <a href="#about" class="js-scroll-trigger">ABOUT</a>
-        <a href="#projects" class="js-scroll-trigger">PROJECTS</a>
-        <a href="#interest" class="js-scroll-trigger">LEADERSHIP</a>
-        <a href="#blogs" class="js-scroll-trigger">HOBBIES</a>
-        <a href="#contact" class="js-scroll-trigger">CONTACT</a>
+        <a href="#about" class="js-scroll-trigger">About</a>
+        <a href="#leadership" class="js-scroll-trigger">Leadership</a>
+        <a href="#projects" class="js-scroll-trigger">Projects</a>
       </div>
 
       <!-- Use any element to open the sidenav -->
@@ -129,16 +129,10 @@
             <a class="nav-link js-scroll-trigger" href="#about">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#projects">Work</a>
+            <a class="nav-link js-scroll-trigger" href="#leadership">Leadership</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#interest">Leadership</a>
-          </li>
-          <li>
-            <a class="nav-link js-scroll-trigger" href="#blogs">Blogs</a>
-          </li>
-          <li>
-            <a class="nav-link js-scroll-trigger" href="#contact">Contact Me</a>
+            <a class="nav-link js-scroll-trigger" href="#projects">Projects</a>
           </li>
         </ul>
       </div>
@@ -177,43 +171,66 @@
           <div class="row">
             <div class="col" width="auto">
               <img src="img/me.jpg" alt"My Photo">
-
+              <br><br><br>
+              <div><h4>Check out my <a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="https://drive.google.com/file/d/1osRg11TAOepCwnAyAQswjl5qMmutB0_T/view?usp=sharing" target="_blank">resume</a></h4></div>
+              <br><br><br>
             </div>
+            
+            
+            <div class="col-lg-1"></div>
             <div class="col-lg-6">
               <h3 align="left">Education</h3>
               <div class="timeline">
                 <div class="tl_container right" date="2021-2025">
                   <div class="content" align="left">
-                    <h4>Carnegie Mellon Univsersity</h4>
-                    <p>Bachelors Degree</p>
+                    <h4>Bachellors in CS/AI</h4>
+                    <p>Carnegie Mellon Univserity</p>
                   </div>
                 </div>
 
 
                 <div class="tl_container right" date="2017-2021">
                     <div class="content" align="left">
-                      <h4>Lynbrook</h4>
-                      <p>High School Diploma</p>
+                      <h4>High School Diploma</h4>
+                      <p>Lynbrook</p>
                     </div>
                 </div>
               </div>
 
               <h3 align="left">Work Experience</h3>
+
               <div class="timeline">
-                <div class="tl_container right" date="2021-2025">
+
+                <!-- <div class="tl_container right" date="June-Aug 2023">
                   <div class="content" align="left">
-                    <h4>Carnegie Mellon Univsersity</h4>
-                    <p>Bachelors Degree</p>
+                    <h4>MIDL Tech</h4>
+                    <p>Computer Vision Intern</p>
+                  </div>
+                </div> -->
+
+
+                <div class="tl_container right" date="Jun-Aug 2022">
+                  <div class="content" align="left">
+                    <h4>Facebook (Meta)</h4>
+                    <p>Software Engineering Intern</p>
                   </div>
                 </div>
 
 
-                <div class="tl_container right" date="2017-2021">
+                <div class="tl_container right" date="Jun-Aug 2021">
                     <div class="content" align="left">
-                      <h4>Lynbrook</h4>
-                      <p>High School Diploma</p>
+                      <h4>Step Function AI</h4>
+                      <p>Data Science Intern</p>
                     </div>
                 </div>
+
+                <div class="tl_container right" date="Jun-Aug 2019">
+                  <div class="content" align="left">
+                    <h4>Alphonso Inc.</h4>
+                    <p>Data Science Intern</p>
+                  </div>
+              </div>
+
               </div>
 
               
@@ -221,7 +238,6 @@
 
               
             </div>
-            <div class="col-lg-1"></div>
           </div>
           <!--Grid column-->
 
@@ -229,11 +245,14 @@
 
 
     <!-- Projects Section -->
-    <section id="projects" class="projects-section bg-light">
+    
+    <section id="leadership" class="projects-section bg-light">
       <!-- <div class="container"> -->
 
       <!-- Featured Project Row -->
 
+      <h2 class="h1 pt-4">Leadership</h2>
+      <br><br><br><br>
 
       <!-- <div class="row align-items-center no-gutters mb-4 mb-lg-5">
         <div class="col-xl-8 col-lg-7 ">
@@ -273,82 +292,142 @@
       </div> -->
 
 
-      <!-- Project Two Row
-      <div class="row justify-content-center no-gutters">
-        <div class="col-lg-6">
-          <img class="img-fluid" src="img/cart.gif" alt="">
-        </div>
-        <div class="col-lg-6 order-lg-first">
-          <div class="bg-black text-center h-100 project">
-            <div class="d-flex h-100">
-              <div class="project-text w-100 my-auto text-center text-lg-right">
-                <h4 class="text-white">OpenAI Gym Cartpole Challenge</h4>
-                <p class="mb-0 text-white-50">A number of state of the art Deep Learning approaches to get phenomenal results on the Cartpole Challenge by OpenAI.</p>
-                <br>
-                <a class="btn btn-dark" style="font-family: 'Raleway';" href="https://github.com/malhotra5/OpenAI-Gym-CartPole-Challenge">Source Code</a>
-                <hr class="d-none d-lg-block mb-0 mr-0">
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div> -->
-
-      <!-- Project Three Row -->
-
-      <!-- <div class="row justify-content-center no-gutters mb-5 mb-lg-0">
-        <div class="col-lg-6 view overlay hm-red-strong">
-          <img class="img-fluid " src="img/flight2.gif" alt="">
-          <div class="mask">
-
-          </div>
-        </div>
-
-        <div class="col-lg-6">
-          <div class="bg-black text-center h-100 project">
-            <div class="d-flex h-100">
-              <div class="project-text w-100 my-auto text-center text-lg-left">
-                <h4 class="text-white">Flight Simulator</h4>
-                <p class="mb-0 text-white-50">A flight sim made from scratch in  processing. The tutorial explores the fundamental concepts of creating 3D graphics.</p>
-                <br>
-                <a class="btn btn-dark" style="font-family: 'Raleway';" href="https://github.com/malhotra5/Flight-Simulator">Source Code</a>
-                <hr class="d-none d-lg-block mb-0 ml-0">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
-      <!-- Project Four Row -->
-      <!-- <div class="row justify-content-center no-gutters">
-        <div class="col-lg-6">
-          <img class="img-fluid" src="img/manim.png" alt="">
-        </div>
-        <div class="col-lg-6 order-lg-first">
-          <div class="bg-black text-center h-100 project">
-            <div class="d-flex h-100">
-              <div class="project-text w-100 my-auto text-center text-lg-right">
-                <h4 class="text-white">Manim Graphics Engine Tutorial</h4>
-                <p class="mb-0 text-white-50">The tutorial covers manim, a graphics library made and used by Grant Sanderson, popularly known as 3b1b.</p>
-                <br>
-                <a class="btn btn-dark" style="font-family: 'Raleway';" href="https://github.com/malhotra5/Manim-Tutorial">Source Code</a>
-                <hr class="d-none d-lg-block mb-0 mr-0">
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div> -->
-
     </section>
 
-  <section id="interest" style="background: #252934;">
+  <section id="projects" class="text-center" style="background: #252934;">
+    
+    <h2 class="h1 pt-4">Projects</h2>
+    <br><br><br><br>
+
+    <div class="row">
+    <div class="col-lg-3"></div>
+
+    <!-- Flight Simulator -->
+    <div class="col-lg-6 jKmnsm">
+      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+        <img class="img-fluid " src="img/flight2.gif" alt="">
+        <div class="content__slate" style="text-align: left;">
+          <h4>Flight Simulator</h4>
+          <p>A flight simulator made from scratch, exploring the fundamental concepts of creating 3D graphics.</p>
+          <p class="d-flex flex-wrap">
+            <span class="d-block mb-1">Processing</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- OpenAI Cartplole -->
+      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+        <img class="img-fluid" src="img/cart.gif" alt="">
+        <div class="content__slate" style="text-align: left;">
+          <h4>OpenAI Cartpole</h4>
+          <p>Explores various ML/AI approaches such as neuroevolution to get phenomenal results on the Cartpole Challenge by OpenAI.</p>
+          <p class="d-flex flex-wrap">
+            <span class="d-block mb-1">Python</span>
+          </p>
+        </div>
+      </div>
+
+      
+      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+        <img class="img-fluid " src="img/sem.jpg" alt="">
+        <div class="content__slate" style="text-align: left;">
+          <h4>Navigation for the Blind</h4>
+          <p>Navigation system that uses image processing to detemine best course of direction to walk in.</p>
+          <p class="d-flex flex-wrap">
+            <span class="d-block mb-1">Python</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Mimer -->
+      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+        <img class="img-fluid " src="" alt="">
+        <div class="content__slate" style="text-align: left;">
+          <h4>Mimer: Mimicking Humanoid Robot</h4>
+          <p>A humanoid robot that uses a computer vision to mimic the movements of a human in front of it.</p>
+          <p class="d-flex flex-wrap">
+            <span class="d-block mb-1">Python</span>
+            <span class="d-block mb-1">Arduino</span>
+          </p>
+        </div>
+      </div>
+
+      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+        <img class="img-fluid " src="" alt="">
+        <div class="content__slate" style="text-align: left;">
+          <h4>Manim Tutorial</h4>
+          <p>One of the first tutorials unravelling a graphics library made and used by Grant Sanderson, popularly known as 3b1b</p>
+          <p class="d-flex flex-wrap">
+            <span class="d-block mb-1">Python</span>
+          </p>
+        </div>
+      </div>
+
+
+      <!-- City Pop -->
+      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+        <img class="img-fluid " src="" alt="">
+        <div class="content__slate" style="text-align: left;">
+          <h4>Japanese City Pop Data Analysis</h4>
+          <p>Data analysis and research on Japanese City Pop via webscraping, text mining, and text analysis.</p>
+          <p class="d-flex flex-wrap">
+            <span class="d-block mb-1">Python</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- ChatGPT Robot -->
+      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+        <img class="img-fluid " src="" alt="">
+        <div class="content__slate" style="text-align: left;">
+          <h4>Spontaneous Response to Dynamic Environments via GPT 3.5</h4>
+          <p>Uses GPT 3.5 as a central nervous system to make high level decision during path planning for the cozmo robot.</p>
+          <p class="d-flex flex-wrap">
+            <span class="d-block mb-1">Python</span>
+          </p>
+        </div>
+      </div>
+
+
+      <!-- Personal Website -->
+      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+        <img class="img-fluid " src="" alt="">
+        <div class="content__slate" style="text-align: left;">
+          <h4>Personal Website</h4>
+          <p>A project to design and create this website.</p>
+          <p class="d-flex flex-wrap">
+            <span class="d-block mb-1">HTML</span>
+            <span class="d-block mb-1">CSS</span>
+            <br>
+            <span class="d-block mb-1">Javascript</span>
+          </p>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div class="col-lg-2"></div>
+  </div>
+<!-- 
+      <div class="row align-items-center no-gutters mb-4 mb-lg-5">
+        <div class="col-xl-8 col-lg-7 ">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/3vl17ymkODg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="embed-responsive-16by9">
+          </iframe>
+
+        </div>
+        <div class="col-xl-4 col-lg-5">
+          <div class="featured-text text-center text-lg-left">
+            <h4>YouTube</h4>
+            <p class="text-black-50 mb-0">My channel has a series of carefully tailored playlists for tutorials with beautiful graphics on Machine Learning.</p>
+          </div>
+        </div> -->
 
   </section>
 
-  <section id="blogs" style="background: #fff;">
+  <!-- <section id="blogs" style="background: #fff;">
 
-  </section>
+  </section> -->
 
     <!-- CONTACT -->
 
