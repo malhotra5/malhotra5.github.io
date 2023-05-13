@@ -1187,18 +1187,6 @@ footer {
   }
 }
 
-/* @-webkit-keyframes fadeInUp {
-  .jKmnsm from {
-      margin-top: 4rem;
-      opacity: 0;
-  }
-
-  .jKmnsm to {
-      margin-top: 1.5em;
-      opacity: 1;
-  }
-} */
-
 @media (max-width: 585px) {
   .jKmnsm {
       opacity:1 !important;
