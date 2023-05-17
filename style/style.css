@@ -1274,11 +1274,20 @@ footer {
 
 .egREUb:hover,.egREUb:focus {
   cursor: none;
+  
 }
+/* .noProp:hover, .noProp:focus{
+  cursor: auto;
+} */
+
 
 .egREUb:hover:after,.egREUb:focus:after {
   opacity: 1;
 }
+
+/* .noProp:hover::after, .noProp:focus:after{
+  opacity: 0;
+} */
 
 .egREUb:hover div.content__slate,.egREUb:focus div.content__slate {
   z-index: 999;
