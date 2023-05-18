@@ -84,6 +84,7 @@
   <!-- <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet"> -->
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,600italic,300italic,400italic,300,700italic,800italic,800' rel='stylesheet' type='text/css'>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- <script src="scripts/modal.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mixitup/2.1.11/jquery.mixitup.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.0/jquery.waypoints.min.js"></script>
 
@@ -180,13 +181,13 @@
             
             
             <div class="col-lg-1"></div>
-            <div class="col-lg-6">
+            <div class="col-lg-4">
               <h3 align="left">Education</h3>
               <div class="timeline">
                 <div class="tl_container right" date="2021-2025">
                   <div class="content" align="left">
                     <h4>Bachelors in CS/AI</h4>
-                    <p>Carnegie Mellon Univserity (<a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="" target="_blank">relevant coursework</a>) </p>
+                    <p>Carnegie Mellon Univserity (<a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="" target="_blank" data-toggle="modal" data-target="#cmuWork">relevant coursework</a>) </p>
                   </div>
                 </div>
 
@@ -194,7 +195,7 @@
                 <div class="tl_container right" date="2017-2021">
                     <div class="content" align="left">
                       <h4>High School Diploma</h4>
-                      <p>Lynbrook (<a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="" target="_blank">relevant coursework</a>)</p>
+                      <p>Lynbrook (<a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="" target="_blank" data-toggle="modal" data-target="#lynWork">relevant coursework</a>)</p>
                     </div>
                 </div>
               </div>
@@ -447,7 +448,10 @@
 
       <!-- YouTube -->
       <!-- <a onclick="openModal()"> -->
-      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+
+      <!-- <a></a> -->
+      <a data-toggle="modal" data-target="#exampleModel">
+      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell" >
         <img class="img-fluid " src="img/yout.png" alt="">
         <div class="content__slate" style="text-align: left;">
           <h4>YouTube Educational Series</h4>
@@ -457,9 +461,11 @@
             <span class="d-block mb-1">Video Editing</span>
           </p>
         </div>
+                
       </div>   
-    <!-- </a>   -->
+    </a>      
 
+      
 
     </div>
 
@@ -471,16 +477,9 @@
     
 
   </div>
+
+  
   </section>
-
-
-    <!-- <div class="container">
-      <div id="modal" class="sidenav" style="height: 100%; margin-top: 100px;z-index: 5;" >
-        <a href="javascript:void(0)" onclick="closeModal()" class="closebtn">Close &times;</a>
-        <br>
-        <a href="#about" class="js-scroll-trigger" onclick="closeModal()">About</a>
-      </div>      
-    </div> -->
 
 
 
@@ -570,6 +569,183 @@
     </div>
   </footer>
 
+
+
+
+
+<!-- All Modals -->
+
+
+<div class="modal right" id="cmuWork">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to About Me</a>
+      </div>
+      <div class="modal-body">
+        <h4>CMU Relevant Coursework</h4>
+        <br>
+        <div class="list-group">
+          <div class="item">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Mathematical Foundations of CS</h5> <br>
+            <!-- <small class="text-muted">3 days ago</small> -->
+          </div>
+          <p class="mb-1 text-muted">Rigorous proof based discrete math class.</p>
+          </div>
+
+          <div class="item">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Principles of Imperative Computation</h5>
+          </div>
+          <p class="mb-1 text-muted">Algorithms and data structures in C.</p>
+          </div>
+
+          <div class="item">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Matrices and Linear Transformations</h5>
+          </div>
+          <p class="mb-1 text-muted">Semi-proof based class on linear algebra concepts for computer science.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Principles of Functional Programming</h5>
+            </div>
+            <p class="mb-1 text-muted">Proof and programming based class using functional language SML.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Great Ideas in Theoretical CS</h5>
+            </div>
+            <p class="mb-1 text-muted">Rigorous proof based class on computation and complexity theory.</p>
+          </div>
+
+          
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Calculus in 3D</h5>
+            </div>
+            <p class="mb-1 text-muted">Multivariate calculus.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Intro to Computer Systems</h5>
+            </div>
+            <p class="mb-1 text-muted">Fundamentals of computer systems.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">AI Representation and Problem Solving</h5>
+            </div>
+            <p class="mb-1 text-muted">Theory and programming class for modern techniques in AI.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Probability Theory for CS</h5>
+            </div>
+            <p class="mb-1 text-muted">Probability class for the study of both statistics and random systems.</p>
+          </div>
+
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Intro to ML</h5>
+            </div>
+            <p class="mb-1 text-muted">Theory and programming class for modern techniques in ML.</p>
+          </div>
+
+          
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Parallel and Sequential Data Structures and Algs</h5>
+            </div>
+            <p class="mb-1 text-muted">Advanced algorithms/data structures class with emphasis on parallel thinking.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Intro to Computer Security</h5>
+            </div>
+            <p class="mb-1 text-muted">Theory and programming based class on fundamentals of computer security.</p>  
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Cognitive Robotics</h5>
+            </div>
+            <p class="mb-1 text-muted">Exploring intelligent behavior in mobile robots using Cozmo by Anki.</p>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="modal-footer">
+        
+      </div> -->
+    </div>
+  </div>
+</div>
+
+
+<div class="modal right" id="lynWork">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to About Me</a>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+
+        
+      </div>
+      <div class="modal-body">
+        super large content filler super large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content filler
+
+      </div>
+      <!-- <div class="modal-footer">
+        
+      </div> -->
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal right" id="exampleModel">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+
+        
+      </div>
+      <div class="modal-body">
+        super large content filler super large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content filler
+
+      </div>
+      <!-- <div class="modal-footer">
+        
+      </div> -->
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -581,6 +757,8 @@
   <!-- Custom scripts for this template -->
   <script src="js/grayscale.min.js"></script>
   <script src="scripts/canvas.js"></script>
+ 
+
 
   <script>
     function openNav() {

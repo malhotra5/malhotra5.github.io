@@ -1370,3 +1370,61 @@ footer {
       opacity: 1 !important;
   }
 }
+
+
+.modal {
+  animation-duration: 0.7s;
+  animation-name: slideInRight;
+  text-align: left;
+}
+
+
+.modal.right .modal-dialog {
+  position: fixed;
+  margin: auto;
+  width: 585px;
+  height: 100%;
+  right: 0px;
+  border-color:#1E242C;
+  -webkit-transform: translate3d(0%, 0, 0);
+      -ms-transform: translate3d(0%, 0, 0);
+       -o-transform: translate3d(0%, 0, 0);
+          transform: translate3d(0%, 0, 0);
+      
+}
+
+.modal.right .modal-content {
+  height: 100%;
+  padding: 2rem 2rem 4rem;
+  overflow-y: auto;
+  background-color:rgba(0, 0, 0);
+}
+
+
+.modal.right .modal-body {
+  padding: 15px 15px 80px;
+}
+.model-header {
+  justify-content: flex-start;
+}
+
+@media (max-width: 585px) {
+  .modal.right .modal-dialog{
+    width: 100%;
+  }
+}
+
+.modal-header a:hover {
+  text-decoration: underline;
+  color: white;
+}
+
+.item {
+  transition: all 0.3s ease-in-out;
+  background-color: rgba(0, 0, 0);
+  left: 0px;
+}
+
+.item:hover{
+	transform: scaleX(1.1);
+}
