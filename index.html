@@ -148,10 +148,10 @@
   <div id="main">
 
     <section id="home" class="flex height-fix">
-      <div id="pt" class="canvas"></div>
+      <div id="pt" class="canvas" style=""></div>
       <div class="flex">
 
-        <div class="text">
+        <div class="text" style="position:fixed; z-index: -9;" >
           Hello, I'm <span class="highlight">Rohit Malhotra</span>
           <br>
           <span class="highlight2"><b>AI</b></span> Major @ <span class="highlight2"> <b>CMU</b></span>
@@ -162,7 +162,8 @@
 
   <!-- About Section -->
 
-  <section id="about" class="text-center">
+  
+  <section id="about" class="text-center bg-white">
 
 
       <!--Section heading-->
@@ -175,7 +176,6 @@
               <img src="img/me.jpg" alt"My Photo">
               <br><br><br>
               <div><h4>Check out my <a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="https://drive.google.com/file/d/1osRg11TAOepCwnAyAQswjl5qMmutB0_T/view?usp=sharing" target="_blank">resume</a></h4></div>
-              <div><h4>Contact Info: <a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="mailto: rohit.malh5@gmail.com">rohit.malh5@gmail.com</a></h4></div>
               <br><br><br>
             </div>
             
@@ -195,7 +195,7 @@
                 <div class="tl_container right" date="2017-2021">
                     <div class="content" align="left">
                       <h4>High School Diploma</h4>
-                      <p>Lynbrook (<a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="" target="_blank" data-toggle="modal" data-target="#lynWork">relevant coursework</a>)</p>
+                      <p>Lynbrook</p>
                     </div>
                 </div>
               </div>
@@ -262,11 +262,7 @@
         <div class="col-lg-4">
           <div style="height:600px" id="cardHover" class="egREUb noProp" role="gridcell">
             <img class="img-fluid " src="img/ascend.png" alt="">
-            <div class="content__slate" style="text-align: left; z-index: 999 !important;
-            -webkit-transform: none !important;
-            -ms-transform: none !important;
-            transform: none !important;
-            opacity: 1 !important;">
+            <div class="content__slate">
               <h4>CMU Climbing Club</h4>
               <p>Role: Founder/President</p>
             </div>
@@ -280,11 +276,7 @@
         <div class="col-lg-4">
           <div style="height:600px" id="cardHover" class="egREUb noProp" role="gridcell">
             <img class="img-fluid " src="img/lit.png" alt="">
-            <div class="content__slate" style="text-align: left; z-index: 999 !important;
-            -webkit-transform: none !important;
-            -ms-transform: none !important;
-            transform: none !important;
-            opacity: 1 !important;">
+            <div class="content__slate">
               <h4>Learn In Shelter</h4>
               <p>Role: CEO/CTO</p>
             </div>
@@ -301,11 +293,7 @@
         <div class="col-lg-4">
           <div style="height:600px" id="cardHover" class="egREUb noProp" role="gridcell">
             <img class="img-fluid " src="img/farm2.jpg" alt="">
-            <div class="content__slate" style="text-align: left; z-index: 999 !important;
-            -webkit-transform: none !important;
-            -ms-transform: none !important;
-            transform: none !important;
-            opacity: 1 !important;">
+            <div class="content__slate">
               <h4>Melodaid</h4>
               <p>Role: Co-Founder/Lead Guitarist</p>
             </div>
@@ -327,6 +315,7 @@
     <div class="col-lg-3"></div>
 
     <!-- Flight Simulator -->
+    <a data-toggle="modal" data-target="#flightModal">
     <div class="col-lg-6 jKmnsm">
       <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
         <img class="img-fluid " src="img/flight2.gif" alt="">
@@ -338,9 +327,11 @@
           </p>
         </div>
       </div>
+    </a>
 
 
      <!-- City Pop -->
+     <a data-toggle="modal" data-target="#popModal">
      <div style="height:310px" id="cardHover" class="egREUb" role="gridcell">
       <img class="img-fluid " src="img/citypop.png" alt="">
       <div class="content__slate" style="text-align: left;">
@@ -351,8 +342,10 @@
         </p>
       </div>
     </div>
+  </a>
 
      <!-- Navblind -->
+     <a data-toggle="modal" data-target="#navModal">
      <div style="height:400px" id="cardHover" class="egREUb" role="gridcell">
       <img class="img-fluid " src="img/sem2.png" alt="">
       <div class="content__slate" style="text-align: left;">
@@ -363,110 +356,119 @@
         </p>
       </div>
     </div>
+  </a>
 
 
       <!-- Mimer -->
-      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
-        <img class="img-fluid " src="img/rob.png" alt="">
-        <div class="content__slate" style="text-align: left;">
-          <h4>Mimer: Mimicking Humanoid Robot</h4>
-          <p>A humanoid robot that uses a computer vision to mimic the movements of a human in front of it.</p>
-          <p class="d-flex flex-wrap">
-            <span class="d-block mb-1">Python</span>
-            <span class="d-block mb-1">Arduino</span>
-          </p>
+      <a data-toggle="modal" data-target="#mimerModal">
+        <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid " src="img/rob.png" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>Mimer: Mimicking Humanoid Robot</h4>
+            <p>A humanoid robot that uses a computer vision to mimic the movements of a human in front of it.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+              <span class="d-block mb-1">Arduino</span>
+            </p>
+          </div>
         </div>
-      </div>
+      </a>
 
 
 
       <!-- Personal Website -->
-      <div style="height:400px" id="cardHover" class="egREUb" role="gridcell">
-        <img class="img-fluid " src="img/web.png" alt="">
-        <div class="content__slate" style="text-align: left;">
-          <h4>Personal Website</h4>
-          <p>A project to design and create this website.</p>
-          <p class="d-flex flex-wrap">
-            <span class="d-block mb-1">HTML</span>
-            <span class="d-block mb-1">CSS</span>
-            <span class="d-block mb-1">Javascript</span>
-          </p>
+      <a data-toggle="modal" data-target="#webModal">
+        <div style="height:400px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid " src="img/web.png" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>Personal Website</h4>
+            <p>A project to design and create this website.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">HTML</span>
+              <span class="d-block mb-1">CSS</span>
+              <span class="d-block mb-1">Javascript</span>
+            </p>
+          </div>
         </div>
-      </div>
+      </a>
       
       
        <!-- Manim -->
-       <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
-        <img class="img-fluid " src="img/manim.gif" alt="">
-        <div class="content__slate" style="text-align: left;">
-          <h4>Manim Tutorial</h4>
-          <p>One of the first tutorials unravelling a graphics library made and used by Grant Sanderson, popularly known as 3b1b</p>
-          <p class="d-flex flex-wrap">
-            <span class="d-block mb-1">Python</span>
-          </p>
+       <a data-toggle="modal" data-target="#manimModal">
+        <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid " src="img/manim.gif" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>Manim Tutorial</h4>
+            <p>One of the first tutorials unravelling a graphics library made and used by Grant Sanderson, popularly known as 3b1b</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+            </p>
+          </div>
         </div>
-      </div>
+       </a>
 
     
        <!-- OpenAI Cartplole -->
-       <div style="height:400px" id="cardHover" class="egREUb" role="gridcell">
-        <img class="img-fluid" src="img/cart.gif" alt="">
-        <div class="content__slate" style="text-align: left;">
-          <h4>OpenAI Cartpole</h4>
-          <p>Explores various ML/AI approaches such as neuroevolution to get phenomenal results on the Cartpole Challenge by OpenAI.</p>
-          <p class="d-flex flex-wrap">
-            <span class="d-block mb-1">Python</span>
-          </p>
+       <a data-toggle="modal" data-target="#cartModal">
+        <div style="height:400px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid" src="img/cart.gif" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>OpenAI Cartpole</h4>
+            <p>Explores various ML/AI approaches such as neuroevolution to get phenomenal results on the Cartpole Challenge by OpenAI.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+            </p>
+          </div>
         </div>
-      </div>
+      </a>
 
       <!-- ChatGPT Robot -->
-      <div style="height:310px" id="cardHover" class="egREUb" role="gridcell">
-        <img class="img-fluid " src="img/gpt.png" alt="">
-        <div class="content__slate" style="text-align: left;">
-          <h4>Spontaneous Response to Dynamic Environments via GPT 3.5</h4>
-          <p>Uses GPT 3.5 as a central nervous system to make high level decision during path planning for the cozmo robot.</p>
-          <p class="d-flex flex-wrap">
-            <span class="d-block mb-1">Python</span>
-          </p>
+      <a data-toggle="modal" data-target="#gptModal">
+        <div style="height:310px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid " src="img/gpt.png" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>Spontaneous Response to Dynamic Environments via GPT 3.5</h4>
+            <p>Uses GPT 3.5 as a central nervous system to make high level decision during path planning for the cozmo robot.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+            </p>
+          </div>
         </div>
-      </div>
+      </a>
+      
 
 
        <!-- Awap -->
-      <div style="height:400px" id="cardHover" class="egREUb" role="gridcell">
-      <img class="img-fluid " src="img/awap.gif" alt="">
-      <div class="content__slate" style="text-align: left;">
-        <h4>Terraforming Bot</h4>
-        <p>A game bot whose objective is to terraform the most tiles on mars while competing against enemy bots.</p>
-        <p class="d-flex flex-wrap">
-          <span class="d-block mb-1">Python</span>
-        </p>
-      </div>
-    </div>
+      <a data-toggle="modal" data-target="#awapModal">
+        <div style="height:400px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid " src="img/awap.gif" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>Terraforming Bot</h4>
+            <p>A game bot whose objective is to terraform the most tiles on mars while competing against enemy bots.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+            </p>
+          </div>
+        </div>
+      </a>
+      
 
 
       <!-- YouTube -->
-      <!-- <a onclick="openModal()"> -->
-
-      <!-- <a></a> -->
-      <a data-toggle="modal" data-target="#exampleModel">
-      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell" >
-        <img class="img-fluid " src="img/yout.png" alt="">
-        <div class="content__slate" style="text-align: left;">
-          <h4>YouTube Educational Series</h4>
-          <p>A set of educational videos on YouTube created using the Manim engine.</p>
-          <p class="d-flex flex-wrap">
-            <span class="d-block mb-1">Python</span>
-            <span class="d-block mb-1">Video Editing</span>
-          </p>
-        </div>
-                
-      </div>   
-    </a>      
-
-      
-
+      <a data-toggle="modal" data-target="#youtModal">
+        <div style="height:454px" id="cardHover" class="egREUb" role="gridcell" >
+          <img class="img-fluid " src="img/yout.png" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>YouTube Educational Series</h4>
+            <p>A set of educational videos on YouTube created using the Manim engine.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+              <span class="d-block mb-1">Video Editing</span>
+            </p>
+          </div>
+                  
+        </div>   
+      </a>     
     </div>
 
     <div class="col-lg-2"></div>
@@ -493,11 +495,7 @@
         <div class="col-lg-4">
           <div style="height:600px" id="cardHover" class="egREUb noProp" role="gridcell">
             <img class="img-fluid " src="img/guitar.jpg" alt="">
-            <div class="content__slate" style="text-align: left; z-index: 999 !important;
-            -webkit-transform: none !important;
-            -ms-transform: none !important;
-            transform: none !important;
-            opacity: 1 !important;">
+            <div class="content__slate">
               <h4>Guitar</h4>
             </div>
           </div>
@@ -510,11 +508,7 @@
         <div class="col-lg-4">
           <div style="height:600px" id="cardHover" class="egREUb noProp" role="gridcell">
             <img class="img-fluid " src="img/climb.png" alt="">
-            <div class="content__slate" style="text-align: left; z-index: 999 !important;
-            -webkit-transform: none !important;
-            -ms-transform: none !important;
-            transform: none !important;
-            opacity: 1 !important;">
+            <div class="content__slate">
               <h4>Climbing</h4>
             </div>
           </div>
@@ -527,11 +521,7 @@
         <div class="col-lg-4">
           <div style="height:600px" id="cardHover" class="egREUb noProp" role="gridcell">
             <img class="img-fluid " src="img/bike.png" alt="">
-            <div class="content__slate" style="text-align: left; z-index: 999 !important;
-            -webkit-transform: none !important;
-            -ms-transform: none !important;
-            transform: none !important;
-            opacity: 1 !important;">
+            <div class="content__slate">
               <h4>Long Distance Running/Road Biking</h4>
             </div>
           </div>
@@ -565,7 +555,9 @@
 
     <div class="container">
       <!-- Copyright &copy; Rohit Malhotra 2018 -->
-      Rohit Malhotra, 2023
+      Rohit Malhotra, 2023<br>
+      <a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="mailto: rohit.malh5@gmail.com">rohit.malh5@gmail.com</a>
+
     </div>
   </footer>
 
@@ -682,66 +674,181 @@
           </div>
         </div>
       </div>
-      <!-- <div class="modal-footer">
-        
-      </div> -->
     </div>
   </div>
 </div>
 
-
-<div class="modal right" id="lynWork">
-  <div class="modal-dialog">
-    <div class="modal-content ">
-      <div class="modal-header">
-        <a href="" data-dismiss="modal" >Back to About Me</a>
-        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button> -->
-
-        
-      </div>
-      <div class="modal-body">
-        super large content filler super large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content filler
-
-      </div>
-      <!-- <div class="modal-footer">
-        
-      </div> -->
-    </div>
-  </div>
-</div>
-
-
-
-<div class="modal right" id="exampleModel">
+<div class="modal right" id="flightModal">
   <div class="modal-dialog">
     <div class="modal-content ">
       <div class="modal-header">
         <a href="" data-dismiss="modal" >Back to Projects</a>
-        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button> -->
-
-        
       </div>
       <div class="modal-body">
-        super large content filler super large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content fillersuper large content filler
-
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/flight2.gif" alt="">
+        </div>
+        <br>
       </div>
-      <!-- <div class="modal-footer">
-        
-      </div> -->
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="popModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/citypop.png" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="navModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/sem2.png" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal right" id="mimerModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/rob.png" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="webModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/web.png" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="manimModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/manim.gif" alt="">
+        </div>
+        <br>
+      </div>
     </div>
   </div>
 </div>
 
 
+<div class="modal right" id="cartModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>OpenAI Cartpole</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/cart.gif" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="gptModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Spontaneous Response to Dynamic Environments via GPT3.5</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/gpt.png" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="awapModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Terraforming Bot</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/awap.gif" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
 
 
+<div class="modal right" id="youtModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>        
+      </div>
+      <div class="modal-body">
+        <h4>YouTube Educational Series</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/yout.png" alt="">
+        </div>
+        <br>
 
-
-
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -769,18 +876,6 @@
     function closeNav() {
       document.getElementById("mySidenav").style.width = "0";
     }
-
-
-    // /* Set the width of the sidebar to 250px (show it) */
-    // function openModal() {
-    //   document.getElementById("modal").style.width = "100%";
-
-    // }
-
-    // /* Set the width of the sidebar to 0 (hide it) */
-    // function closeModal() {
-    //   document.getElementById("modal").style.width = "0";
-    // }
 
 
   </script>
