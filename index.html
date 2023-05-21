@@ -151,7 +151,7 @@
       <div id="pt" class="canvas" style=""></div>
       <div class="flex">
 
-        <div class="text" style="position:fixed; z-index: -9;" >
+        <div class="text blur" style="position:fixed; z-index: -9;" >
           Hello, I'm <span class="highlight">Rohit Malhotra</span>
           <br>
           <span class="highlight2"><b>AI</b></span> Major @ <span class="highlight2"> <b>CMU</b></span>
@@ -180,9 +180,9 @@
             </div>
             
             
-            <div class="col-lg-1"></div>
-            <div class="col-lg-4">
-              <h3 align="left">Education</h3>
+            <!-- <div class="col-lg-1"></div> -->
+            <div class="col" width="auto">
+              <!-- <h3 align="left">Education</h3>
               <div class="timeline">
                 <div class="tl_container right" date="2021-2025">
                   <div class="content" align="left">
@@ -200,9 +200,9 @@
                 </div>
               </div>
 
-              <h3 align="left">Work Experience</h3>
+              <h3 align="left">Work Experience</h3> -->
 
-              <div class="timeline">
+              <!-- <div class="timeline">
 
                 <div class="tl_container right" date="June-Aug 2023">
                   <div class="content" align="left">
@@ -234,14 +234,63 @@
                   </div>
               </div>
 
-              </div>
+              </div> -->
 
-              
-  
+              <div class="container">
+                <h1 class="center">Background</h1>
+                
+                <article class="episode">
+                  <div class="episode__number">Education</div>
+                  <div class="episode__content">
+                    <div class="title">Bachelors in CS/AI</div>
+                    <div class="story">
+                      <p>Carnegie Mellon Univserity (<a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="" target="_blank" data-toggle="modal" data-target="#cmuWork">relevant coursework</a>)</p>
+                      <p>2021-2025</p>
+                    
+                    </div>
+                  
 
-              
+                    <div class="title">High School Diploma</div>
+                    <div class="story">
+                      <p>Lynbrook High School</p>
+                      <p>2017-2021</p>
+                    </div>
+                  </div>
+                </article>
+                
+                <article class="episode">
+                  <div class="episode__number">Work Experience</div>
+                  <div class="episode__content">
+                    <div class="title">MIDL Technology</div>
+                    <div class="story">
+                      <p>Computer Vision Intern</p>
+                      <p>Jun-Aug 2023</p>
+                    </div>
+
+                    <div class="title">Facebook (Meta)</div>
+                    <div class="story">
+                      <p>Software Engineering Intern</p>
+                      <p>Jun-Aug 2022</p>
+                    </div>
+
+                    <div class="title">Step Function AI</div>
+                    <div class="story">
+                      <p>Data Science Intern</p>
+                      <p>Jun-Aug 2021</p>
+                    </div>
+
+                    <div class="title">Alphonso Inc.</div>
+                    <div class="story">
+                      <p>Data Science Intern</p>
+                      <p>Jun-Aug 2019</p>
+                    </div>
+                  </div>
+                </article>
+              </div>            
             </div>
           </div>
+
+
           <!--Grid column-->
 
   </section>
@@ -489,7 +538,6 @@
     <h2 class="h1 pt-4">Hobbies</h2>
 
     <br><br><br><br>
-      
       <div class="row" style="margin-left: 20px; margin-right: 20px;">
         
         <div class="col-lg-4">
@@ -548,6 +596,7 @@
 
   <!-- Footer -->
   <footer class="small text-center text-white-50" id="contact">
+    
 
         <!-- <a href="#" class="fa fa-twitter"></a>
       <a href="#" class="fa fa-youtube"></a>
@@ -879,6 +928,18 @@
 
 
   </script>
+
+  <script>
+    $(window).scroll(function() {
+    var s = $(window).scrollTop();
+    var h = $('.canvas').height(),
+    opacityVal = Math.max(0, 1-s/(h/2));
+    $('.blur').css('opacity', opacityVal);
+    // $('.canvas').css('opacity', opacityVal);
+  });
+  </script>
+
+
 
 </body>
 
