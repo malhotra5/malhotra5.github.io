@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Rohit Malhotra</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <style media="screen">
+    .sidenav {
+      height: 100%;
+      /* 100% Full-height */
+      width: 0;
+      /* 0 width - change this with JavaScript */
+      position: fixed;
+      /* Stay in place */
+      z-index: 1;
+      /* Stay on top */
+      top: 0;
+      /* Stay at the top */
+      left: 0;
+      /* background-color: #111; */
+      background-color: #252934;
+      /* Black*/
+      overflow-x: hidden;
+      /* Disable horizontal scroll */
+      /* padding-top: 60px; */
+      /* Place content 60px from the top */
+      transition: 0.5s;
+      /* 0.5 second transition effect to slide in the sidenav */
+    }
+
+    /* The navigation menu links */
+    .sidenav a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 15px;
+      color: #818181;
+      display: block;
+      transition: 0.3s;
+    }
+
+    /* When you mouse over the navigation links, change their color */
+    .sidenav a:hover {
+      color: #ffffff;
+    }
+
+    /* Position and style the close button (top right corner) */
+    .sidenav .closebtn {
+
+      font-size: 20px;
+    }
+
+    .navbar-toggler{
+      border: none;
+    }
+
+    /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+    @media screen and (max-height: 450px) {
+      .sidenav {
+        padding-top: 15px;
+      }
+
+      .sidenav a {
+        font-size: 18px;
+      }
+    }
+
+  </style>
+
+
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" /> -->
+
+
+  <!-- Custom fonts for this template -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet"> -->
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,600italic,300italic,400italic,300,700italic,800italic,800' rel='stylesheet' type='text/css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- <script src="scripts/modal.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mixitup/2.1.11/jquery.mixitup.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.0/jquery.waypoints.min.js"></script>
+
+
+  <script src="scripts/pt.min.js"></script>
+
+
+  <!-- Custom styles for this template -->
+  <link href="css/grayscale.css" rel="stylesheet">
+  <link rel="stylesheet" href="style/style.css">
+
+
+
+</head>
+
+<body id="page-top">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top " id="mainNav">
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="index.html">Rohit Malhotra</a>
+      <!-- <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button> -->
+
+      <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" onclick="closeNav()" class="closebtn">Close &times;</a>
+        <br>
+        <a href="index.html#about" class="js-scroll-trigger" onclick="closeNav()">About</a>
+        <a href="ventures.html" class="js-scroll-trigger" onclick="closeNav()">Ventures</a>
+        <a href="research.html" class="js-scroll-trigger" onclick="closeNav()">Research</a>
+        <a href="#projects" class="js-scroll-trigger" onclick="closeNav()">Projects</a>
+        <a href="hobbies.html" class="js-scroll-trigger" onclick="closeNav()">Hobbies</a>
+      </div>
+
+      <!-- Use any element to open the sidenav -->
+      <span onclick="openNav()" class="navbar-toggler navbar-toggler-icon"></span>
+
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="index.html#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="ventures.html">Ventures</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="research.html">Research</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#projects">Projects</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="hobbies.html">Hobbies</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- HOME -->
+  <div id="main">
+
+   
+  <!-- About Section -->
+
+  
+
+  <section id="projects" class="text-center" style="height: 100%; background: #252934;">
+    <br><br><br><br><br><br><br>
+    <h2 class="h1 pt-4" style="color:#e9ecef;">Projects</h2>
+    <br><br><br><br>
+
+    <div class="row">
+    <div class="col-lg-3"></div>
+
+    <!-- Flight Simulator -->
+    <a data-toggle="modal" data-target="#flightModal">
+    <div class="col-lg-6 jKmnsm">
+      <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+        <img class="img-fluid " src="img/flight2.gif" alt="">
+        <div class="content__slate" style="text-align: left;">
+          <h4>Flight Simulator</h4>
+          <p>A flight simulator made from scratch, exploring the fundamental concepts of creating 3D graphics.</p>
+          <p class="d-flex flex-wrap">
+            <span class="d-block mb-1">Processing</span>
+          </p>
+        </div>
+      </div>
+    </a>
+
+
+     <!-- City Pop -->
+     <a data-toggle="modal" data-target="#popModal">
+     <div style="height:310px" id="cardHover" class="egREUb" role="gridcell">
+      <img class="img-fluid " src="img/citypop.png" alt="">
+      <div class="content__slate" style="text-align: left;">
+        <h4>Japanese City Pop Data Analysis</h4>
+        <p>Data analysis and research on Japanese City Pop via webscraping, text mining, and text analysis.</p>
+        <p class="d-flex flex-wrap">
+          <span class="d-block mb-1">Python</span>
+        </p>
+      </div>
+    </div>
+  </a>
+
+     <!-- Navblind -->
+     <a data-toggle="modal" data-target="#navModal">
+     <div style="height:400px" id="cardHover" class="egREUb" role="gridcell">
+      <img class="img-fluid " src="img/sem2.png" alt="">
+      <div class="content__slate" style="text-align: left;">
+        <h4>Navigation for the Blind</h4>
+        <p>Navigation system that uses image processing to detemine best course of direction to walk in.</p>
+        <p class="d-flex flex-wrap">
+          <span class="d-block mb-1">Python</span>
+        </p>
+      </div>
+    </div>
+  </a>
+
+
+      <!-- Mimer -->
+      <a data-toggle="modal" data-target="#mimerModal">
+        <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid " src="img/rob.png" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>Mimer: Mimicking Humanoid Robot</h4>
+            <p>A humanoid robot that uses a computer vision to mimic the movements of a human in front of it.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+              <span class="d-block mb-1">Arduino</span>
+            </p>
+          </div>
+        </div>
+      </a>
+
+
+
+      <!-- Personal Website -->
+      <a data-toggle="modal" data-target="#webModal">
+        <div style="height:400px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid " src="img/web.png" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>Personal Website</h4>
+            <p>A project to design and create this website.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">HTML</span>
+              <span class="d-block mb-1">CSS</span>
+              <span class="d-block mb-1">Javascript</span>
+            </p>
+          </div>
+        </div>
+      </a>
+      
+      
+       <!-- Manim -->
+       <a data-toggle="modal" data-target="#manimModal">
+        <div style="height:454px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid " src="img/manim.gif" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>Manim Tutorial</h4>
+            <p>One of the first tutorials unravelling a graphics library made and used by Grant Sanderson, popularly known as 3b1b</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+            </p>
+          </div>
+        </div>
+       </a>
+
+    
+       <!-- OpenAI Cartplole -->
+       <a data-toggle="modal" data-target="#cartModal">
+        <div style="height:400px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid" src="img/cart.gif" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>OpenAI Cartpole</h4>
+            <p>Explores various ML/AI approaches such as neuroevolution to get phenomenal results on the Cartpole Challenge by OpenAI.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+            </p>
+          </div>
+        </div>
+      </a>
+
+      <!-- ChatGPT Robot -->
+      <a data-toggle="modal" data-target="#gptModal">
+        <div style="height:310px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid " src="img/gpt.png" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>Spontaneous Response to Dynamic Environments via GPT 3.5</h4>
+            <p>Uses GPT 3.5 as a central nervous system to make high level decision during path planning for the cozmo robot.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+            </p>
+          </div>
+        </div>
+      </a>
+      
+
+
+       <!-- Awap -->
+      <a data-toggle="modal" data-target="#awapModal">
+        <div style="height:400px" id="cardHover" class="egREUb" role="gridcell">
+          <img class="img-fluid " src="img/awap.gif" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>Terraforming Bot</h4>
+            <p>A game bot whose objective is to terraform the most tiles on mars while competing against enemy bots.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+            </p>
+          </div>
+        </div>
+      </a>
+      
+
+
+      <!-- YouTube -->
+      <a data-toggle="modal" data-target="#youtModal">
+        <div style="height:454px" id="cardHover" class="egREUb" role="gridcell" >
+          <img class="img-fluid " src="img/yout.png" alt="">
+          <div class="content__slate" style="text-align: left;">
+            <h4>YouTube Educational Series</h4>
+            <p>A set of educational videos on YouTube created using the Manim engine.</p>
+            <p class="d-flex flex-wrap">
+              <span class="d-block mb-1">Python</span>
+              <span class="d-block mb-1">Video Editing</span>
+            </p>
+          </div>
+                  
+        </div>   
+      </a>     
+    </div>
+
+    <div class="col-lg-2"></div>
+
+   
+
+
+    
+
+  </div>
+
+  
+  </section>
+
+
+
+
+  <!-- Footer -->
+  <footer class="small text-center text-white-50" id="footer">
+    
+        <!-- <a href="#" class="fa fa-twitter" ></a> -->
+      <!-- <a href="#" class="fa fa-youtube"></a>
+      <a href="#" class="fa fa-linkedin"></a> -->
+
+    <div class="container">
+      <!-- Copyright &copy; Rohit Malhotra 2018 -->
+      Rohit Malhotra, 2023<br>
+      <a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="mailto: rohit.malh5@gmail.com">rohit.malh5@gmail.com</a>
+
+    </div>
+  </footer>
+
+
+
+
+
+<!-- All Modals -->
+
+
+<div class="modal right" id="cmuWork">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to About Me</a>
+      </div>
+      <div class="modal-body">
+        <h4>CMU Relevant Coursework</h4>
+        <br>
+        <div class="list-group">
+          <div class="item">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Mathematical Foundations of CS</h5> <br>
+            <!-- <small class="text-muted">3 days ago</small> -->
+          </div>
+          <p class="mb-1 text-muted">Rigorous proof based discrete math class.</p>
+          </div>
+
+          <div class="item">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Principles of Imperative Computation</h5>
+          </div>
+          <p class="mb-1 text-muted">Algorithms and data structures in C.</p>
+          </div>
+
+          <div class="item">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Matrices and Linear Transformations</h5>
+          </div>
+          <p class="mb-1 text-muted">Semi-proof based class on linear algebra concepts for computer science.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Principles of Functional Programming</h5>
+            </div>
+            <p class="mb-1 text-muted">Proof and programming based class using functional language SML.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Great Ideas in Theoretical CS</h5>
+            </div>
+            <p class="mb-1 text-muted">Rigorous proof based class on computation and complexity theory.</p>
+          </div>
+
+          
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Calculus in 3D</h5>
+            </div>
+            <p class="mb-1 text-muted">Multivariate calculus.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Intro to Computer Systems</h5>
+            </div>
+            <p class="mb-1 text-muted">Fundamentals of computer systems.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">AI Representation and Problem Solving</h5>
+            </div>
+            <p class="mb-1 text-muted">Theory and programming class for modern techniques in AI.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Probability Theory for CS</h5>
+            </div>
+            <p class="mb-1 text-muted">Probability class for the study of both statistics and random systems.</p>
+          </div>
+
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Intro to ML</h5>
+            </div>
+            <p class="mb-1 text-muted">Theory and programming class for modern techniques in ML.</p>
+          </div>
+
+          
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Parallel and Sequential Data Structures and Algs</h5>
+            </div>
+            <p class="mb-1 text-muted">Advanced algorithms/data structures class with emphasis on parallel thinking.</p>
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Intro to Computer Security</h5>
+            </div>
+            <p class="mb-1 text-muted">Theory and programming based class on fundamentals of computer security.</p>  
+          </div>
+
+          <div class="item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Cognitive Robotics</h5>
+            </div>
+            <p class="mb-1 text-muted">Exploring intelligent behavior in mobile robots using Cozmo by Anki.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="flightModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/flight2.gif" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="popModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/citypop.png" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="navModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/sem2.png" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal right" id="mimerModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/rob.png" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="webModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/web.png" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="manimModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Manim Tutorial</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/manim.gif" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal right" id="cartModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>OpenAI Cartpole</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/cart.gif" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="gptModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Spontaneous Response to Dynamic Environments via GPT3.5</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/gpt.png" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal right" id="awapModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>
+      </div>
+      <div class="modal-body">
+        <h4>Terraforming Bot</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/awap.gif" alt="">
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal right" id="youtModal">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <a href="" data-dismiss="modal" >Back to Projects</a>        
+      </div>
+      <div class="modal-body">
+        <h4>YouTube Educational Series</h4>
+        <div style="height:300px" id="cardHover" class="egREUb noProp" role="gridcell">
+          <img class="img-fluid " src="img/yout.png" alt="">
+        </div>
+        <br>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+
+  <!-- Custom scripts for this template -->
+  <script src="js/grayscale.min.js"></script>
+  <script src="scripts/canvas.js"></script>
+ 
+
+
+  <script>
+    function openNav() {
+      document.getElementById("mySidenav").style.width = "250px";
+    }
+
+    /* Set the width of the side navigation to 0 */
+    function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+    }
+
+
+  </script>
+
+  <script>
+    $(window).scroll(function() {
+    var s = $(window).scrollTop();
+    var h = $('.canvas').height(),
+    opacityVal = Math.max(0, 1-s/(h/2));
+    $('.blur').css('opacity', opacityVal);
+    // $('.canvas').css('opacity', opacityVal);
+  });
+  </script>
+
+
+
+</body>
+
+</html>
