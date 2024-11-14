@@ -58,7 +58,7 @@
       font-size: 20px;
     }
 
-    .navbar-toggler{
+    .navbar-toggler {
       border: none;
     }
 
@@ -76,7 +76,6 @@
     /* #mainNav {
       
     } */
-
   </style>
 
 
@@ -86,7 +85,9 @@
   <!-- Custom fonts for this template -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <!-- <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet"> -->
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,600italic,300italic,400italic,300,700italic,800italic,800' rel='stylesheet' type='text/css'>
+  <link
+    href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,600italic,300italic,400italic,300,700italic,800italic,800'
+    rel='stylesheet' type='text/css'>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <!-- <script src="scripts/modal.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mixitup/2.1.11/jquery.mixitup.min.js"></script>
@@ -152,10 +153,10 @@
   <!-- HOME -->
   <div id="main">
 
-  
-  <!-- About Section -->
 
-  
+    <!-- About Section -->
+
+
 
     <!-- Projects Section -->
     <br><br><br><br><br><br><br>
@@ -166,9 +167,26 @@
 
       <h2 class="h1 pt-4">Ventures</h2>
       <br><br><br><br>
-      
+
       <div class="row" style="margin-left: 20px; margin-right: 20px;">
-        
+
+        <div class="col-lg-4">
+          <div style="height:600px" id="cardHover" class="egREUb noProp" role="gridcell">
+            <img class="img-fluid " src="img/sitewiz.jpeg" alt="">
+            <div class="content__slate">
+              <h4>Sitwiz</h4>
+              <p>Role: Cofounder/CTO</p>
+            </div>
+          </div>
+          <p style="text-align: left;">
+            Cofounded and led technological development at Sitewiz. Delivered actionable A/B test suggestions, grounded
+            in
+            behaviorial data, using AI Agents to increase
+            conversion rates for e-commerce businesses.
+          </p>
+        </div>
+
+
         <div class="col-lg-4">
           <div style="height:600px" id="cardHover" class="egREUb noProp" role="gridcell">
             <img class="img-fluid " src="img/ascend.png" alt="">
@@ -177,8 +195,8 @@
               <p>Role: Founder/President</p>
             </div>
           </div>
-          <p style="text-align: left;">Started the Climbing Club at Carnegie Mellon Univserity. Negotiated a 40% discount for all members at a local climbing gym
-          to make it financially feasible.
+          <p style="text-align: left;">Started the Climbing Club at CMU. Negotiated a 40% discount at a local climbing
+            gym. Currently an active community of 750 climbers and growing!
           </p>
         </div>
 
@@ -191,16 +209,19 @@
               <p>Role: CEO/CTO</p>
             </div>
           </div>
-          <p style="text-align: left;">Created a non-profit platform, that offers free one-on-one, high quality tutoring sessions online. Students sign up as tutors to gain volunteer hours, and tutees sign up for free classes."<br> 
-          <blockquote style="text-align: left;"> "To the Learn in Shelter team and thank you so much for this invaluable service! - Gibbons</blockquote>
+          <p style="text-align: left;">Connected a community of 5000 students for free tutoring sessions online, using
+            only word of mouth, with a monetization
+            potential of $250,000 ARR.<br>
+          <blockquote style="text-align: left;"> "To the Learn in Shelter team and thank you so much for this invaluable
+            service! - Gibbons"</blockquote>
           <br>
           <blockquote style="text-align: left;">"I appreciate this soooo much! You're a godsend. - Ross"</blockquote>
 
           </p>
-          
+
         </div>
 
-        <div class="col-lg-4">
+        <!-- <div class="col-lg-4">
           <div style="height:600px" id="cardHover" class="egREUb noProp" role="gridcell">
             <img class="img-fluid " src="img/farm2.jpg" alt="">
             <div class="content__slate">
@@ -208,14 +229,15 @@
               <p>Role: Co-Founder/Lead Guitarist</p>
             </div>
           </div>
-          <p style="text-align: left;">Performed improv jazz and rock on the electric guitar in Bay Area farmers' markets. 
+          <p style="text-align: left;">Performed improv jazz and rock on the electric guitar in Bay Area farmers'
+            markets.
             All money raised were donated to old age homes.</p>
-        </div>
+        </div> -->
 
-      
+
       </div>
     </section>
-    
+
 
 
 
@@ -231,15 +253,16 @@
 
   <!-- Footer -->
   <footer class="small text-center text-white-50" id="footer">
-    
-        <!-- <a href="#" class="fa fa-twitter" ></a> -->
-      <!-- <a href="#" class="fa fa-youtube"></a>
+
+    <!-- <a href="#" class="fa fa-twitter" ></a> -->
+    <!-- <a href="#" class="fa fa-youtube"></a>
       <a href="#" class="fa fa-linkedin"></a> -->
 
     <div class="container">
       <!-- Copyright &copy; Rohit Malhotra 2018 -->
       Rohit Malhotra, 2023<br>
-      <a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);" href="mailto: rohit.malh5@gmail.com">rohit.malh5@gmail.com</a>
+      <a style="border-bottom: dotted 1px rgba(0, 0, 0, 0.5);"
+        href="mailto: rohit.malh5@gmail.com">rohit.malh5@gmail.com</a>
 
     </div>
   </footer>
@@ -259,7 +282,7 @@
 
   <!-- Custom scripts for this template -->
   <script src="js/grayscale.min.js"></script>
- 
+
 
 
   <script>
@@ -276,13 +299,13 @@
   </script>
 
   <script>
-    $(window).scroll(function() {
-    var s = $(window).scrollTop();
-    var h = $('.canvas').height(),
-    opacityVal = Math.max(0, 1-s/(h/2));
-    $('.blur').css('opacity', opacityVal);
-    // $('.canvas').css('opacity', opacityVal);
-  });
+    $(window).scroll(function () {
+      var s = $(window).scrollTop();
+      var h = $('.canvas').height(),
+        opacityVal = Math.max(0, 1 - s / (h / 2));
+      $('.blur').css('opacity', opacityVal);
+      // $('.canvas').css('opacity', opacityVal);
+    });
   </script>
 
 
