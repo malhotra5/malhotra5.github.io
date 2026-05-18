@@ -14,10 +14,11 @@ const IMG = '/img/snapshot-analysis';
 >
 
   <p>
-    We mined all 311 merged PRs from the
+    We <a href="#method-mining">mined</a> all 311 merged PRs from the
     <a href="https://github.com/OpenHands/openhands-cli" target="_blank" rel="noopener noreferrer">openhands-cli</a>
-    repository (Sep 2025 – May 2026), classified each by type, authorship, and snapshot
-    involvement, then analyzed commit-level history to understand <em>how</em> snapshot tests
+    repository (Sep 2025 – May 2026), <a href="#method-classification">classified</a> each by
+    type, authorship, and snapshot involvement, then analyzed
+    <a href="#method-snapshot">commit-level history</a> to understand <em>how</em> snapshot tests
     are actually used. Snapshot tests were adopted in January 2026.
   </p>
 
@@ -87,7 +88,7 @@ const IMG = '/img/snapshot-analysis';
   <p>
     Snapshot tests don't just test rendering — they implicitly test the full stack behind what's
     rendered. A test that renders a conversation after switching implicitly exercises persistence.
-    We read every snapshot test file (20 test classes + conftest) and asked:
+    We <a href="#method-indirect">read every snapshot test file</a> (20 test classes + conftest) and asked:
     <em>would the snapshot output actually change if this bug existed?</em>
   </p>
 
@@ -180,9 +181,16 @@ const IMG = '/img/snapshot-analysis';
 
   <p>
     But the overall TUI bug-to-feature ratio went from <strong>0.60 to 0.95</strong> —
-    essentially flat. Snapshot tests didn't reduce the total bug count because 54% of visual
-    bugs are on uncovered paths. You can't prevent bugs in areas you don't cover.
+    essentially flat. The severity mix shifted — critical bugs dropped while UX regressions rose —
+    but this tracks codebase growth, not snapshot adoption.
   </p>
+
+  <figure>
+    <img src={`${IMG}/4_bug_severity_before_after.png`} alt="Bug severity before vs after snapshot adoption" />
+    <figcaption>Critical bugs dropped (11.5% → 6.5%) but UX regressions rose (12.6% → 18.5%).
+    Snapshot tests didn't reduce the total bug count because 54% of visual bugs are on
+    uncovered paths. You can't prevent bugs in areas you don't cover.</figcaption>
+  </figure>
 
   <h2>Actionable Gaps</h2>
 
@@ -261,7 +269,7 @@ const IMG = '/img/snapshot-analysis';
     <a href="https://github.com/malhotra5/snapshot-tests-analysis" target="_blank" rel="noopener noreferrer">snapshot-tests-analysis</a>.
   </p>
 
-  <h3>Step 1: Mining (GitHub API → JSON)</h3>
+  <h3 id="method-mining">Step 1: Mining (GitHub API → JSON)</h3>
 
   <p>
     <code>scripts/mine_github.py</code> pulls every merged PR from
@@ -284,7 +292,7 @@ const IMG = '/img/snapshot-analysis';
     No LLM is involved in this step — it's pure API data.
   </p>
 
-  <h3>Step 2: Classification (LLM + heuristics → CSV)</h3>
+  <h3 id="method-classification">Step 2: Classification (LLM + heuristics → CSV)</h3>
 
   <p>
     <code>scripts/categorize_prs.py</code> classifies each PR along four dimensions.
@@ -313,7 +321,7 @@ const IMG = '/img/snapshot-analysis';
     call fails. The heuristic labels are retained in the CSV for comparison.
   </p>
 
-  <h3>Step 3: Snapshot-specific analysis (heuristic)</h3>
+  <h3 id="method-snapshot">Step 3: Snapshot-specific analysis (heuristic)</h3>
 
   <p>
     Several analyses required no LLM — just reading file paths, commit messages, and timestamps:
@@ -329,7 +337,7 @@ const IMG = '/img/snapshot-analysis';
     <li><strong>Review speed</strong> — compare <code>hours_to_first_review</code> between snapshot and non-snapshot PRs</li>
   </ul>
 
-  <h3>Step 4: Indirect coverage analysis (manual + scripted)</h3>
+  <h3 id="method-indirect">Step 4: Indirect coverage analysis (manual + scripted)</h3>
 
   <p>
     This was the most labor-intensive step. We cloned openhands-cli and read all 20 snapshot test
