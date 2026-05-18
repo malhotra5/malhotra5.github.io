@@ -186,10 +186,10 @@ const IMG = '/img/snapshot-analysis';
   </p>
 
   <figure>
-    <img src={`${IMG}/4_bug_severity_before_after.png`} alt="Bug severity before vs after snapshot adoption" />
-    <figcaption>Critical bugs dropped (11.5% → 6.5%) but UX regressions rose (12.6% → 18.5%).
-    Snapshot tests didn't reduce the total bug count because 54% of visual bugs are on
-    uncovered paths. You can't prevent bugs in areas you don't cover.</figcaption>
+    <img src={`${IMG}/5_bug_rate_timeline.png`} alt="Critical vs UX regression bug rate over time" />
+    <figcaption>Critical bugs (red) drop to zero by March 2026. UX regressions (orange) spike
+    in the adoption month then settle, before spiking again in May. Snapshot tests didn't reduce
+    the total bug count because 54% of visual bugs are on uncovered paths.</figcaption>
   </figure>
 
   <h2>Actionable Gaps</h2>
