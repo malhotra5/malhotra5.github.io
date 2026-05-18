@@ -1,0 +1,157 @@
+---
+interface Props {
+  currentPage?: string;
+  transparent?: boolean;
+}
+
+const { currentPage = '', transparent = false } = Astro.props;
+
+const navLinks = [
+  { href: '/#about', label: 'About' },
+  { href: '/ventures', label: 'Ventures' },
+  { href: '/research', label: 'Research' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/hobbies', label: 'Hobbies' },
+];
+---
+
+<nav
+  id="mainNav"
+  class="fixed top-0 left-0 w-full z-40 transition-all duration-300"
+  data-transparent={transparent ? 'true' : 'false'}
+>
+  <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+    <a
+      href="/"
+      id="nav-brand"
+      class="text-lg font-bold tracking-wide transition-colors duration-300"
+    >
+      Rohit Malhotra
+    </a>
+
+    <!-- Desktop nav -->
+    <ul class="hidden md:flex items-center gap-8">
+      {navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class:list={[
+              'nav-link text-sm font-medium uppercase tracking-wider transition-colors duration-300',
+              currentPage === link.label.toLowerCase() && 'nav-link--active',
+            ]}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Mobile hamburger -->
+    <button
+      id="mobile-menu-btn"
+      class="md:hidden flex flex-col gap-1.5 p-2"
+      aria-label="Toggle navigation"
+    >
+      <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
+      <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
+      <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
+    </button>
+  </div>
+
+  <!-- Mobile sidenav -->
+  <div
+    id="mobile-sidenav"
+    class="fixed inset-0 bg-dark z-50 transform translate-x-full transition-transform duration-500 md:hidden"
+  >
+    <div class="flex justify-end p-6">
+      <button id="close-sidenav" class="text-gray-400 hover:text-white text-lg">
+        Close &times;
+      </button>
+    </div>
+    <ul class="flex flex-col gap-4 px-8">
+      {navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class="text-gray-400 hover:text-white text-base transition-colors mobile-nav-link"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
+
+<script>
+  const nav = document.getElementById('mainNav')!;
+  const brand = document.getElementById('nav-brand')!;
+  const navLinksEls = document.querySelectorAll('.nav-link');
+  const hamburgerBars = document.querySelectorAll('.hamburger-bar');
+  const isTransparent = nav.dataset.transparent === 'true';
+
+  function applyNavStyle(scrolled: boolean) {
+    const solid = !isTransparent || scrolled;
+
+    // Nav background
+    if (solid) {
+      nav.classList.remove('bg-transparent');
+      nav.classList.add('bg-white/95', 'backdrop-blur-sm', 'shadow-sm');
+    } else {
+      nav.classList.add('bg-transparent');
+      nav.classList.remove('bg-white/95', 'backdrop-blur-sm', 'shadow-sm');
+    }
+
+    // Brand color
+    brand.classList.toggle('text-white', !solid);
+    brand.classList.toggle('hover:text-accent', true);
+    brand.classList.toggle('text-dark', solid);
+
+    // Link colors
+    navLinksEls.forEach((link) => {
+      const isActive = link.classList.contains('nav-link--active');
+      if (isActive) {
+        link.classList.add('text-accent');
+        link.classList.remove('text-white/80', 'text-gray-600');
+      } else if (solid) {
+        link.classList.remove('text-white/80', 'hover:text-white');
+        link.classList.add('text-gray-600', 'hover:text-dark');
+      } else {
+        link.classList.add('text-white/80', 'hover:text-white');
+        link.classList.remove('text-gray-600', 'hover:text-dark');
+      }
+    });
+
+    // Hamburger bars
+    hamburgerBars.forEach((bar) => {
+      bar.classList.toggle('bg-white', !solid);
+      bar.classList.toggle('bg-dark', solid);
+    });
+  }
+
+  // Apply immediately for initial state
+  applyNavStyle(window.scrollY > 50);
+
+  // Update on scroll
+  window.addEventListener('scroll', () => applyNavStyle(window.scrollY > 50), { passive: true });
+
+  // Mobile sidenav
+  const btn = document.getElementById('mobile-menu-btn');
+  const sidenav = document.getElementById('mobile-sidenav');
+  const closeBtn = document.getElementById('close-sidenav');
+  const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+  function openNav() {
+    sidenav?.classList.remove('translate-x-full');
+    sidenav?.classList.add('translate-x-0');
+  }
+
+  function closeNav() {
+    sidenav?.classList.remove('translate-x-0');
+    sidenav?.classList.add('translate-x-full');
+  }
+
+  btn?.addEventListener('click', openNav);
+  closeBtn?.addEventListener('click', closeNav);
+  mobileLinks.forEach((link) => link.addEventListener('click', closeNav));
+</script>

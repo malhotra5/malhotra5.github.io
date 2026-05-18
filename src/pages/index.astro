@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+---
+
+<BaseLayout title="Rohit Malhotra" currentPage="about" transparentNav={true}>
+  <!-- Hero Section with Particle Canvas -->
+  <section class="relative h-screen flex items-center justify-center overflow-hidden" style="background:#252934;">
+    <div id="pt" class="canvas-bg"></div>
+    <div class="relative z-10 text-center hero-text transition-opacity duration-300">
+      <h1 class="text-3xl md:text-5xl font-light text-white leading-tight">
+        Hello, I'm <span class="text-pink font-bold">Rohit Malhotra</span>
+      </h1>
+      <p class="text-xl md:text-2xl mt-4 text-white">
+        <span class="text-accent font-bold">AI</span> @
+        <span class="text-accent font-bold">CMU</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-6">
+      <SectionHeading title="About Me" />
+
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="flex justify-center">
+          <img
+            src="/img/me2.png"
+            alt="Rohit Malhotra"
+            class="w-full max-w-md rounded-lg"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="text-gray-text text-lg leading-relaxed">
+          <p>
+            Entrepreneurial, results-oriented AI/ML specialist with a track record
+            of thriving in startups and industry giants like Meta. Open source
+            contributor, ex co-founder CTO and a proven leader. Known for rapid
+            learning, collaboration, and a strong ability to navigate complex and
+            ambiguous challenges. Check out my
+            <a
+              href="https://drive.google.com/file/d/1Xg43oO67qLmy1g5VhcHdR4F7Ih9Doma7/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="border-b border-dotted border-gray-400 hover:border-accent hover:text-accent transition-colors"
+            >
+              resume
+            </a>!
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Original pt.js particle canvas animation -->
+  <script is:inline src="/js/pt.min.js"></script>
+  <script is:inline>
+    (function () {
+      var space;
+
+      function floatySpace() {
+        var colors = ['#FF3F8E', '#04C2C9', '#2E55C1'];
+
+        space = new CanvasSpace('canvas', '#252934').display();
+        var form = new Form(space);
+
+        var pts = [];
+        var center = space.size.$divide(1.8);
+        var angle = -(window.innerWidth * 0.5);
+        var count = Math.min(window.innerWidth * 0.05, 150);
+        var line = new Line(0, angle).to(space.size.x, 0);
+        var mouse = center.clone();
+
+        var r = Math.min(space.size.x, space.size.y);
+        for (var i = 0; i < count; i++) {
+          var p = new Vector(Math.random() * r - Math.random() * r, Math.random() * r - Math.random() * r);
+          p.moveBy(center).rotate2D((i * Math.PI) / count, center);
+          p.brightness = 0.1;
+          pts.push(p);
+        }
+
+        space.add({
+          animate: function (time, fps, context) {
+            for (var i = 0; i < pts.length; i++) {
+              var pt = pts[i];
+              pt.rotate2D(Const.one_degree / 20, center);
+              form.stroke(false).fill(colors[i % 3]).point(pt, 1);
+
+              var ln = new Line(pt).to(line.getPerpendicularFromPoint(pt));
+              var distFromMouse = Math.abs(ln.getDistanceFromPoint(mouse));
+
+              if (distFromMouse < 50) {
+                if (pts[i].brightness < 0.3) pts[i].brightness += 0.015;
+              } else {
+                if (pts[i].brightness > 0.1) pts[i].brightness -= 0.01;
+              }
+
+              var color = 'rgba(255,255,255,' + pts[i].brightness + ')';
+              form.stroke(color).fill(true).line(ln);
+            }
+          },
+
+          onMouseAction: function (type, x, y) {
+            if (type === 'move') mouse.set(x, y);
+          },
+
+          onTouchAction: function (type, x, y) {
+            this.onMouseAction(type, x, y);
+          },
+        });
+
+        space.bindMouse();
+        space.play();
+      }
+
+      floatySpace();
+
+      window.addEventListener('resize', function () {
+        if (space) {
+          space.removeAll();
+          var c = document.querySelector('#pt canvas');
+          if (c) c.remove();
+          floatySpace();
+        }
+      });
+
+      window.addEventListener('scroll', function () {
+        var s = window.scrollY;
+        var heroText = document.querySelector('.hero-text');
+        var canvasEl = document.querySelector('.canvas-bg');
+        if (heroText && canvasEl) {
+          var h = canvasEl.offsetHeight;
+          var opacity = Math.max(0, 1 - s / (h / 2));
+          heroText.style.opacity = opacity;
+        }
+      }, { passive: true });
+    })();
+  </script>
+</BaseLayout>

@@ -1,0 +1,17 @@
+---
+interface Props {
+  title: string;
+  light?: boolean;
+}
+
+const { title, light = false } = Astro.props;
+---
+
+<h2
+  class:list={[
+    'text-4xl md:text-5xl font-bold text-center mb-16',
+    light ? 'text-gray-100' : 'text-gray-800',
+  ]}
+>
+  {title}
+</h2>

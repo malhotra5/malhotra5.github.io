@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import VentureCard from '../components/VentureCard.astro';
+---
+
+<BaseLayout title="Ventures — Rohit Malhotra" currentPage="ventures">
+  <section class="pt-32 pb-24 bg-white min-h-screen">
+    <div class="max-w-6xl mx-auto px-6">
+      <SectionHeading title="Ventures" />
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <VentureCard
+          title="Sitewiz"
+          role="Role: Cofounder/CTO"
+          image="/img/sitewiz.jpeg"
+          description="Cofounded and led technological development at Sitewiz."
+        >
+          Cofounded and led technological development at Sitewiz. Delivered
+          actionable A/B test suggestions, grounded in behavioral data, using AI
+          Agents to increase conversion rates for e-commerce businesses.
+        </VentureCard>
+
+        <VentureCard
+          title="CMU Climbing Club"
+          role="Role: Founder/President"
+          image="/img/ascend.png"
+          description="Started the Climbing Club at CMU."
+        >
+          Started the Climbing Club at CMU. Negotiated a 40% discount at a local
+          climbing gym. Currently an active community of 750 climbers and growing!
+        </VentureCard>
+
+        <VentureCard
+          title="Learn In Shelter"
+          role="Role: CEO/CTO"
+          image="/img/lit.png"
+          description="Connected students for free tutoring."
+        >
+          Connected a community of 5000 students for free tutoring sessions
+          online, using only word of mouth, with a monetization potential of
+          $250,000 ARR.
+          <blockquote class="mt-4 pl-4 border-l-2 border-gray-300 italic text-gray-500">
+            "To the Learn in Shelter team and thank you so much for this
+            invaluable service! - Gibbons"
+          </blockquote>
+          <blockquote class="mt-2 pl-4 border-l-2 border-gray-300 italic text-gray-500">
+            "I appreciate this soooo much! You're a godsend. - Ross"
+          </blockquote>
+        </VentureCard>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

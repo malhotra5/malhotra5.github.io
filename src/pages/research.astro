@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+
+const papers = [
+  {
+    title: 'VHABench: Benchmarking Underspecified User Intents for Tool Augmented LLMs',
+    url: 'https://www.researchgate.net/publication/383231851_VHABench_Benchmarking_Underspecified_User_Intents_for_Tool_Augmented_LLMs',
+  },
+  {
+    title: 'CluRag: Improving Zero-Shot RAG systems using clustering',
+    url: 'https://www.researchgate.net/publication/383231819_Finding_the_Best_Zero-Shot_RAG_Systems_for_Multi-Group_Topics',
+  },
+];
+---
+
+<BaseLayout title="Research — Rohit Malhotra" currentPage="research">
+  <section class="pt-32 pb-16 bg-white min-h-screen">
+    <div class="max-w-4xl mx-auto px-6">
+      <SectionHeading title="Research" />
+
+      <p class="text-gray-text text-lg md:text-xl text-center leading-relaxed mb-16">
+        I'm attempting to specialize in NLP. I'm interested in getting the most
+        out of LLMs without changing their weights (i.e Agents).
+      </p>
+
+      <h3 class="text-3xl font-bold text-gray-800 text-center mb-12">My Work</h3>
+
+      <div class="flex flex-col gap-4">
+        {papers.map((paper) => (
+          <a
+            href={paper.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block p-5 rounded-lg border-2 border-gray-200 text-gray-700 text-base font-medium
+                   hover:border-accent hover:text-accent hover:shadow-md
+                   transition-all duration-300"
+          >
+            {paper.title}
+            <span class="text-xs text-gray-400 ml-2">↗</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/fonts/Raleway-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/fonts/Raleway-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/fonts/Raleway-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-raleway text-white overflow-x-hidden m-0;
+  }
+
+  a {
+    @apply no-underline text-inherit;
+  }
+}
+
+@layer components {
+  /* Particle canvas background — fills the hero section */
+  .canvas-bg {
+    @apply absolute inset-0 w-full h-full;
+    z-index: 0;
+  }
+
+  /* Project / venture card with image overlay */
+  .card-hover {
+    @apply relative cursor-pointer rounded-lg overflow-hidden flex items-end;
+    padding: 1.4rem 2rem;
+    background-color: var(--button-index);
+    background-position: center;
+    background-repeat: no-repeat;
+    break-inside: avoid;
+  }
+
+  .card-hover img {
+    @apply w-full h-full absolute left-0 top-0 object-cover;
+  }
+
+  .card-hover::before {
+    content: '';
+    @apply pointer-events-none block absolute inset-0;
+    z-index: -1;
+    background: radial-gradient(circle at center, white 10%, whitesmoke 11%, whitesmoke 100%);
+  }
+
+  .card-hover::after {
+    content: '';
+    @apply pointer-events-none absolute inset-0;
+    z-index: 1;
+    opacity: 0.3;
+    background: linear-gradient(180deg, rgba(0,0,0,0.1) 10%, rgba(0,0,0,0.78) 80%);
+    transition: opacity 300ms ease-in-out;
+  }
+
+  .card-hover:hover::after,
+  .card-hover:focus::after {
+    opacity: 1;
+  }
+
+  .card-no-hover:hover::after,
+  .card-no-hover:focus::after {
+    opacity: 0.3;
+  }
+
+  .card-hover .card-content {
+    @apply relative opacity-0 translate-y-[10%] transition-all duration-300 ease-in-out text-left;
+    z-index: 10;
+  }
+
+  .card-hover:hover .card-content,
+  .card-hover:focus .card-content {
+    @apply opacity-100 translate-y-0;
+  }
+
+  .card-no-hover .card-content {
+    @apply opacity-100 translate-y-0;
+  }
+
+  .card-hover h4 {
+    @apply text-white text-lg font-extrabold;
+  }
+
+  .card-hover p {
+    @apply text-gray-300 text-sm;
+  }
+
+  .card-hover .tag {
+    @apply bg-gray-500 px-2.5 py-1 rounded-full text-xs capitalize mr-1.5 text-white font-medium inline-block;
+  }
+
+  /* Modal slide-in */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/50 z-50 opacity-0 pointer-events-none transition-opacity duration-300;
+  }
+
+  .modal-overlay.active {
+    @apply opacity-100 pointer-events-auto;
+  }
+
+  .modal-panel {
+    @apply fixed top-0 right-0 h-full w-[600px] max-w-full bg-black text-white overflow-y-auto z-50;
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+    padding: 2rem;
+  }
+
+  .modal-overlay.active .modal-panel {
+    transform: translateX(0);
+  }
+}
+
+/* Responsive card content always visible on small screens */
+@media (max-width: 989px) {
+  .card-hover::after {
+    opacity: 1 !important;
+  }
+  .card-no-hover::after {
+    opacity: 0.3 !important;
+  }
+  .card-hover .card-content {
+    z-index: 999 !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

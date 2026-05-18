@@ -1,0 +1,22 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  image: string;
+}
+
+const { id, title, image } = Astro.props;
+---
+
+<div id={id} class="modal-overlay" data-modal>
+  <div class="modal-panel">
+    <button class="text-gray-400 hover:text-white mb-6 text-sm" data-modal-close>
+      ← Back to Projects
+    </button>
+    <h4 class="text-xl font-bold mb-4">{title}</h4>
+    <div class="rounded-lg overflow-hidden">
+      <img src={image} alt={title} class="w-full h-auto object-cover" loading="lazy" />
+    </div>
+    <slot />
+  </div>
+</div>
