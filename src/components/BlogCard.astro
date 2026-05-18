@@ -4,43 +4,57 @@ interface Props {
   description: string;
   date: string;
   slug: string;
+  image?: string;
   readTime?: string;
   tags?: string[];
 }
 
-const { title, description, date, slug, readTime, tags = [] } = Astro.props;
+const { title, description, date, slug, image, readTime, tags = [] } = Astro.props;
 ---
 
 <a
   href={`/blog/${slug}`}
-  class="block p-6 rounded-lg border-2 border-gray-200
+  class="block rounded-lg border-2 border-gray-200 overflow-hidden
          hover:border-accent hover:shadow-md transition-all duration-300 group"
 >
-  <div class="flex items-center gap-3 text-sm text-gray-400 mb-3">
-    <time>{date}</time>
-    {readTime && (
-      <>
-        <span>·</span>
-        <span>{readTime}</span>
-      </>
-    )}
-  </div>
-
-  <h3 class="text-xl font-semibold text-gray-800 group-hover:text-accent transition-colors mb-2">
-    {title}
-  </h3>
-
-  <p class="text-gray-text text-sm leading-relaxed mb-4">
-    {description}
-  </p>
-
-  {tags.length > 0 && (
-    <div class="flex flex-wrap gap-2">
-      {tags.map((tag) => (
-        <span class="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium">
-          {tag}
-        </span>
-      ))}
+  {image && (
+    <div class="w-full aspect-[2/1] overflow-hidden bg-gray-100">
+      <img
+        src={image}
+        alt={title}
+        class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+        loading="lazy"
+      />
     </div>
   )}
+
+  <div class="p-6">
+    <div class="flex items-center gap-3 text-sm text-gray-400 mb-3">
+      <time>{date}</time>
+      {readTime && (
+        <>
+          <span>·</span>
+          <span>{readTime}</span>
+        </>
+      )}
+    </div>
+
+    <h3 class="text-xl font-semibold text-gray-800 group-hover:text-accent transition-colors mb-2">
+      {title}
+    </h3>
+
+    <p class="text-gray-text text-sm leading-relaxed mb-4">
+      {description}
+    </p>
+
+    {tags.length > 0 && (
+      <div class="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <span class="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+  </div>
 </a>

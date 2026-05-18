@@ -5,15 +5,22 @@ interface Props {
   title: string;
   description: string;
   date: string;
+  image?: string;
+  imageCaption?: string;
   readTime?: string;
   originalUrl?: string;
   tags?: string[];
 }
 
-const { title, description, date, readTime, originalUrl, tags = [] } = Astro.props;
+const { title, description, date, image, imageCaption, readTime, originalUrl, tags = [] } = Astro.props;
 ---
 
-<BaseLayout title={`${title} — Rohit Malhotra`} currentPage="blog">
+<BaseLayout
+  title={`${title} — Rohit Malhotra`}
+  description={description}
+  ogImage={image}
+  currentPage="blog"
+>
   <article class="pt-32 pb-16 bg-white min-h-screen">
     <div class="max-w-3xl mx-auto px-6">
       <!-- Back link -->
@@ -65,6 +72,22 @@ const { title, description, date, readTime, originalUrl, tags = [] } = Astro.pro
               </span>
             ))}
           </div>
+        )}
+
+        {image && (
+          <figure class="mt-8">
+            <img
+              src={image}
+              alt={imageCaption || title}
+              class="w-full rounded-lg"
+              loading="eager"
+            />
+            {imageCaption && (
+              <figcaption class="text-sm text-gray-400 text-center mt-3 italic">
+                {imageCaption}
+              </figcaption>
+            )}
+          </figure>
         )}
 
         <div class="h-px bg-gray-200 mt-8"></div>
