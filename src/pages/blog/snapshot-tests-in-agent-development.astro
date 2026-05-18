@@ -258,13 +258,119 @@ const IMG = '/img/snapshot-analysis';
     <figcaption>Evidence strength across SDLC phases. Development forcing function has the strongest evidence. Bug prevention remains weak due to the coverage gap.</figcaption>
   </figure>
 
-  <hr />
+  <h2>Methodology</h2>
 
   <p>
-    Full data, scripts, and methodology at
+    Everything in this analysis is reproducible from two scripts and a GitHub token.
+    The full pipeline, data, and graphs are at
     <a href="https://github.com/malhotra5/snapshot-tests-analysis" target="_blank" rel="noopener noreferrer">snapshot-tests-analysis</a>.
-    Data mined via GitHub API; PR types classified with gpt-4o-mini. Indirect coverage analysis
-    based on reading all 20 snapshot test source files.
   </p>
+
+  <h3>Step 1: Mining (GitHub API → JSON)</h3>
+
+  <p>
+    <code>scripts/mine_github.py</code> pulls every merged PR from
+    <a href="https://github.com/OpenHands/openhands-cli" target="_blank" rel="noopener noreferrer">openhands-cli</a>
+    via the GitHub REST API and <code>gh</code> CLI. For each PR it collects:
+  </p>
+
+  <ul>
+    <li><strong>PR metadata</strong> — title, body, author, labels, branch names, created/merged timestamps, additions/deletions, changed file count</li>
+    <li><strong>File-level diffs</strong> — every file changed with its status (added/modified/removed) and line counts</li>
+    <li><strong>Commit history</strong> — full commit messages per PR, which enabled the "code first, fix snapshots later" analysis</li>
+    <li><strong>Review data</strong> — reviewer logins, review decision, time-to-first-review</li>
+    <li><strong>Linked issues</strong> — cross-referenced issue titles, bodies, and authors</li>
+    <li><strong>Release mapping</strong> — which release tag (if any) includes each PR</li>
+    <li><strong>Authorship detection</strong> — heuristic markers for agent-authored PRs (co-authored-by tags, conversation links, bot authors)</li>
+  </ul>
+
+  <p>
+    Output: a single <code>mined_prs.json</code> file with 42 fields per PR across all 311 merged PRs.
+    No LLM is involved in this step — it's pure API data.
+  </p>
+
+  <h3>Step 2: Classification (LLM + heuristics → CSV)</h3>
+
+  <p>
+    <code>scripts/categorize_prs.py</code> classifies each PR along four dimensions.
+    It runs two classifiers in parallel and keeps both outputs:
+  </p>
+
+  <p><strong>Heuristic classifier</strong> (keyword-based, no LLM):</p>
+  <ul>
+    <li>PR type — title keyword matching ("fix" → bug-fix, "feat" → feature, "bump" → version-bump, etc.)</li>
+    <li>Bug severity — title keyword matching ("crash" → critical, "display" → ux-regression, "typo" → polish)</li>
+    <li>Snapshot involvement — file path matching (<code>*.svg</code> in <code>snapshot</code> directories)</li>
+    <li>Agent authorship — co-author tags and bot usernames</li>
+  </ul>
+
+  <p><strong>LLM classifier</strong> (gpt-4o-mini via <a href="https://docs.openhands.dev/sdk" target="_blank" rel="noopener noreferrer">OpenHands SDK</a>):</p>
+  <ul>
+    <li>PR type — same categories but with full context (title, description, file list, linked issues)</li>
+    <li>Bug severity — critical / ux-regression / polish, with definitions in the system prompt</li>
+    <li>Whether the PR touches TUI code — the LLM sees the actual file paths and description, catching cases keywords miss</li>
+    <li>Rationale — a 1-2 sentence explanation stored alongside each classification for auditability</li>
+  </ul>
+
+  <p>
+    The report uses the LLM classifications (<code>llm_pr_type</code>, <code>llm_bug_severity</code>,
+    <code>llm_touches_tui</code>) as the primary labels, falling back to heuristics when the LLM
+    call fails. The heuristic labels are retained in the CSV for comparison.
+  </p>
+
+  <h3>Step 3: Snapshot-specific analysis (heuristic)</h3>
+
+  <p>
+    Several analyses required no LLM — just reading file paths, commit messages, and timestamps:
+  </p>
+
+  <ul>
+    <li><strong>Commit-level pattern detection</strong> — for each multi-commit PR, check if snapshot-related keywords
+    ("snapshot", "update snap", "regenerate", "baseline") appear only in later commits, indicating
+    the "code first, fix snapshots later" pattern</li>
+    <li><strong>Bug-fix coverage gap</strong> — for each bug-fix PR, classify as "no snapshots touched" / "modified existing" /
+    "added new" based on the Git status of snapshot SVG files</li>
+    <li><strong>Suite reuse</strong> — extract test suite names from snapshot file paths and count unique PRs per suite</li>
+    <li><strong>Review speed</strong> — compare <code>hours_to_first_review</code> between snapshot and non-snapshot PRs</li>
+  </ul>
+
+  <h3>Step 4: Indirect coverage analysis (manual + scripted)</h3>
+
+  <p>
+    This was the most labor-intensive step. We cloned openhands-cli and read all 20 snapshot test
+    files (~2,500 lines of test code), including <code>conftest.py</code> fixtures and trajectory
+    replay helpers. From this, <code>scripts/analyze_indirect_coverage.py</code> builds:
+  </p>
+
+  <ul>
+    <li>A <strong>coverage map</strong> — which test suite exercises which functional behaviors
+    (e.g., <code>TestConfirmationMode</code> exercises scrolling, confirmation panel, agent execution)</li>
+    <li>A <strong>per-bug classification</strong> — for each of the 20 "file covered, path uncovered" bugs,
+    whether a snapshot test would <em>actually produce different output</em> if the bug existed.
+    Each classification includes a written rationale.</li>
+  </ul>
+
+  <h3>Step 5: Visualization</h3>
+
+  <p>
+    <code>scripts/generate_deep_analysis_graphs.py</code> produces all 18 matplotlib graphs.
+    <code>scripts/generate_report.py</code> assembles the self-contained HTML report with
+    base64-embedded images. Both are runnable with <code>uv run</code>.
+  </p>
+
+  <h3>Limitations</h3>
+
+  <ul>
+    <li><strong>LLM classification accuracy</strong> — gpt-4o-mini misclassifies some edge cases (e.g., a PR
+    titled "fix: add feature X" gets classified as bug-fix). We spot-checked ~30 PRs and found
+    ~90% agreement with human judgment. The heuristic labels provide a second opinion.</li>
+    <li><strong>Agent authorship detection</strong> — relies on co-author tags and known bot usernames.
+    PRs where a human manually committed agent-generated code would be counted as human-authored.</li>
+    <li><strong>Indirect coverage is subjective</strong> — our B1 (indirectly covered) classifications
+    are judgment calls about whether a snapshot would visibly change. Different reviewers might
+    classify 1-2 borderline cases differently, but the overall split (4 B1 vs 16 B2) is robust.</li>
+    <li><strong>Single repository</strong> — all findings are specific to openhands-cli. Generalizing to
+    other agent-driven projects requires similar analysis in those codebases.</li>
+  </ul>
 
 </BlogPostLayout>
