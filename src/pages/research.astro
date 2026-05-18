@@ -2,16 +2,44 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 
-const papers = [
+const publications = [
+  {
+    title: 'The OpenHands Software Agent SDK: A Composable and Extensible Foundation for Production Agents',
+    authors: ['Xingyao Wang', 'Simon Rosenberg', 'Juan Michelini', 'Calvin Smith', 'Hoang Tran', 'Engel Nyst', 'Rohit Malhotra', 'Xuhui Zhou', 'Valerie Chen', 'Robert Brennan', 'Graham Neubig'],
+    venue: 'Proceedings of the Eighth Conference on Machine Learning and Systems (MLSys)',
+    location: 'Bellevue, WA, USA (Oral)',
+    date: 'Nov 2026',
+    url: 'https://arxiv.org/abs/2511.03690',
+  },
+  {
+    title: 'How can we assess human-agent interactions? Case studies in software agent design',
+    authors: ['Valerie Chen', 'Rohit Malhotra', 'Xingyao Wang', 'Juan Michelini', 'Xuhui Zhou', 'Aditya Bharat Soni', 'Hoang H. Tran', 'Calvin Smith', 'Ameet Talwalkar', 'Graham Neubig'],
+    venue: 'International Conference on Machine Learning (ICML)',
+    location: 'Seoul, South Korea',
+    date: 'July 2026',
+    url: 'https://arxiv.org/abs/2510.09801',
+  },
+];
+
+const projects = [
   {
     title: 'VHABench: Benchmarking Underspecified User Intents for Tool Augmented LLMs',
+    authors: ['Eduardo Trevino', 'Rohit Malhotra', 'Hugo Contant'],
     url: 'https://www.researchgate.net/publication/383231851_VHABench_Benchmarking_Underspecified_User_Intents_for_Tool_Augmented_LLMs',
   },
   {
+    title: 'Survey on Tool Usage in LLMS: Towards A General Tool Use LLM Framework',
+    authors: ['Eduardo Trevino', 'Hugo Contant', 'Rohit Malhotra'],
+    url: 'https://www.researchgate.net/publication/388955739_Survey_on_Tool_Usage_in_LLMS_Towards_A_General_Tool_Use_LLM_Framework',
+  },
+  {
     title: 'CluRag: Improving Zero-Shot RAG systems using clustering',
+    authors: ['Rohit Malhotra', 'Eduardo Trevino', 'Hugo Contant'],
     url: 'https://www.researchgate.net/publication/383231819_Finding_the_Best_Zero-Shot_RAG_Systems_for_Multi-Group_Topics',
   },
 ];
+
+const ME = 'Rohit Malhotra';
 ---
 
 <BaseLayout title="Research — Rohit Malhotra" currentPage="research">
@@ -24,20 +52,84 @@ const papers = [
         out of LLMs without changing their weights (i.e Agents).
       </p>
 
-      <h3 class="text-3xl font-bold text-gray-800 text-center mb-12">My Work</h3>
+      <!-- Publications -->
+      <h3 class="text-3xl font-bold text-gray-800 text-center mb-10">Publications</h3>
 
-      <div class="flex flex-col gap-4">
-        {papers.map((paper) => (
+      <div class="flex items-center gap-4 mb-6">
+        <span class="text-lg font-semibold text-accent">2026</span>
+        <div class="h-px flex-1 bg-gray-200"></div>
+      </div>
+
+      <div class="flex flex-col gap-6 mb-16">
+        {publications.map((paper) => (
           <a
             href={paper.url}
             target="_blank"
             rel="noopener noreferrer"
-            class="block p-5 rounded-lg border-2 border-gray-200 text-gray-700 text-base font-medium
-                   hover:border-accent hover:text-accent hover:shadow-md
-                   transition-all duration-300"
+            class="block p-6 rounded-lg border-2 border-gray-200
+                   hover:border-accent hover:shadow-md transition-all duration-300 group"
           >
-            {paper.title}
-            <span class="text-xs text-gray-400 ml-2">↗</span>
+            <h4 class="text-lg font-semibold text-gray-800 group-hover:text-accent transition-colors">
+              {paper.title}
+              <span class="text-xs text-gray-400 ml-1">↗</span>
+            </h4>
+
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              {paper.authors.map((author, i) => (
+                <>
+                  {author === ME ? (
+                    <span class="underline underline-offset-2 font-medium text-gray-700">{author}</span>
+                  ) : (
+                    <span>{author}</span>
+                  )}
+                  {i < paper.authors.length - 1 && ', '}
+                </>
+              ))}
+            </p>
+
+            {paper.venue && (
+              <p class="text-sm text-gray-500 mt-1 italic">
+                {paper.venue}.{paper.location && ` ${paper.location}.`}{paper.date && ` ${paper.date}.`}
+              </p>
+            )}
+          </a>
+        ))}
+      </div>
+
+      <!-- Projects -->
+      <h3 class="text-3xl font-bold text-gray-800 text-center mb-10">Projects</h3>
+
+      <div class="flex items-center gap-4 mb-6">
+        <span class="text-lg font-semibold text-accent">2024</span>
+        <div class="h-px flex-1 bg-gray-200"></div>
+      </div>
+
+      <div class="flex flex-col gap-6">
+        {projects.map((project) => (
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block p-6 rounded-lg border-2 border-gray-200
+                   hover:border-accent hover:shadow-md transition-all duration-300 group"
+          >
+            <h4 class="text-lg font-semibold text-gray-800 group-hover:text-accent transition-colors">
+              {project.title}
+              <span class="text-xs text-gray-400 ml-1">↗</span>
+            </h4>
+
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              {project.authors.map((author, i) => (
+                <>
+                  {author === ME ? (
+                    <span class="underline underline-offset-2 font-medium text-gray-700">{author}</span>
+                  ) : (
+                    <span>{author}</span>
+                  )}
+                  {i < project.authors.length - 1 && ', '}
+                </>
+              ))}
+            </p>
           </a>
         ))}
       </div>
