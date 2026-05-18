@@ -87,15 +87,6 @@ const projects = [
   },
 ];
 
-const courses = [
-  { name: 'Advanced NLP', desc: 'Advanced topics in Natural Language Processing, focusing on modern deep learning approaches.' },
-  { name: 'AI Representation and Problem Solving', desc: 'Theory and programming class for modern techniques in AI.' },
-  { name: 'Probability Theory for CS', desc: 'Probability class for the study of both statistics and random systems.' },
-  { name: 'Intro to ML', desc: 'Theory and programming class for modern techniques in ML.' },
-  { name: 'Parallel and Sequential Data Structures and Algs', desc: 'Advanced algorithms/data structures class with emphasis on parallel thinking.' },
-  { name: 'Intro to Computer Security', desc: 'Theory and programming based class on fundamentals of computer security.' },
-  { name: 'Cognitive Robotics', desc: 'Exploring intelligent behavior in mobile robots using Cozmo by Anki.' },
-];
 ---
 
 <BaseLayout title="Projects — Rohit Malhotra" currentPage="projects" darkBg={true}>
@@ -114,22 +105,6 @@ const courses = [
               tags={project.tags}
               height={project.height}
             />
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Coursework Section -->
-  <section class="py-24 bg-dark">
-    <div class="max-w-4xl mx-auto px-6">
-      <SectionHeading title="Relevant Coursework" light={true} />
-
-      <div class="flex flex-col gap-2">
-        {courses.map((course) => (
-          <div class="p-4 bg-black/40 rounded-lg hover:scale-x-105 transition-transform duration-300 origin-left">
-            <h5 class="text-white font-semibold text-base">{course.name}</h5>
-            <p class="text-gray-400 text-sm mt-1">{course.desc}</p>
           </div>
         ))}
       </div>
