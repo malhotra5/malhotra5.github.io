@@ -17,18 +17,14 @@ const navLinks = [
 
 <nav
   id="mainNav"
-  class:list={[
-    'fixed top-0 left-0 w-full z-40 transition-all duration-300',
-    transparent ? 'bg-transparent' : 'bg-white/95 backdrop-blur-sm shadow-sm',
-  ]}
+  class="fixed top-0 left-0 w-full z-40 transition-all duration-300"
+  data-transparent={transparent ? 'true' : 'false'}
 >
   <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
     <a
       href="/"
-      class:list={[
-        'text-lg font-bold tracking-wide transition-colors',
-        transparent ? 'text-white hover:text-accent' : 'text-dark hover:text-accent',
-      ]}
+      id="nav-brand"
+      class="text-lg font-bold tracking-wide transition-colors duration-300"
     >
       Rohit Malhotra
     </a>
@@ -40,9 +36,8 @@ const navLinks = [
           <a
             href={link.href}
             class:list={[
-              'text-sm font-medium uppercase tracking-wider transition-colors',
-              transparent ? 'text-white/80 hover:text-white' : 'text-gray-600 hover:text-dark',
-              currentPage === link.label.toLowerCase() && 'text-accent',
+              'nav-link text-sm font-medium uppercase tracking-wider transition-colors duration-300',
+              currentPage === link.label.toLowerCase() && 'nav-link--active',
             ]}
           >
             {link.label}
@@ -57,9 +52,9 @@ const navLinks = [
       class="md:hidden flex flex-col gap-1.5 p-2"
       aria-label="Toggle navigation"
     >
-      <span class:list={['block w-6 h-0.5 transition-colors', transparent ? 'bg-white' : 'bg-dark']} />
-      <span class:list={['block w-6 h-0.5 transition-colors', transparent ? 'bg-white' : 'bg-dark']} />
-      <span class:list={['block w-6 h-0.5 transition-colors', transparent ? 'bg-white' : 'bg-dark']} />
+      <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
+      <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
+      <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
     </button>
   </div>
 
@@ -89,10 +84,62 @@ const navLinks = [
 </nav>
 
 <script>
+  const nav = document.getElementById('mainNav')!;
+  const brand = document.getElementById('nav-brand')!;
+  const navLinksEls = document.querySelectorAll('.nav-link');
+  const hamburgerBars = document.querySelectorAll('.hamburger-bar');
+  const isTransparent = nav.dataset.transparent === 'true';
+
+  function applyNavStyle(scrolled: boolean) {
+    const solid = !isTransparent || scrolled;
+
+    // Nav background
+    if (solid) {
+      nav.classList.remove('bg-transparent');
+      nav.classList.add('bg-white/95', 'backdrop-blur-sm', 'shadow-sm');
+    } else {
+      nav.classList.add('bg-transparent');
+      nav.classList.remove('bg-white/95', 'backdrop-blur-sm', 'shadow-sm');
+    }
+
+    // Brand color
+    brand.classList.toggle('text-white', !solid);
+    brand.classList.toggle('hover:text-accent', true);
+    brand.classList.toggle('text-dark', solid);
+
+    // Link colors
+    navLinksEls.forEach((link) => {
+      const isActive = link.classList.contains('nav-link--active');
+      if (isActive) {
+        link.classList.add('text-accent');
+        link.classList.remove('text-white/80', 'text-gray-600');
+      } else if (solid) {
+        link.classList.remove('text-white/80', 'hover:text-white');
+        link.classList.add('text-gray-600', 'hover:text-dark');
+      } else {
+        link.classList.add('text-white/80', 'hover:text-white');
+        link.classList.remove('text-gray-600', 'hover:text-dark');
+      }
+    });
+
+    // Hamburger bars
+    hamburgerBars.forEach((bar) => {
+      bar.classList.toggle('bg-white', !solid);
+      bar.classList.toggle('bg-dark', solid);
+    });
+  }
+
+  // Apply immediately for initial state
+  applyNavStyle(window.scrollY > 50);
+
+  // Update on scroll
+  window.addEventListener('scroll', () => applyNavStyle(window.scrollY > 50), { passive: true });
+
+  // Mobile sidenav
   const btn = document.getElementById('mobile-menu-btn');
   const sidenav = document.getElementById('mobile-sidenav');
   const closeBtn = document.getElementById('close-sidenav');
-  const links = document.querySelectorAll('.mobile-nav-link');
+  const mobileLinks = document.querySelectorAll('.mobile-nav-link');
 
   function openNav() {
     sidenav?.classList.remove('translate-x-full');
@@ -106,5 +153,5 @@ const navLinks = [
 
   btn?.addEventListener('click', openNav);
   closeBtn?.addEventListener('click', closeNav);
-  links.forEach((link) => link.addEventListener('click', closeNav));
+  mobileLinks.forEach((link) => link.addEventListener('click', closeNav));
 </script>
