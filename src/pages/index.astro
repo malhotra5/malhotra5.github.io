@@ -5,7 +5,7 @@ import SectionHeading from '../components/SectionHeading.astro';
 
 <BaseLayout title="Rohit Malhotra" currentPage="about" transparentNav={true}>
   <!-- Hero Section with Particle Canvas -->
-  <section class="relative h-screen flex items-center justify-center bg-dark overflow-hidden">
+  <section class="relative h-screen flex items-center justify-center overflow-hidden" style="background:#252934;">
     <div id="pt" class="canvas-bg"></div>
     <div class="relative z-10 text-center hero-text transition-opacity duration-300">
       <h1 class="text-3xl md:text-5xl font-light text-white leading-tight">
@@ -53,72 +53,89 @@ import SectionHeading from '../components/SectionHeading.astro';
       </div>
     </div>
   </section>
-</BaseLayout>
 
-<script src="https://cdn.jsdelivr.net/npm/pts@0.10.12/dist/pts.min.js" is:inline></script>
-<script is:inline>
-  function floatySpace() {
-    var colors = ['#FF3F8E', '#04C2C9', '#2E55C1'];
-    var space = new Pts.CanvasSpace('#pt').setup({ bgcolor: '#252934', resize: true, retina: true });
-    var form = space.getForm();
+  <!-- Original pt.js particle canvas animation -->
+  <script is:inline src="/js/pt.min.js"></script>
+  <script is:inline>
+    (function () {
+      var space;
 
-    var pts = [];
-    var count = Math.min(window.innerWidth * 0.05, 150);
+      function floatySpace() {
+        var colors = ['#FF3F8E', '#04C2C9', '#2E55C1'];
 
-    space.add({
-      start: function (bound) {
-        var center = space.center;
+        space = new CanvasSpace('canvas', '#252934').display();
+        var form = new Form(space);
+
+        var pts = [];
+        var center = space.size.$divide(1.8);
+        var angle = -(window.innerWidth * 0.5);
+        var count = Math.min(window.innerWidth * 0.05, 150);
+        var line = new Line(0, angle).to(space.size.x, 0);
+        var mouse = center.clone();
+
         var r = Math.min(space.size.x, space.size.y);
         for (var i = 0; i < count; i++) {
-          var p = new Pts.Pt(Math.random() * r - Math.random() * r, Math.random() * r - Math.random() * r);
-          p = Pts.Geom.rotate2D(p, (i * Math.PI) / count, center);
+          var p = new Vector(Math.random() * r - Math.random() * r, Math.random() * r - Math.random() * r);
+          p.moveBy(center).rotate2D((i * Math.PI) / count, center);
           p.brightness = 0.1;
           pts.push(p);
         }
-      },
 
-      animate: function (time) {
-        var center = space.center;
-        var mouse = space.pointer;
-        var r = Math.min(space.size.x, space.size.y);
-        var angle = -(window.innerWidth * 0.5);
-        var line = new Pts.Group(new Pts.Pt(0, angle), new Pts.Pt(space.size.x, 0));
+        space.add({
+          animate: function (time, fps, context) {
+            for (var i = 0; i < pts.length; i++) {
+              var pt = pts[i];
+              pt.rotate2D(Const.one_degree / 20, center);
+              form.stroke(false).fill(colors[i % 3]).point(pt, 1);
 
-        for (var i = 0; i < pts.length; i++) {
-          pts[i] = Pts.Geom.rotate2D(pts[i], 0.0009, center);
-          form.strokeOnly(false).fillOnly(colors[i % 3]).point(pts[i], 1);
+              var ln = new Line(pt).to(line.getPerpendicularFromPoint(pt));
+              var distFromMouse = Math.abs(ln.getDistanceFromPoint(mouse));
 
-          var perpPt = Pts.Line.perpendicularFromPt(line, pts[i]);
-          var ln = new Pts.Group(pts[i], perpPt);
-          var distFromLine = Math.abs(Pts.Line.distanceFromPt(line, pts[i]));
-          var distFromMouse = mouse ? pts[i].$subtract(mouse).magnitude() : 999;
+              if (distFromMouse < 50) {
+                if (pts[i].brightness < 0.3) pts[i].brightness += 0.015;
+              } else {
+                if (pts[i].brightness > 0.1) pts[i].brightness -= 0.01;
+              }
 
-          if (distFromMouse < 50) {
-            if (pts[i].brightness < 0.3) pts[i].brightness += 0.015;
-          } else {
-            if (pts[i].brightness > 0.1) pts[i].brightness -= 0.01;
-          }
+              var color = 'rgba(255,255,255,' + pts[i].brightness + ')';
+              form.stroke(color).fill(true).line(ln);
+            }
+          },
 
-          var c = 'rgba(255,255,255,' + pts[i].brightness + ')';
-          form.strokeOnly(c).line(ln);
+          onMouseAction: function (type, x, y) {
+            if (type === 'move') mouse.set(x, y);
+          },
+
+          onTouchAction: function (type, x, y) {
+            this.onMouseAction(type, x, y);
+          },
+        });
+
+        space.bindMouse();
+        space.play();
+      }
+
+      floatySpace();
+
+      window.addEventListener('resize', function () {
+        if (space) {
+          space.removeAll();
+          var c = document.querySelector('#pt canvas');
+          if (c) c.remove();
+          floatySpace();
         }
-      },
-    });
+      });
 
-    space.bindMouse().play();
-    return space;
-  }
-
-  var _space = floatySpace();
-
-  window.addEventListener('scroll', function () {
-    var s = window.scrollY;
-    var heroText = document.querySelector('.hero-text');
-    var canvas = document.querySelector('.canvas-bg');
-    if (heroText && canvas) {
-      var h = canvas.offsetHeight;
-      var opacity = Math.max(0, 1 - s / (h / 2));
-      heroText.style.opacity = opacity;
-    }
-  });
-</script>
+      window.addEventListener('scroll', function () {
+        var s = window.scrollY;
+        var heroText = document.querySelector('.hero-text');
+        var canvasEl = document.querySelector('.canvas-bg');
+        if (heroText && canvasEl) {
+          var h = canvasEl.offsetHeight;
+          var opacity = Math.max(0, 1 - s / (h / 2));
+          heroText.style.opacity = opacity;
+        }
+      }, { passive: true });
+    })();
+  </script>
+</BaseLayout>

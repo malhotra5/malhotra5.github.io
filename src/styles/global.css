@@ -43,13 +43,10 @@
 }
 
 @layer components {
-  /* Particle canvas background */
+  /* Particle canvas background — fills the hero section */
   .canvas-bg {
-    @apply fixed top-0 left-0 w-screen h-screen;
-    z-index: -10;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    @apply absolute inset-0 w-full h-full;
+    z-index: 0;
   }
 
   /* Project / venture card with image overlay */
