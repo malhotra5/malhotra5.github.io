@@ -165,32 +165,36 @@ const IMG = '/img/snapshot-analysis';
   <h2>The Bug Rate and Its Limits</h2>
 
   <p>
-    Did snapshot tests reduce the UX regression rate? The answer depends on how you normalize.
-  </p>
-
-  <figure>
-    <img src={`${IMG}/deep_10_bug_rate_with_context.png`} alt="Normalized UX regression rate" />
-    <figcaption>UX bugs per cumulative TUI feature shipped. Pre-adoption peaked at 0.45. The settled post-adoption rate (Feb–Apr) drops to 0.02–0.10, which is 4–20× lower.</figcaption>
-  </figure>
-
-  <p>
-    The raw per-month rate (% of agent PRs that are UX bugs) is misleading because monthly
-    sample sizes range from 5 to 63. The bug-per-feature normalization controls for codebase growth
-    and shows a clear drop once the adoption surge settles.
-  </p>
-
-  <p>
-    But the overall TUI bug-to-feature ratio went from <strong>0.60 to 0.95</strong> —
-    essentially flat. The severity mix shifted — critical bugs dropped while UX regressions rose —
-    but this tracks codebase growth, not snapshot adoption.
+    Did snapshot tests reduce the bug rate? The raw timeline tells a complicated story.
   </p>
 
   <figure>
     <img src={`${IMG}/5_bug_rate_timeline.png`} alt="Critical vs UX regression bug rate over time" />
     <figcaption>Critical bugs (red) drop to zero by March 2026. UX regressions (orange) spike
-    in the adoption month then settle, before spiking again in May. Snapshot tests didn't reduce
-    the total bug count because 54% of visual bugs are on uncovered paths.</figcaption>
+    in the adoption month, settle through Feb–Apr, then spike again in May. At face value,
+    UX regressions got worse.</figcaption>
   </figure>
+
+  <p>
+    But the raw per-month rate (% of agent PRs that are UX bugs) is misleading — monthly
+    sample sizes range from 5 to 63, and the May spike comes from just 3 bugs in a
+    low-PR month. The right normalization: UX bugs per cumulative TUI feature shipped.
+    This controls for codebase growth and sample size.
+  </p>
+
+  <figure>
+    <img src={`${IMG}/deep_10_bug_rate_with_context.png`} alt="Normalized UX regression rate" />
+    <figcaption>Normalized view: UX bugs per cumulative TUI feature. Pre-adoption peaked at 0.45.
+    The adoption month (Jan 2026) started at 0.44 — same level, coinciding with a huge feature
+    push. The settled post-adoption rate (Feb–Apr) drops to 0.02–0.10, which is 4–20× lower.
+    The May spike barely registers when normalized against the growing feature base.</figcaption>
+  </figure>
+
+  <p>
+    Still, the overall TUI bug-to-feature ratio went from <strong>0.60 to 0.95</strong> —
+    essentially flat. Snapshot tests didn't reduce the total bug count because 54% of visual
+    bugs are on uncovered paths. You can't prevent bugs in areas you don't cover.
+  </p>
 
   <h2>Actionable Gaps</h2>
 
