@@ -1,4 +1,6 @@
 ---
+import { base } from '../utils/base';
+
 interface Props {
   title: string;
   description: string;
@@ -13,7 +15,7 @@ const { title, description, date, slug, image, readTime, tags = [] } = Astro.pro
 ---
 
 <a
-  href={`/blog/${slug}`}
+  href={base(`/blog/${slug}`)}
   class="block rounded-lg border-2 border-gray-200 overflow-hidden
          hover:border-accent hover:shadow-md transition-all duration-300 group"
 >

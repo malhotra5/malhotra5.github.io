@@ -1,4 +1,6 @@
 ---
+import { base } from '../utils/base';
+
 interface Props {
   currentPage?: string;
   transparent?: boolean;
@@ -7,12 +9,12 @@ interface Props {
 const { currentPage = '', transparent = false } = Astro.props;
 
 const navLinks = [
-  { href: '/#about', label: 'About' },
-  { href: '/ventures', label: 'Ventures' },
-  { href: '/research', label: 'Research' },
-  { href: '/projects', label: 'Projects' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/hobbies', label: 'Hobbies' },
+  { href: base('/#about'), label: 'About' },
+  { href: base('/ventures'), label: 'Ventures' },
+  { href: base('/research'), label: 'Research' },
+  { href: base('/blog'), label: 'Blog' },
+  { href: base('/projects'), label: 'Projects' },
+  { href: base('/hobbies'), label: 'Hobbies' },
 ];
 ---
 
@@ -23,7 +25,7 @@ const navLinks = [
 >
   <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
     <a
-      href="/"
+      href={base('/')}
       id="nav-brand"
       class="text-lg font-bold tracking-wide transition-colors duration-300"
     >
