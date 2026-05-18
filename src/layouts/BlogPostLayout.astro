@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import { base } from '../utils/base';
 
 interface Props {
   title: string;
@@ -25,7 +26,7 @@ const { title, description, date, image, imageCaption, readTime, originalUrl, ta
     <div class="max-w-3xl mx-auto px-6">
       <!-- Back link -->
       <a
-        href="/blog"
+        href={base('/blog')}
         class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-accent transition-colors mb-8"
       >
         ← Back to Blog
