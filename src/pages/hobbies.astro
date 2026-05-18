@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import VentureCard from '../components/VentureCard.astro';
+import { base } from '../utils/base';
 ---
 
 <BaseLayout title="Hobbies — Rohit Malhotra" currentPage="hobbies" darkBg={true}>
@@ -13,7 +14,7 @@ import VentureCard from '../components/VentureCard.astro';
         <VentureCard
           title="Guitar"
           role=""
-          image="/img/guitar.jpg"
+          image={base('/img/guitar.jpg')}
           description="Classical and rock guitar."
         >
           I started playing classical music on a nylon string guitar in the 3rd
@@ -25,7 +26,7 @@ import VentureCard from '../components/VentureCard.astro';
         <VentureCard
           title="Climbing"
           role=""
-          image="/img/climb.png"
+          image={base('/img/climb.png')}
           description="Indoor and outdoor climbing."
         >
           I climb both indoors and outdoors. As of recently, I have been working
@@ -37,7 +38,7 @@ import VentureCard from '../components/VentureCard.astro';
         <VentureCard
           title="Long Distance Running / Road Biking"
           role=""
-          image="/img/bike.png"
+          image={base('/img/bike.png')}
           description="Trail running and road biking."
         >
           I ran cross country competitively in high school. A lot of my training

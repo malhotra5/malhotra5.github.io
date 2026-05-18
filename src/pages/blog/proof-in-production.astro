@@ -1,12 +1,13 @@
 ---
 import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
+import { base } from '../../utils/base';
 ---
 
 <BlogPostLayout
   title="Proof in Production: Evaluating Effectiveness of SWE Agents with A/B Tests"
   description="SWE-Agents are setting new benchmark records, yet underperform in the real world. Beneath the hype, only A/B testing can prove their effectiveness."
   date="Sep 24, 2025"
-  image="/img/swe-bench-scores.png"
+  image={base('/img/swe-bench-scores.png')}
   imageCaption="Tracking SWE-Bench scores over the last 2 years. It's the most popular benchmark used to evaluate SWE-Agents."
   readTime="5 min read"
   originalUrl="https://rohitmalh.substack.com/p/proof-in-production-evaluating-effectiveness"
@@ -29,7 +30,7 @@ import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
 
   <figure>
     <img
-      src="/img/swe-bench-scores.png"
+      src={base('/img/swe-bench-scores.png')}
       alt="SWE-Bench scores over the last 2 years"
     />
     <figcaption>

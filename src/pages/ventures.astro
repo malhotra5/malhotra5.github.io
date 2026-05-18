@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import VentureCard from '../components/VentureCard.astro';
+import { base } from '../utils/base';
 ---
 
 <BaseLayout title="Ventures — Rohit Malhotra" currentPage="ventures">
@@ -13,7 +14,7 @@ import VentureCard from '../components/VentureCard.astro';
         <VentureCard
           title="Sitewiz"
           role="Role: Cofounder/CTO"
-          image="/img/sitewiz.jpeg"
+          image={base('/img/sitewiz.jpeg')}
           description="Cofounded and led technological development at Sitewiz."
         >
           Cofounded and led technological development at Sitewiz. Delivered
@@ -24,7 +25,7 @@ import VentureCard from '../components/VentureCard.astro';
         <VentureCard
           title="CMU Climbing Club"
           role="Role: Founder/President"
-          image="/img/ascend.png"
+          image={base('/img/ascend.png')}
           description="Started the Climbing Club at CMU."
         >
           Started the Climbing Club at CMU. Negotiated a 40% discount at a local
@@ -34,7 +35,7 @@ import VentureCard from '../components/VentureCard.astro';
         <VentureCard
           title="Learn In Shelter"
           role="Role: CEO/CTO"
-          image="/img/lit.png"
+          image={base('/img/lit.png')}
           description="Connected students for free tutoring."
         >
           Connected a community of 5000 students for free tutoring sessions

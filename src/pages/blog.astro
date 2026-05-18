@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import BlogCard from '../components/BlogCard.astro';
+import { base } from '../utils/base';
 
 const posts = [
   {
@@ -10,7 +11,7 @@ const posts = [
       'An empirical analysis of 311 pull requests where 68% are authored by AI agents. We examine whether snapshot tests actually catch bugs, guard behavior, and improve the development process.',
     date: 'May 18, 2026',
     slug: 'snapshot-tests-in-agent-development',
-    image: '/img/snapshot-analysis/deep_10_bug_rate_with_context.png',
+    image: base('/img/snapshot-analysis/deep_10_bug_rate_with_context.png'),
     readTime: '12 min read',
     tags: ['AI Agents', 'Testing', 'Snapshot Tests', 'Empirical Analysis'],
   },
@@ -20,7 +21,7 @@ const posts = [
       'SWE-Agents are setting new benchmark records, yet underperform in the real world. Beneath the hype, only A/B testing can prove their effectiveness.',
     date: 'Sep 24, 2025',
     slug: 'proof-in-production',
-    image: '/img/swe-bench-scores.png',
+    image: base('/img/swe-bench-scores.png'),
     readTime: '5 min read',
     tags: ['AI Agents', 'SWE', 'A/B Testing', 'Evaluation'],
   },
