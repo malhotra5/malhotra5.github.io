@@ -1,0 +1,50 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  date: string;
+  slug: string;
+  image?: string;
+  readTime?: string;
+  tags?: string[];
+}
+
+const { title, description, date, slug, image, readTime, tags = [] } = Astro.props;
+---
+
+<a
+  href={`/blog/${slug}`}
+  class="block rounded-lg border-2 border-gray-200 overflow-hidden
+         hover:border-accent hover:shadow-md transition-all duration-300 group"
+>
+  <div class:list={['flex flex-col', image && 'md:flex-row']}>
+    <!-- Text -->
+    <div class:list={['p-6', image && 'md:flex-1 md:min-w-0']}>
+      <h3 class="text-xl md:text-2xl font-bold text-gray-800 group-hover:text-accent transition-colors mb-2 leading-snug">
+        {title}
+      </h3>
+
+      <p class="text-gray-text text-sm leading-relaxed mb-4 line-clamp-3">
+        {description}
+      </p>
+
+      <div class="flex items-center gap-2 text-xs uppercase tracking-wider text-gray-400">
+        <time>{date}</time>
+        <span>·</span>
+        <span>Rohit Malhotra</span>
+      </div>
+    </div>
+
+    <!-- Image -->
+    {image && (
+      <div class="w-full md:w-64 lg:w-72 shrink-0 aspect-[2/1] md:aspect-auto overflow-hidden bg-gray-100 order-first md:order-last">
+        <img
+          src={image}
+          alt={title}
+          class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+          loading="lazy"
+        />
+      </div>
+    )}
+  </div>
+</a>

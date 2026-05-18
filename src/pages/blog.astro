@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import BlogCard from '../components/BlogCard.astro';
+
+const posts = [
+  {
+    title: 'Proof in Production: Evaluating Effectiveness of SWE Agents with A/B Tests',
+    description:
+      'SWE-Agents are setting new benchmark records, yet underperform in the real world. Beneath the hype, only A/B testing can prove their effectiveness.',
+    date: 'Sep 24, 2025',
+    slug: 'proof-in-production',
+    image: '/img/swe-bench-scores.png',
+    readTime: '5 min read',
+    tags: ['AI Agents', 'SWE', 'A/B Testing', 'Evaluation'],
+  },
+];
+---
+
+<BaseLayout title="Blog — Rohit Malhotra" currentPage="blog">
+  <section class="pt-32 pb-16 bg-white min-h-screen">
+    <div class="max-w-4xl mx-auto px-6">
+      <SectionHeading title="Thoughts on code agents, rock climbing, and more." />
+
+      <div class="flex flex-col gap-6">
+        {posts.map((post) => (
+          <BlogCard {...post} />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
