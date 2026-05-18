@@ -1,0 +1,30 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image: string;
+  tags?: string[];
+  height?: string;
+  clickable?: boolean;
+}
+
+const { title, description, image, tags = [], height = '450px', clickable = true } = Astro.props;
+---
+
+<div
+  class:list={['card-hover', !clickable && 'card-no-hover']}
+  style={`height: ${height}`}
+>
+  <img src={image} alt={title} loading="lazy" />
+  <div class="card-content">
+    <h4>{title}</h4>
+    <p>{description}</p>
+    {tags.length > 0 && (
+      <p class="flex flex-wrap gap-1 mt-2">
+        {tags.map((tag) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </p>
+    )}
+  </div>
+</div>

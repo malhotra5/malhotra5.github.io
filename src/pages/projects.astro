@@ -1,0 +1,186 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Modal from '../components/Modal.astro';
+
+const projects = [
+  {
+    id: 'flight',
+    title: 'Flight Simulator',
+    description: 'A flight simulator made from scratch, exploring the fundamental concepts of creating 3D graphics.',
+    image: '/img/flight2.gif',
+    tags: ['Processing'],
+    height: '450px',
+  },
+  {
+    id: 'citypop',
+    title: 'Japanese City Pop Data Analysis',
+    description: 'Data analysis and research on Japanese City Pop via webscraping, text mining, and text analysis.',
+    image: '/img/citypop.png',
+    tags: ['Python'],
+    height: '310px',
+  },
+  {
+    id: 'nav',
+    title: 'Navigation for the Blind',
+    description: 'Navigation system that uses image processing to determine best course of direction to walk in.',
+    image: '/img/sem2.png',
+    tags: ['Python'],
+    height: '400px',
+  },
+  {
+    id: 'mimer',
+    title: 'Mimer: Mimicking Humanoid Robot',
+    description: 'A humanoid robot that uses computer vision to mimic the movements of a human in front of it.',
+    image: '/img/rob.png',
+    tags: ['Python', 'Arduino'],
+    height: '450px',
+  },
+  {
+    id: 'web',
+    title: 'Personal Website',
+    description: 'My personal portfolio website built from scratch.',
+    image: '/img/web.png',
+    tags: ['HTML', 'CSS', 'JS'],
+    height: '400px',
+  },
+  {
+    id: 'manim',
+    title: 'Manim Tutorial',
+    description: 'A tutorial series on creating mathematical animations using Manim.',
+    image: '/img/manim.gif',
+    tags: ['Python'],
+    height: '310px',
+  },
+  {
+    id: 'cart',
+    title: 'OpenAI Cartpole',
+    description: 'Reinforcement learning agent solving the classic CartPole balancing problem.',
+    image: '/img/cart.gif',
+    tags: ['Python', 'OpenAI'],
+    height: '310px',
+  },
+  {
+    id: 'gpt',
+    title: 'Spontaneous Response via GPT3.5',
+    description: 'Spontaneous response to dynamic environments via GPT3.5.',
+    image: '/img/gpt.png',
+    tags: ['Python', 'GPT'],
+    height: '450px',
+  },
+  {
+    id: 'awap',
+    title: 'Terraforming Bot',
+    description: 'An autonomous terraforming bot for competitive programming challenges.',
+    image: '/img/awap.gif',
+    tags: ['Python'],
+    height: '310px',
+  },
+  {
+    id: 'yout',
+    title: 'YouTube Educational Series',
+    description: 'Educational video series covering CS and ML topics.',
+    image: '/img/yout.png',
+    tags: ['Education'],
+    height: '400px',
+  },
+];
+
+const courses = [
+  { name: 'Advanced NLP', desc: 'Advanced topics in Natural Language Processing, focusing on modern deep learning approaches.' },
+  { name: 'AI Representation and Problem Solving', desc: 'Theory and programming class for modern techniques in AI.' },
+  { name: 'Probability Theory for CS', desc: 'Probability class for the study of both statistics and random systems.' },
+  { name: 'Intro to ML', desc: 'Theory and programming class for modern techniques in ML.' },
+  { name: 'Parallel and Sequential Data Structures and Algs', desc: 'Advanced algorithms/data structures class with emphasis on parallel thinking.' },
+  { name: 'Intro to Computer Security', desc: 'Theory and programming based class on fundamentals of computer security.' },
+  { name: 'Cognitive Robotics', desc: 'Exploring intelligent behavior in mobile robots using Cozmo by Anki.' },
+];
+---
+
+<BaseLayout title="Projects — Rohit Malhotra" currentPage="projects" darkBg={true}>
+  <!-- Projects Section -->
+  <section class="pt-32 pb-24 bg-dark min-h-screen">
+    <div class="max-w-5xl mx-auto px-6">
+      <SectionHeading title="Projects" light={true} />
+
+      <div class="columns-1 lg:columns-2 gap-6">
+        {projects.map((project) => (
+          <div class="mb-6 break-inside-avoid cursor-pointer" data-open-modal={project.id}>
+            <ProjectCard
+              title={project.title}
+              description={project.description}
+              image={project.image}
+              tags={project.tags}
+              height={project.height}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Coursework Section -->
+  <section class="py-24 bg-dark">
+    <div class="max-w-4xl mx-auto px-6">
+      <SectionHeading title="Relevant Coursework" light={true} />
+
+      <div class="flex flex-col gap-2">
+        {courses.map((course) => (
+          <div class="p-4 bg-black/40 rounded-lg hover:scale-x-105 transition-transform duration-300 origin-left">
+            <h5 class="text-white font-semibold text-base">{course.name}</h5>
+            <p class="text-gray-400 text-sm mt-1">{course.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Modals -->
+  {projects.map((project) => (
+    <Modal id={`modal-${project.id}`} title={project.title} image={project.image} />
+  ))}
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Open modal
+    document.querySelectorAll('[data-open-modal]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var id = 'modal-' + el.getAttribute('data-open-modal');
+        var modal = document.getElementById(id);
+        if (modal) modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    // Close modal
+    document.querySelectorAll('[data-modal-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var overlay = btn.closest('.modal-overlay');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // Close on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(function (m) {
+          m.classList.remove('active');
+        });
+        document.body.style.overflow = '';
+      }
+    });
+  });
+</script>

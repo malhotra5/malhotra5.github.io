@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import VentureCard from '../components/VentureCard.astro';
+---
+
+<BaseLayout title="Hobbies — Rohit Malhotra" currentPage="hobbies" darkBg={true}>
+  <section class="pt-32 pb-24 bg-dark min-h-screen">
+    <div class="max-w-6xl mx-auto px-6">
+      <SectionHeading title="Hobbies" light={true} />
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <VentureCard
+          title="Guitar"
+          role=""
+          image="/img/guitar.jpg"
+          description="Classical and rock guitar."
+        >
+          I started playing classical music on a nylon string guitar in the 3rd
+          grade. My preferred play style now is classic rock. My biggest
+          inspirations are David Gilmour (Pink Floyd), Chad Smith (RHCP), Eric
+          Clapton, Christine McVie (Fleetwood Mac), and more.
+        </VentureCard>
+
+        <VentureCard
+          title="Climbing"
+          role=""
+          image="/img/climb.png"
+          description="Indoor and outdoor climbing."
+        >
+          I climb both indoors and outdoors. As of recently, I have been working
+          on my bouldering strength, but I enjoy rope climbing as well. I'm
+          inspired by the smooth style and perseverance of Tommy Caldwell, Dave
+          Macleod, and Lonnie Kosuko Kauk.
+        </VentureCard>
+
+        <VentureCard
+          title="Long Distance Running / Road Biking"
+          role=""
+          image="/img/bike.png"
+          description="Trail running and road biking."
+        >
+          I ran cross country competitively in high school. A lot of my training
+          was done in the hills, and ever since I have enjoyed exploring new
+          trails and roads in the mountains. This picture is of San Felipe hills
+          in San Jose, California.
+        </VentureCard>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

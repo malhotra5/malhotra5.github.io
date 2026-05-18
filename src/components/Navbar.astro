@@ -1,0 +1,110 @@
+---
+interface Props {
+  currentPage?: string;
+  transparent?: boolean;
+}
+
+const { currentPage = '', transparent = false } = Astro.props;
+
+const navLinks = [
+  { href: '/#about', label: 'About' },
+  { href: '/ventures', label: 'Ventures' },
+  { href: '/research', label: 'Research' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/hobbies', label: 'Hobbies' },
+];
+---
+
+<nav
+  id="mainNav"
+  class:list={[
+    'fixed top-0 left-0 w-full z-40 transition-all duration-300',
+    transparent ? 'bg-transparent' : 'bg-white/95 backdrop-blur-sm shadow-sm',
+  ]}
+>
+  <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+    <a
+      href="/"
+      class:list={[
+        'text-lg font-bold tracking-wide transition-colors',
+        transparent ? 'text-white hover:text-accent' : 'text-dark hover:text-accent',
+      ]}
+    >
+      Rohit Malhotra
+    </a>
+
+    <!-- Desktop nav -->
+    <ul class="hidden md:flex items-center gap-8">
+      {navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class:list={[
+              'text-sm font-medium uppercase tracking-wider transition-colors',
+              transparent ? 'text-white/80 hover:text-white' : 'text-gray-600 hover:text-dark',
+              currentPage === link.label.toLowerCase() && 'text-accent',
+            ]}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Mobile hamburger -->
+    <button
+      id="mobile-menu-btn"
+      class="md:hidden flex flex-col gap-1.5 p-2"
+      aria-label="Toggle navigation"
+    >
+      <span class:list={['block w-6 h-0.5 transition-colors', transparent ? 'bg-white' : 'bg-dark']} />
+      <span class:list={['block w-6 h-0.5 transition-colors', transparent ? 'bg-white' : 'bg-dark']} />
+      <span class:list={['block w-6 h-0.5 transition-colors', transparent ? 'bg-white' : 'bg-dark']} />
+    </button>
+  </div>
+
+  <!-- Mobile sidenav -->
+  <div
+    id="mobile-sidenav"
+    class="fixed inset-0 bg-dark z-50 transform translate-x-full transition-transform duration-500 md:hidden"
+  >
+    <div class="flex justify-end p-6">
+      <button id="close-sidenav" class="text-gray-400 hover:text-white text-lg">
+        Close &times;
+      </button>
+    </div>
+    <ul class="flex flex-col gap-4 px-8">
+      {navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class="text-gray-400 hover:text-white text-base transition-colors mobile-nav-link"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const sidenav = document.getElementById('mobile-sidenav');
+  const closeBtn = document.getElementById('close-sidenav');
+  const links = document.querySelectorAll('.mobile-nav-link');
+
+  function openNav() {
+    sidenav?.classList.remove('translate-x-full');
+    sidenav?.classList.add('translate-x-0');
+  }
+
+  function closeNav() {
+    sidenav?.classList.remove('translate-x-0');
+    sidenav?.classList.add('translate-x-full');
+  }
+
+  btn?.addEventListener('click', openNav);
+  closeBtn?.addEventListener('click', closeNav);
+  links.forEach((link) => link.addEventListener('click', closeNav));
+</script>
