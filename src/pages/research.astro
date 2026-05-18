@@ -23,11 +23,6 @@ const publications = [
 
 const projects = [
   {
-    title: 'CluRag: Improving Zero-Shot RAG systems using clustering',
-    authors: ['Rohit Malhotra', 'Eduardo Trevino', 'Hugo Contant'],
-    url: 'https://www.researchgate.net/publication/383231819_Finding_the_Best_Zero-Shot_RAG_Systems_for_Multi-Group_Topics',
-  },
-  {
     title: 'VHABench: Benchmarking Underspecified User Intents for Tool Augmented LLMs',
     authors: ['Eduardo Trevino', 'Rohit Malhotra', 'Hugo Contant'],
     url: 'https://www.researchgate.net/publication/383231851_VHABench_Benchmarking_Underspecified_User_Intents_for_Tool_Augmented_LLMs',
@@ -36,6 +31,11 @@ const projects = [
     title: 'Survey on Tool Usage in LLMS: Towards A General Tool Use LLM Framework',
     authors: ['Eduardo Trevino', 'Hugo Contant', 'Rohit Malhotra'],
     url: 'https://www.researchgate.net/publication/388955739_Survey_on_Tool_Usage_in_LLMS_Towards_A_General_Tool_Use_LLM_Framework',
+  },
+  {
+    title: 'CluRag: Improving Zero-Shot RAG systems using clustering',
+    authors: ['Rohit Malhotra', 'Eduardo Trevino', 'Hugo Contant'],
+    url: 'https://www.researchgate.net/publication/383231819_Finding_the_Best_Zero-Shot_RAG_Systems_for_Multi-Group_Topics',
   },
 ];
 
@@ -52,74 +52,90 @@ const ME = 'Rohit Malhotra';
         out of LLMs without changing their weights (i.e Agents).
       </p>
 
-      <h3 class="text-3xl font-bold text-gray-800 text-center mb-12">Publications</h3>
+      <!-- 2026 — Publications -->
+      <div class="relative">
+        <div class="flex items-center gap-4 mb-8">
+          <span class="text-4xl font-extrabold text-gray-200">2026</span>
+          <div class="h-px flex-1 bg-gray-200"></div>
+        </div>
 
-      <div class="flex flex-col gap-6">
-        {publications.map((paper) => (
-          <a
-            href={paper.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="block p-6 rounded-lg border-2 border-gray-200
-                   hover:border-accent hover:shadow-md transition-all duration-300 group"
-          >
-            <h4 class="text-lg font-semibold text-gray-800 group-hover:text-accent transition-colors">
-              {paper.title}
-              <span class="text-xs text-gray-400 ml-1">↗</span>
-            </h4>
+        <h3 class="text-2xl font-bold text-gray-800 mb-8">Publications</h3>
 
-            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
-              {paper.authors.map((author, i) => (
-                <>
-                  {author === ME ? (
-                    <span class="underline underline-offset-2 font-medium text-gray-700">{author}</span>
-                  ) : (
-                    <span>{author}</span>
-                  )}
-                  {i < paper.authors.length - 1 && ', '}
-                </>
-              ))}
-            </p>
+        <div class="flex flex-col gap-6">
+          {publications.map((paper) => (
+            <a
+              href={paper.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block p-6 rounded-lg border-2 border-gray-200
+                     hover:border-accent hover:shadow-md transition-all duration-300 group"
+            >
+              <h4 class="text-lg font-semibold text-gray-800 group-hover:text-accent transition-colors">
+                {paper.title}
+                <span class="text-xs text-gray-400 ml-1">↗</span>
+              </h4>
 
-            {paper.venue && (
-              <p class="text-sm text-gray-500 mt-1 italic">
-                {paper.venue}.{paper.location && ` ${paper.location}.`}{paper.date && ` ${paper.date}.`}
+              <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+                {paper.authors.map((author, i) => (
+                  <>
+                    {author === ME ? (
+                      <span class="underline underline-offset-2 font-medium text-gray-700">{author}</span>
+                    ) : (
+                      <span>{author}</span>
+                    )}
+                    {i < paper.authors.length - 1 && ', '}
+                  </>
+                ))}
               </p>
-            )}
-          </a>
-        ))}
+
+              {paper.venue && (
+                <p class="text-sm text-gray-500 mt-1 italic">
+                  {paper.venue}.{paper.location && ` ${paper.location}.`}{paper.date && ` ${paper.date}.`}
+                </p>
+              )}
+            </a>
+          ))}
+        </div>
       </div>
 
-      <h3 class="text-3xl font-bold text-gray-800 text-center mt-20 mb-12">Projects</h3>
+      <!-- 2024 — Projects -->
+      <div class="relative mt-16">
+        <div class="flex items-center gap-4 mb-8">
+          <span class="text-4xl font-extrabold text-gray-200">2024</span>
+          <div class="h-px flex-1 bg-gray-200"></div>
+        </div>
 
-      <div class="flex flex-col gap-6">
-        {projects.map((project) => (
-          <a
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="block p-6 rounded-lg border-2 border-gray-200
-                   hover:border-accent hover:shadow-md transition-all duration-300 group"
-          >
-            <h4 class="text-lg font-semibold text-gray-800 group-hover:text-accent transition-colors">
-              {project.title}
-              <span class="text-xs text-gray-400 ml-1">↗</span>
-            </h4>
+        <h3 class="text-2xl font-bold text-gray-800 mb-8">Projects</h3>
 
-            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
-              {project.authors.map((author, i) => (
-                <>
-                  {author === ME ? (
-                    <span class="underline underline-offset-2 font-medium text-gray-700">{author}</span>
-                  ) : (
-                    <span>{author}</span>
-                  )}
-                  {i < project.authors.length - 1 && ', '}
-                </>
-              ))}
-            </p>
-          </a>
-        ))}
+        <div class="flex flex-col gap-6">
+          {projects.map((project) => (
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block p-6 rounded-lg border-2 border-gray-200
+                     hover:border-accent hover:shadow-md transition-all duration-300 group"
+            >
+              <h4 class="text-lg font-semibold text-gray-800 group-hover:text-accent transition-colors">
+                {project.title}
+                <span class="text-xs text-gray-400 ml-1">↗</span>
+              </h4>
+
+              <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+                {project.authors.map((author, i) => (
+                  <>
+                    {author === ME ? (
+                      <span class="underline underline-offset-2 font-medium text-gray-700">{author}</span>
+                    ) : (
+                      <span>{author}</span>
+                    )}
+                    {i < project.authors.length - 1 && ', '}
+                  </>
+                ))}
+              </p>
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   </section>
