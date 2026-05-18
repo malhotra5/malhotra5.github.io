@@ -2,16 +2,34 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 
-const papers = [
+const publications = [
+  {
+    title: 'How can we assess human-agent interactions? Case studies in software agent design',
+    authors: ['Valerie Chen', 'Rohit Malhotra', 'Xingyao Wang', 'Juan Michelini', 'Xuhui Zhou', 'Aditya Bharat Soni', 'Hoang H. Tran', 'Calvin Smith', 'Ameet Talwalkar', 'Graham Neubig'],
+    venue: 'International Conference on Machine Learning (ICML)',
+    location: 'Seoul, South Korea',
+    date: 'July 2026',
+    url: 'https://arxiv.org/abs/2510.09801',
+  },
   {
     title: 'VHABench: Benchmarking Underspecified User Intents for Tool Augmented LLMs',
+    authors: ['Rohit Malhotra'],
+    venue: '',
+    location: '',
+    date: '',
     url: 'https://www.researchgate.net/publication/383231851_VHABench_Benchmarking_Underspecified_User_Intents_for_Tool_Augmented_LLMs',
   },
   {
     title: 'CluRag: Improving Zero-Shot RAG systems using clustering',
+    authors: ['Rohit Malhotra'],
+    venue: '',
+    location: '',
+    date: '',
     url: 'https://www.researchgate.net/publication/383231819_Finding_the_Best_Zero-Shot_RAG_Systems_for_Multi-Group_Topics',
   },
 ];
+
+const ME = 'Rohit Malhotra';
 ---
 
 <BaseLayout title="Research — Rohit Malhotra" currentPage="research">
@@ -24,20 +42,40 @@ const papers = [
         out of LLMs without changing their weights (i.e Agents).
       </p>
 
-      <h3 class="text-3xl font-bold text-gray-800 text-center mb-12">My Work</h3>
+      <h3 class="text-3xl font-bold text-gray-800 text-center mb-12">Publications</h3>
 
-      <div class="flex flex-col gap-4">
-        {papers.map((paper) => (
+      <div class="flex flex-col gap-6">
+        {publications.map((paper) => (
           <a
             href={paper.url}
             target="_blank"
             rel="noopener noreferrer"
-            class="block p-5 rounded-lg border-2 border-gray-200 text-gray-700 text-base font-medium
-                   hover:border-accent hover:text-accent hover:shadow-md
-                   transition-all duration-300"
+            class="block p-6 rounded-lg border-2 border-gray-200
+                   hover:border-accent hover:shadow-md transition-all duration-300 group"
           >
-            {paper.title}
-            <span class="text-xs text-gray-400 ml-2">↗</span>
+            <h4 class="text-lg font-semibold text-gray-800 group-hover:text-accent transition-colors">
+              {paper.title}
+              <span class="text-xs text-gray-400 ml-1">↗</span>
+            </h4>
+
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              {paper.authors.map((author, i) => (
+                <>
+                  {author === ME ? (
+                    <span class="underline underline-offset-2 font-medium text-gray-700">{author}</span>
+                  ) : (
+                    <span>{author}</span>
+                  )}
+                  {i < paper.authors.length - 1 && ', '}
+                </>
+              ))}
+            </p>
+
+            {paper.venue && (
+              <p class="text-sm text-gray-500 mt-1 italic">
+                {paper.venue}.{paper.location && ` ${paper.location}.`}{paper.date && ` ${paper.date}.`}
+              </p>
+            )}
           </a>
         ))}
       </div>
