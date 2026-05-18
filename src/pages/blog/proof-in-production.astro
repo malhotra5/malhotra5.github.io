@@ -27,6 +27,16 @@ import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
     SWE-Agents and de-risking its developments.</strong>
   </p>
 
+  <figure>
+    <img
+      src="/img/swe-bench-scores.png"
+      alt="SWE-Bench scores over the last 2 years"
+    />
+    <figcaption>
+      Tracking SWE-Bench scores over the last 2 years. It's the most popular benchmark used to evaluate SWE-Agents.
+    </figcaption>
+  </figure>
+
   <h2>Limitations of Static Benchmarks</h2>
 
   <p>
@@ -40,37 +50,27 @@ import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
     But once in production, the limitations of static benchmarks become clear:
   </p>
 
-  <p>
-    <strong>Generalizability</strong>: Benchmarks typically cover narrow tasks such as bug
+  <ul>
+    <li><strong>Generalizability</strong>: Benchmarks typically cover narrow tasks such as bug
     fixing or unit test generation. Real SWE involves much more: debugging infrastructure,
-    integrating CI/CD pipelines, refactoring large systems, etc.
-  </p>
-
-  <p>
-    <strong>Gamification</strong>: Optimizing agents to excel at specific benchmarks (e.g.,
+    integrating CI/CD pipelines, refactoring large systems, etc.</li>
+    <li><strong>Gamification</strong>: Optimizing agents to excel at specific benchmarks (e.g.,
     SWE-Bench bug fixing) often leads to inflated scores without corresponding gains in
-    other SWE tasks. Data contamination can also inflate scores similarly.
-  </p>
-
-  <p>
-    <strong>Interaction complexity</strong>: Multi-turn collaboration with humans, diverse
+    other SWE tasks. Data contamination can also inflate scores similarly.</li>
+    <li><strong>Interaction complexity</strong>: Multi-turn collaboration with humans, diverse
     environment setups, and heterogeneous codebases are hard to simulate. It's tough to
-    capture the variability and messiness of real-world contexts.
-  </p>
-
-  <p>
-    <strong>Practical trade-offs</strong>: Engineering decisions often involve short-term
+    capture the variability and messiness of real-world contexts.</li>
+    <li><strong>Practical trade-offs</strong>: Engineering decisions often involve short-term
     compromises, like temporarily creating technical debt or working under strict budget
-    constraints, that benchmarks don't reflect.
-  </p>
+    constraints, that benchmarks don't reflect.</li>
+    <li><strong>Fragility</strong>: Seemingly minor changes (e.g., a prompt tweak) may not
+    shift benchmark scores but can drastically affect user experience. For example, an agent
+    that becomes overly verbose may technically "pass" but frustrate developers in practice.</li>
+  </ul>
 
   <p>
-    <strong>Fragility</strong>: Seemingly minor changes (e.g., a prompt tweak) may not
-    shift benchmark scores but can drastically affect user experience. For example, an agent
-    that becomes overly verbose may technically "pass" but frustrate developers in practice.
+    <strong>So why not build better benchmarks?</strong>
   </p>
-
-  <h3>So why not build better benchmarks?</h3>
 
   <p>
     Efforts like <a href="https://www.all-hands.dev/blog/building-a-provably-versatile-agent" target="_blank" rel="noopener noreferrer">VersaBench</a>
@@ -78,22 +78,16 @@ import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
     still face inherent constraints:
   </p>
 
-  <p>
-    They must remain <strong>relatively small and cost-effective</strong>, so evaluations
+  <ul>
+    <li>They must remain <strong>relatively small and cost-effective</strong>, so evaluations
     can be repeated regularly. Attempting to model the full complexity of SWE would make
-    them prohibitively expensive and still likely incomplete.
-  </p>
-
-  <p>
-    They <strong>cannot model user preferences</strong>. Subjective usability constraints
-    often determine success, but are nearly impossible to encode in a static dataset.
-  </p>
-
-  <p>
-    The <strong>definitions for success differ and change</strong>. Benchmarks typically
+    them prohibitively expensive and still likely incomplete.</li>
+    <li>They <strong>cannot model user preferences</strong>. Subjective usability constraints
+    often determine success, but are nearly impossible to encode in a static dataset.</li>
+    <li>The <strong>definitions for success differ and change</strong>. Benchmarks typically
     capture one slice of quality (e.g., correctness), while real-world engineering balances
-    multiple goals (speed, maintainability, readability, etc).
-  </p>
+    multiple goals (speed, maintainability, readability, etc).</li>
+  </ul>
 
   <p>
     The dilemma, however, is that you cannot confidently determine if an agent is
@@ -109,25 +103,21 @@ import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
     risk in production, the solution involves:
   </p>
 
-  <p>
-    <strong>Benchmarks</strong>: The first safety net
-  </p>
-
-  <p>
-    <strong>Manual QA</strong>: Vibe check for obvious things benchmarks fail to capture
-  </p>
-
-  <p>
-    <strong>A/B Tests</strong>: The mechanism for detecting regressions and validating
-    wins in live workflows
-  </p>
+  <ul>
+    <li><strong>Benchmarks</strong>: The first safety net</li>
+    <li><strong>Manual QA</strong>: Vibe check for obvious things benchmarks fail to capture</li>
+    <li><strong>A/B Tests</strong>: The mechanism for detecting regressions and validating
+    wins in live workflows</li>
+  </ul>
 
   <p>
     Designing A/B tests for SWE-Agents is non-trivial, but it is rooted in the scientific
     method, making it the gold standard for evaluating agents in the wild.
   </p>
 
-  <h3>Why is this urgent?</h3>
+  <p>
+    <strong>Why is this urgent?</strong>
+  </p>
 
   <p>
     In traditional product development, the product itself is (mostly) deterministic and
@@ -159,14 +149,11 @@ import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
     for test outcomes can also provide observability into product efficacy.
   </p>
 
-  <p>
-    <strong>Infrastructure observability</strong>: System health (latency, token usage, etc)
-  </p>
-
-  <p>
-    <strong>Product efficacy observability</strong>: Agent is <em>actually useful</em>
-    (minimally invasive user interactions, PR acceptance, etc)
-  </p>
+  <ul>
+    <li><strong>Infrastructure observability</strong>: System health (latency, token usage, etc)</li>
+    <li><strong>Product efficacy observability</strong>: Agent is <em>actually useful</em>
+    (minimally invasive user interactions, PR acceptance, etc)</li>
+  </ul>
 
   <p>
     If tomorrow a model provider aggressively quantized their model and served it on the

@@ -74,22 +74,6 @@ const { title, description, date, image, imageCaption, readTime, originalUrl, ta
           </div>
         )}
 
-        {image && (
-          <figure class="mt-8">
-            <img
-              src={image}
-              alt={imageCaption || title}
-              class="w-full rounded-lg"
-              loading="eager"
-            />
-            {imageCaption && (
-              <figcaption class="text-sm text-gray-400 text-center mt-3 italic">
-                {imageCaption}
-              </figcaption>
-            )}
-          </figure>
-        )}
-
         <div class="h-px bg-gray-200 mt-8"></div>
       </header>
 
@@ -143,8 +127,16 @@ const { title, description, date, image, imageCaption, readTime, originalUrl, ta
     @apply border-l-4 border-accent/30 pl-4 my-6 italic text-gray-500;
   }
 
+  .blog-content figure {
+    @apply my-8;
+  }
+
   .blog-content img {
-    @apply rounded-lg my-6 w-full;
+    @apply rounded-lg w-full;
+  }
+
+  .blog-content figcaption {
+    @apply text-sm text-gray-400 text-center mt-3 italic;
   }
 
   .blog-content hr {
