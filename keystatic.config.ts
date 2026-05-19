@@ -1,6 +1,6 @@
 import React from 'react';
 import { config, fields, collection } from '@keystatic/core';
-import { block } from '@keystatic/core/content-components';
+import { block, wrapper } from '@keystatic/core/content-components';
 
 export default config({
   storage: { kind: 'local' },
@@ -104,6 +104,82 @@ export default config({
                     ),
                 );
               },
+            }),
+            Comment: block({
+              label: 'Comment',
+              description: 'An editorial note — visible in the editor, hidden on the site',
+              schema: {
+                note: fields.text({
+                  label: 'Note',
+                  multiline: true,
+                  validation: { isRequired: true },
+                }),
+              },
+              ContentView: (props) =>
+                React.createElement(
+                  'div',
+                  {
+                    style: {
+                      margin: '0.5rem 0',
+                      padding: '0.75rem 1rem',
+                      background: '#FFF9E5',
+                      borderLeft: '4px solid #F5C518',
+                      borderRadius: '4px',
+                      fontSize: '0.875rem',
+                      color: '#6B5900',
+                      whiteSpace: 'pre-wrap' as const,
+                    },
+                  },
+                  React.createElement(
+                    'span',
+                    {
+                      style: {
+                        fontWeight: 'bold',
+                        marginRight: '0.5rem',
+                      },
+                    },
+                    '📝 Note:',
+                  ),
+                  props.value.note,
+                ),
+            }),
+            Highlight: wrapper({
+              label: 'Highlight',
+              description: 'Highlight a section with an editorial comment — hidden on the site',
+              schema: {
+                comment: fields.text({
+                  label: 'Comment',
+                  multiline: true,
+                  validation: { isRequired: true },
+                }),
+              },
+              ContentView: (props) =>
+                React.createElement(
+                  'div',
+                  {
+                    style: {
+                      margin: '0.5rem 0',
+                      padding: '0.75rem 1rem',
+                      background: '#FFF3E0',
+                      borderLeft: '4px solid #FF9800',
+                      borderRadius: '4px',
+                    },
+                  },
+                  React.createElement(
+                    'div',
+                    {
+                      style: {
+                        fontSize: '0.75rem',
+                        fontWeight: 'bold',
+                        color: '#E65100',
+                        marginBottom: '0.5rem',
+                      },
+                    },
+                    '💬 ',
+                    props.value.comment,
+                  ),
+                  props.children,
+                ),
             }),
           },
         }),
