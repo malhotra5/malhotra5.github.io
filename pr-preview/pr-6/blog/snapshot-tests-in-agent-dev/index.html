@@ -67,19 +67,23 @@ the same code <em>paths</em> covered by snapshots (not just the same files).</p>
 <p>After accounting for indirect coverage: 46% of TUI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered. 16 (46%) remain in adjacent-but-uncovered paths. Revised: 46% covered, 54% uncovered.</p>
 <h2 id="where-coverage-exists-it-works">Where Coverage Exists, It Works</h2>
 <p>The evidence for snapshot value is strongest in areas that have coverage.
-Three independent signals confirm this.</p>
+Four independent signals confirm this.</p>
 <h3 id="forcing-function-every-feature-must-acknowledge-visual-impact">Forcing function: every feature must acknowledge visual impact</h3>
 <figure> <img src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month."> <figcaption>Percentage of feature and bug-fix PRs that include snapshot changes, by month.</figcaption> </figure>
 <p>Feature PRs (green) climb to 100% — every TUI feature now passes through a “did you mean to change how this looks?” gate. Bug-fix PRs (red) plateau at ~35–50%. Since this graph is already filtered to TUI (visual) bugs, the gap isn’t about non-visual code — it’s about coverage depth. Of the 34 post-adoption TUI bug-fixes, 12 land on snapshot-covered paths and update the baseline to reflect the corrected behavior. The other 22 fix bugs on paths that have no snapshot tests at all (settings persistence, notifications, dropdown ordering), so there’s no baseline to update.</p>
-<h3 id="the-protection-loop">The protection loop</h3>
-<p>Once a baseline exists, any PR that changes the rendered output has to deal with it — either by fixing the code (the change was unintended) or by updating the baseline (the change was intentional and now explicitly acknowledged). Either outcome is valuable: one prevents regressions, the other creates a reviewable record of deliberate changes and protects the new behavior going forward.</p>
-<p>Across 27 multi-commit snapshot PRs, <strong>18 (67%)</strong> show code written first, then a later commit addressing broken snapshots.</p>
+<h3 id="the-ci-gate-every-visual-change-must-be-resolved">The CI gate: every visual change must be resolved</h3>
+<p>Once a baseline exists, any PR that changes the rendered output fails CI. The developer either fixes the code (the change was unintended) or updates the baseline (the change was intentional). Either way, the change is explicitly resolved before merge.</p>
+<p>Of 48 TUI PRs with snapshot CI data, <strong>14 (29%)</strong> had snapshot tests fail at least once during development. All 14 were resolved before merge:</p>
+<ul>
+<li><strong>11 updated baselines</strong> — intentional visual changes, explicitly acknowledged and now protected going forward</li>
+<li><strong>3 fixed their code</strong> — the snapshot caught an unintended visual change and the developer reverted it</li>
+</ul>
+<p>The 3 regressions caught were <a href="https://github.com/OpenHands/openhands-cli/pull/595">#595</a> (a TUI refactor that silently changed rendering), <a href="https://github.com/OpenHands/openhands-cli/pull/487">#487</a> (a feature that broke existing layout), and <a href="https://github.com/OpenHands/openhands-cli/pull/445">#445</a> (a settings card change that affected the visual output).</p>
+<p>The remaining 34 TUI PRs passed snapshot CI on every commit — their changes either didn’t touch snapshot-covered paths or were purely additive.</p>
+<h3 id="development-pattern-code-first-fix-snapshots-later">Development pattern: code first, fix snapshots later</h3>
+<p>The CI gate is only the final check. At the commit level, developers hit snapshot failures earlier — during local development — and iterate before pushing.</p>
 <figure> <img src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot-fix commits by PR type (later-in-PR commits only)."> <figcaption>Snapshot-fix commits by PR type (later-in-PR commits only).</figcaption> </figure>
-<p>Feature PRs generated the most snapshot-fix commits (24 across 9 PRs). Refactors generated 11 — code restructuring that wasn’t intended to change visual output was caught doing exactly that.</p>
-<blockquote>
-<p><strong>100% hit rate:</strong> 9 out of 9 multi-commit feature PRs touching snapshot-covered
-areas had to address snapshot tests after their initial code.</p>
-</blockquote>
+<p>Across 27 multi-commit snapshot PRs, <strong>18 (67%)</strong> show a pattern of code written first, then a later commit addressing broken snapshots — 58 snapshot-fix commits total. Feature PRs generated the most (24 across 9 PRs). Refactors generated 11 — code restructuring that wasn’t intended to change visual output was caught doing exactly that.</p>
 <h3 id="review-speed-2-faster-first-review">Review speed: 2× faster first review</h3>
 <p>PRs with snapshot changes get first review in <strong>0.9 hours</strong> vs
 <strong>1.7 hours</strong> for non-snapshot PRs, despite being 8× larger by file count.</p>
