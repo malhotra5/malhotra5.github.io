@@ -28,16 +28,15 @@ Originally on Substack ↗
 <li><strong>Determining intended behavior.</strong> Where is the source of truth for how the product should behave? If an agent details application behavior in a ticket description, is it accurate? The agent user needs to spend time determining whether the task was captured properly. Are the contributor and reviewer actually aligned on the intended behavior? Reviewers depend on the legitimacy of this, and so does the agent itself during future iterations of work. </li>
 <li><strong>Verifying implemented behavior.</strong> Once the code has been implemented, how can we easily verify that the application implements the intended behavior? Manually running and validating the application reveals new problems. It’s time-consuming and doesn’t scale well when agents are producing large volumes of code.</li>
 </ol>
-<h2 id="analyzing-whether-visualizating-application-behavior-improves-verification">Analyzing whether visualizating application behavior improves verification </h2>
-
-<figure> <img src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Agent-authored PRs over time showing consistent volume before and after snapshot adoption"> <figcaption>Agent-authored PR volume remains consistent before and after snapshot adoption in January 2026, establishing a stable baseline for comparison.</figcaption> </figure>
-
 <p>I hypothesize that if application behavior is visually observable, and any change in existing behavior are obvious, we make it <strong>easier to verify changes and safer to use agents in future development efforts.</strong></p>
-<p>To test this hypothesis, we <a href="#step-1-mining-github-api--json">mined</a> all 311 merged PRs from the <a href="https://github.com/OpenHands/openhands-cli">Openhands-CLI</a> repository (Sep 2025 – May 2026), <a href="#step-2-classification-llm--heuristics--csv">classified</a> each by type, authorship, and snapshot involvement, then analyzed <a href="#step-3-snapshot-specific-analysis-heuristic">commit-level history</a> to understand <em>how</em> snapshot tests are actually used. Snapshot tests were adopted in January 2026. For details on the snapshot testing approach itself, see the <a href="#appendix-snapshot-testing-in-the-openhands-cli">Appendix</a>.</p>
-<figure> <img src="/img/snapshot-analysis/0_summary_dashboard.png" alt="Summary dashboard showing 311 PRs, 68% agent-authored, 46 touching snapshots"> <figcaption>Repository contains 311 PRs of which 68% are agent-authored</figcaption> </figure>
+<h2 id="analyzing-whether-visualizing-application-behavior-improves-verification">Analyzing whether visualizing application behavior improves verification </h2>
+
+<p>To test this hypothesis, I <a href="#step-1-mining-github-api--json">mined</a> all 311 merged PRs from the <a href="https://github.com/OpenHands/openhands-cli">Openhands-CLI</a> repository (Sep 2025 – May 2026), <a href="#step-2-classification-llm--heuristics--csv">classified</a> each by type, authorship, and snapshot involvement, then analyzed <a href="#step-3-snapshot-specific-analysis-heuristic">commit-level history</a> to understand <em>how</em> snapshot tests are actually used. Snapshot tests were adopted in January 2026. For the anatomy of a snapshot test, see the <a href="#appendix-snapshot-testing-in-the-openhands-cli">Appendix</a>.</p>
+<figure> <img src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Agent-authored PRs over time showing relatively consistent volume before and after snapshot adoption"> <figcaption>Agent-authored PR volume remains relatively consistent before and after snapshot adoption in January 2026, establishing a stable baseline for comparison.</figcaption> </figure>
+<p>68% of all PRs are agent authored. The percentage of agent authored PRs are lower prior to snapshot, especially for the second month. Excluding this we see relatively consistent percentage of agent authored PRs before and after snapshot adoption, which gives us a reasonable baseline for investigating effects of snapshot tests. </p>
 <figure> <img src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Snapshot adoption timeline"> <figcaption>Before January 2026, zero PRs touched snapshot files. After adoption, 19–33% of monthly PRs include snapshot changes.</figcaption> </figure>
-<h2 id="where-do-bugs-live">Where Do Bugs Live?</h2>
-<p>Not all bugs are visual. Snapshot tests can only help with bugs that change rendered output. This distinction is critical: counting all bug-fixes against snapshot coverage inflates the apparent gap.</p>
+<h3 id="where-do-bugs-live">Where Do Bugs Live?</h3>
+<p>Not all bugs are visual. Snapshot tests helps with bugs that change rendered output. This distinction is critical: counting all bug-fixes against snapshot coverage inflates the apparent gap.</p>
 <figure> <img src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix domain breakdown"> <figcaption>The largest category is TUI widgets &amp; screens (38), where 12 involved snapshots (green). But 27 bugs (35%) are entirely non-visual: CLI core, config/state, API/auth. Snapshot tests are structurally irrelevant for these.</figcaption> </figure>
 <figure> <img src="/img/snapshot-analysis/deep_17_severity_by_domain.png" alt="Bug severity by domain"> <figcaption>Critical bugs skew non-visual (44%) — crashes, auth failures, dependency issues. UX regressions are predominantly visual (75%), the natural domain for snapshot tests.</figcaption> </figure>
 <blockquote>
@@ -47,16 +46,16 @@ CLI argument parsing, dependency pinning. The honest denominator is the 51 visua
 where 12 (24%) have snapshot involvement. That’s still a coverage gap — but it’s a different
 conversation than “85%.”</p>
 </blockquote>
-<h2 id="whats-actually-covered">What’s Actually Covered?</h2>
+<h3 id="whats-actually-covered">What’s Actually Covered?</h3>
 <p>Among the 51 visual (TUI) bug-fixes, what fraction hit paths that snapshot tests guard?
 We analyzed this at three levels of precision.</p>
-<h3 id="level-1-did-the-bug-fix-pr-touch-snapshots">Level 1: Did the bug-fix PR touch snapshots?</h3>
+<h4 id="level-1-did-the-bug-fix-pr-touch-snapshots">Level 1: Did the bug-fix PR touch snapshots?</h4>
 <figure> <img src="/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png" alt="Bug-fix coverage gap"> <figcaption>Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage.</figcaption> </figure>
-<h3 id="level-2-path-level-analysis">Level 2: Path-level analysis</h3>
+<h4 id="level-2-path-level-analysis">Level 2: Path-level analysis</h4>
 <p>Zooming into the 35 post-adoption TUI bug-fixes, we checked whether the bug-fix PR touched
 the same code <em>paths</em> covered by snapshots — not just the same files.</p>
 <figure> <img src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown"> <figcaption>34% hit directly covered paths (fix PR updates snapshots). 57% are in files with some snapshot coverage but the specific bug path was uncovered. 9% are fully uncovered.</figcaption> </figure>
-<h3 id="level-3-accounting-for-indirect-coverage">Level 3: Accounting for indirect coverage</h3>
+<h4 id="level-3-accounting-for-indirect-coverage">Level 3: Accounting for indirect coverage</h4>
 <p>Snapshot tests don’t just test rendering — they implicitly test the full stack behind what’s
 rendered. A test that renders a conversation after switching implicitly exercises persistence.
 We <a href="#step-4-indirect-coverage-analysis-manual--scripted">read every snapshot test file</a> (20 test classes + conftest) and asked:
