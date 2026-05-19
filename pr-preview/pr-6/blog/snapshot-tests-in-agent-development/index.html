@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An empirical analysis of 311 pull requests in the openhands-cli repository, where 68% of PRs are authored by AI agents. We examine whether snapshot tests actually catch bugs, guard behavior, and improve the development process."><meta name="author" content="Rohit Malhotra"><link rel="canonical" href="https://malhotra5.github.io/pr-preview/pr-6/blog/snapshot-tests-in-agent-development/"><link rel="icon" type="image/svg+xml" href="/pr-preview/pr-6/favicon.svg"><!-- Open Graph / Social --><meta property="og:type" content="website"><meta property="og:url" content="https://malhotra5.github.io/pr-preview/pr-6/blog/snapshot-tests-in-agent-development/"><meta property="og:title" content="Do Snapshot Tests Help in Agent-Driven Development? — Rohit Malhotra"><meta property="og:description" content="An empirical analysis of 311 pull requests in the openhands-cli repository, where 68% of PRs are authored by AI agents. We examine whether snapshot tests actually catch bugs, guard behavior, and improve the development process."><meta property="og:image" content="https://malhotra5.github.io/pr-preview/pr-6/img/snapshot-analysis/deep_10_bug_rate_with_context.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Do Snapshot Tests Help in Agent-Driven Development? — Rohit Malhotra"><meta name="twitter:description" content="An empirical analysis of 311 pull requests in the openhands-cli repository, where 68% of PRs are authored by AI agents. We examine whether snapshot tests actually catch bugs, guard behavior, and improve the development process."><meta name="twitter:image" content="https://malhotra5.github.io/pr-preview/pr-6/img/snapshot-analysis/deep_10_bug_rate_with_context.png"><link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet"><!-- Google Tag Manager --><script>
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An empirical analysis of 311 pull requests in the openhands-cli repository, where 68% of PRs are authored by AI agents. We examine whether snapshot tests actually catch bugs, guard behavior, and improve the development process."><meta name="author" content="Rohit Malhotra"><link rel="canonical" href="https://malhotra5.github.io/pr-preview/pr-6/blog/snapshot-tests-in-agent-development/"><link rel="icon" type="image/svg+xml" href="/pr-preview/pr-6/favicon.svg"><!-- Open Graph / Social --><meta property="og:type" content="website"><meta property="og:url" content="https://malhotra5.github.io/pr-preview/pr-6/blog/snapshot-tests-in-agent-development/"><meta property="og:title" content="Do Snapshot Tests Help in Agent-Driven Development? — Rohit Malhotra"><meta property="og:description" content="An empirical analysis of 311 pull requests in the openhands-cli repository, where 68% of PRs are authored by AI agents. We examine whether snapshot tests actually catch bugs, guard behavior, and improve the development process."><meta property="og:image" content="https://malhotra5.github.io/img/snapshot-analysis/deep_10_bug_rate_with_context.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Do Snapshot Tests Help in Agent-Driven Development? — Rohit Malhotra"><meta name="twitter:description" content="An empirical analysis of 311 pull requests in the openhands-cli repository, where 68% of PRs are authored by AI agents. We examine whether snapshot tests actually catch bugs, guard behavior, and improve the development process."><meta name="twitter:image" content="https://malhotra5.github.io/img/snapshot-analysis/deep_10_bug_rate_with_context.png"><link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet"><!-- Google Tag Manager --><script>
       (function (w, d, s, l, i) {
         w[l] = w[l] || [];
         w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
@@ -9,195 +9,269 @@
         j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
         f.parentNode.insertBefore(j, f);
       })(window, document, 'script', 'dataLayer', 'GTM-PG4NJSDL');
-    </script><title>Do Snapshot Tests Help in Agent-Driven Development? — Rohit Malhotra</title><link rel="stylesheet" href="/pr-preview/pr-6/_astro/blog.BKAW3m3H.css">
+    </script><title>Do Snapshot Tests Help in Agent-Driven Development? — Rohit Malhotra</title><link rel="stylesheet" href="/pr-preview/pr-6/_astro/keystatic-astro-page.BKAW3m3H.css">
 <style>.citation-details[data-astro-cid-kt4wdg4p] summary[data-astro-cid-kt4wdg4p]{list-style:none}.citation-details[data-astro-cid-kt4wdg4p] summary[data-astro-cid-kt4wdg4p]::-webkit-details-marker{display:none}.citation-details[data-astro-cid-kt4wdg4p] summary[data-astro-cid-kt4wdg4p] h2[data-astro-cid-kt4wdg4p]{margin:0!important}.citation-details[data-astro-cid-kt4wdg4p][open] .citation-chevron[data-astro-cid-kt4wdg4p]{transform:rotate(180deg)}.blog-content h2{margin-top:2.5rem;margin-bottom:1rem;font-size:1.5rem;line-height:2rem;font-weight:700;--tw-text-opacity: 1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.blog-content h3{margin-top:2rem;margin-bottom:.75rem;font-size:1.25rem;line-height:1.75rem;font-weight:600;--tw-text-opacity: 1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.blog-content p{margin-bottom:1.25rem;font-size:1rem;line-height:1.5rem;line-height:1.625;--tw-text-opacity: 1;color:rgb(97 97 97 / var(--tw-text-opacity, 1))}.blog-content strong{font-weight:600;--tw-text-opacity: 1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.blog-content a{border-bottom-width:1px;border-style:dotted;border-color:#04c2c966;--tw-text-opacity: 1;color:rgb(4 194 201 / var(--tw-text-opacity, 1));transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.blog-content a:hover{--tw-border-opacity: 1;border-color:rgb(4 194 201 / var(--tw-border-opacity, 1))}.blog-content ul,.blog-content ol{margin-bottom:1.25rem;padding-left:1.5rem;font-size:1rem;line-height:1.5rem;line-height:1.625;--tw-text-opacity: 1;color:rgb(97 97 97 / var(--tw-text-opacity, 1))}.blog-content ul{list-style-type:disc}.blog-content ol{list-style-type:decimal}.blog-content li{margin-bottom:.5rem}.blog-content blockquote{margin-top:1.5rem;margin-bottom:1.5rem;border-left-width:4px;border-color:#04c2c94d;padding-left:1rem;font-style:italic;--tw-text-opacity: 1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.blog-content figure{margin-top:2rem;margin-bottom:2rem}.blog-content img{width:100%;border-radius:.5rem}.blog-content figcaption{margin-top:.75rem;text-align:center;font-size:.875rem;line-height:1.25rem;font-style:italic;--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.blog-content code{border-radius:.25rem;--tw-bg-opacity: 1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1));padding:.125rem .375rem;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-size:.875rem;line-height:1.25rem;--tw-text-opacity: 1;color:rgb(227 27 109 / var(--tw-text-opacity, 1))}.blog-content pre{margin-top:1.5rem;margin-bottom:1.5rem;overflow-x:auto;border-radius:.5rem;padding:1.25rem;font-size:.875rem;line-height:1.25rem}.blog-content pre code{border-radius:0;background-color:transparent;padding:0;color:inherit}.blog-content h4{margin-top:1.5rem;margin-bottom:.5rem;font-size:1.125rem;line-height:1.75rem;font-weight:600;--tw-text-opacity: 1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.blog-content hr{margin-top:2rem;margin-bottom:2rem;--tw-border-opacity: 1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}
 </style>
-<link rel="stylesheet" href="/pr-preview/pr-6/_astro/proof-in-production.BXBl-c_5.css"></head> <body> <!-- Google Tag Manager (noscript) --> <noscript> <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PG4NJSDL" height="0" width="0" style="display:none;visibility:hidden"></iframe> </noscript> <nav id="mainNav" class="fixed top-0 left-0 w-full z-40 transition-all duration-300" data-transparent="false"> <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16"> <a href="/pr-preview/pr-6/" id="nav-brand" class="text-lg font-bold tracking-wide transition-colors duration-300">
+<link rel="stylesheet" href="/pr-preview/pr-6/_astro/_slug_.BXBl-c_5.css"></head> <body> <!-- Google Tag Manager (noscript) --> <noscript> <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PG4NJSDL" height="0" width="0" style="display:none;visibility:hidden"></iframe> </noscript> <nav id="mainNav" class="fixed top-0 left-0 w-full z-40 transition-all duration-300" data-transparent="false"> <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16"> <a href="/pr-preview/pr-6/" id="nav-brand" class="text-lg font-bold tracking-wide transition-colors duration-300">
 Rohit Malhotra
 </a> <!-- Desktop nav --> <ul class="hidden md:flex items-center gap-8"> <li> <a href="/pr-preview/pr-6/#about" class="nav-link text-sm font-medium uppercase tracking-wider transition-colors duration-300"> About </a> </li><li> <a href="/pr-preview/pr-6/ventures" class="nav-link text-sm font-medium uppercase tracking-wider transition-colors duration-300"> Ventures </a> </li><li> <a href="/pr-preview/pr-6/research" class="nav-link text-sm font-medium uppercase tracking-wider transition-colors duration-300"> Research </a> </li><li> <a href="/pr-preview/pr-6/blog" class="nav-link text-sm font-medium uppercase tracking-wider transition-colors duration-300 nav-link--active"> Blog </a> </li><li> <a href="/pr-preview/pr-6/projects" class="nav-link text-sm font-medium uppercase tracking-wider transition-colors duration-300"> Projects </a> </li><li> <a href="/pr-preview/pr-6/hobbies" class="nav-link text-sm font-medium uppercase tracking-wider transition-colors duration-300"> Hobbies </a> </li> </ul> <!-- Mobile hamburger --> <button id="mobile-menu-btn" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Toggle navigation"> <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300"></span> <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300"></span> <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300"></span> </button> </div> <!-- Mobile sidenav --> <div id="mobile-sidenav" class="fixed inset-0 bg-dark z-50 transform translate-x-full transition-transform duration-500 md:hidden"> <div class="flex justify-end p-6"> <button id="close-sidenav" class="text-gray-400 hover:text-white text-lg">
 Close &times;
 </button> </div> <ul class="flex flex-col gap-4 px-8"> <li> <a href="/pr-preview/pr-6/#about" class="text-gray-400 hover:text-white text-base transition-colors mobile-nav-link"> About </a> </li><li> <a href="/pr-preview/pr-6/ventures" class="text-gray-400 hover:text-white text-base transition-colors mobile-nav-link"> Ventures </a> </li><li> <a href="/pr-preview/pr-6/research" class="text-gray-400 hover:text-white text-base transition-colors mobile-nav-link"> Research </a> </li><li> <a href="/pr-preview/pr-6/blog" class="text-gray-400 hover:text-white text-base transition-colors mobile-nav-link"> Blog </a> </li><li> <a href="/pr-preview/pr-6/projects" class="text-gray-400 hover:text-white text-base transition-colors mobile-nav-link"> Projects </a> </li><li> <a href="/pr-preview/pr-6/hobbies" class="text-gray-400 hover:text-white text-base transition-colors mobile-nav-link"> Hobbies </a> </li> </ul> </div> </nav> <script type="module">const s=document.getElementById("mainNav"),c=document.getElementById("nav-brand"),i=document.querySelectorAll(".nav-link"),r=document.querySelectorAll(".hamburger-bar"),d=s.dataset.transparent==="true";function l(n){const e=!d||n;e?(s.classList.remove("bg-transparent"),s.classList.add("bg-white/95","backdrop-blur-sm","shadow-sm")):(s.classList.add("bg-transparent"),s.classList.remove("bg-white/95","backdrop-blur-sm","shadow-sm")),c.classList.toggle("text-white",!e),c.classList.toggle("hover:text-accent",!0),c.classList.toggle("text-dark",e),i.forEach(t=>{t.classList.contains("nav-link--active")?(t.classList.add("text-accent"),t.classList.remove("text-white/80","text-gray-600")):e?(t.classList.remove("text-white/80","hover:text-white"),t.classList.add("text-gray-600","hover:text-dark")):(t.classList.add("text-white/80","hover:text-white"),t.classList.remove("text-gray-600","hover:text-dark"))}),r.forEach(t=>{t.classList.toggle("bg-white",!e),t.classList.toggle("bg-dark",e)})}l(window.scrollY>50);window.addEventListener("scroll",()=>l(window.scrollY>50),{passive:!0});const v=document.getElementById("mobile-menu-btn"),a=document.getElementById("mobile-sidenav"),m=document.getElementById("close-sidenav"),g=document.querySelectorAll(".mobile-nav-link");function L(){a?.classList.remove("translate-x-full"),a?.classList.add("translate-x-0")}function o(){a?.classList.remove("translate-x-0"),a?.classList.add("translate-x-full")}v?.addEventListener("click",L);m?.addEventListener("click",o);g.forEach(n=>n.addEventListener("click",o));</script> <main>  <article class="pt-32 pb-16 bg-white min-h-screen"> <div class="max-w-3xl mx-auto px-6"> <!-- Back link --> <a href="/pr-preview/pr-6/blog" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-accent transition-colors mb-8">
 ← Back to Blog
-</a> <!-- Header --> <header class="mb-12"> <h1 class="text-2xl md:text-3xl font-bold text-gray-800 leading-tight mb-4"> Do Snapshot Tests Help in Agent-Driven Development? </h1> <p class="text-lg text-gray-text leading-relaxed mb-4"> An empirical analysis of 311 pull requests in the openhands-cli repository, where 68% of PRs are authored by AI agents. We examine whether snapshot tests actually catch bugs, guard behavior, and improve the development process. </p> <div class="flex flex-wrap items-center gap-3 text-sm text-gray-400"> <time>May 18, 2026</time>  <span>·</span> <span>12 min read</span>   </div> <div class="flex flex-wrap gap-2 mt-4"> <span class="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium"> AI Agents </span><span class="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium"> Testing </span><span class="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium"> Snapshot Tests </span><span class="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium"> Empirical Analysis </span> </div> <div class="h-px bg-gray-200 mt-8"></div> </header> <!-- Content --> <div class="blog-content">  <p>
-Just in the last couple years, agents are being used liberally in all parts of
-    the software development cycle. In addition to code, surrounding artifacts such as ticket
-    descriptions, PR descriptions, documentation, Slack comments are also generated with agents.
-    Even though we seemingly save much time doing this, it is lost during review
-    and verification. It's unavoidable, as code agents can break things, and
-    we need a way to make agents safe to use for everyone.
-</p> <p>
---insert image on time to merge PRs not changing--
-</p> <h2>Code changes are unsafe unless they can be easily reviewed, verfied, and maintained.</h2> <p>I hypothesized there are two problems with respect to verification:</p> <ol> <li> <strong>Determining intended behavior.</strong> Where is the source of truth for how the
-      product should behave? If an agent was used to describe the behavior and write the ticket
-      description, was this captured accurately?
-</li> <li> <strong>Verifying implemented behavior.</strong> Once the code has been implemented, how
-      can we easily verify that the application implements the intended behavior?
-</li> </ol> <ul> <li><strong>Agent user</strong>: must determine if the agent captured the task correctly</li> <li><strong>Reviewer</strong>: must infer the expected behavior from the descriptions</li> <li><strong>Agent itself</strong>: relies on those descriptions during future iterations of work and reviews</li> </ul> <p>
-In many cases, we implicitly assume that the description is correct simply because it looks
-    structured and detailed. But the clarity is often superficial. Are the contributor and reviewer
-    actually aligned on the intended behavior?
-</p> <p>
-Even when the application code and tests appear reasonable, manually running and validating
-    the application reveals new problems. It's time-consuming and doesn't scale well when agents
-    are producing large volumes of code.
-</p> <h2>Hypothesis</h2> <p>
-What if we could <em>see</em> the behavior of the application directly, instead of inferring
-    it from code or descriptions? If the behavior is visually observable, and any change to it is
-    obvious, whether intended or unintended, review and verification become easier and thereby 
-    we ship less buggy products.
-</p> <p> <strong>Snapshot tests could make it easier to review changes for all parties involved,
-    and make it safe to use agents in future iterations.</strong> </p> <p>
-To test this hypothesis, we <a href="#method-mining">mined</a> all 311 merged PRs from the
-<a href="https://github.com/OpenHands/openhands-cli" target="_blank" rel="noopener noreferrer">Openhands-CLI</a>
+</a> <!-- Header --> <header class="mb-12"> <h1 class="text-2xl md:text-3xl font-bold text-gray-800 leading-tight mb-4"> Do Snapshot Tests Help in Agent-Driven Development? </h1> <p class="text-lg text-gray-text leading-relaxed mb-4"> An empirical analysis of 311 pull requests in the openhands-cli repository, where 68% of PRs are authored by AI agents. We examine whether snapshot tests actually catch bugs, guard behavior, and improve the development process. </p> <div class="flex flex-wrap items-center gap-3 text-sm text-gray-400"> <time>May 18, 2026</time>  <span>·</span> <span>12 min read</span>   </div> <div class="flex flex-wrap gap-2 mt-4"> <span class="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium"> AI Agents </span><span class="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium"> Testing </span><span class="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium"> Snapshot Tests </span><span class="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium"> Empirical Analysis </span> </div> <div class="h-px bg-gray-200 mt-8"></div> </header> <!-- Content --> <div class="blog-content">  <p>Just in the last couple years, agents are being used liberally in all parts of
+the software development cycle. In addition to code, surrounding artifacts such as ticket
+descriptions, PR descriptions, documentation, Slack comments are also generated with agents.
+Even though we seemingly save much time doing this, it is lost during review
+and verification. It’s unavoidable, as code agents can break things, and
+we need a way to make agents safe to use for everyone.</p>
+<p>—insert image on time to merge PRs not changing—</p>
+<h2 id="code-changes-are-unsafe-unless-they-can-be-easily-reviewed-verfied-and-maintained">Code changes are unsafe unless they can be easily reviewed, verfied, and maintained.</h2>
+<p>I hypothesized there are two problems with respect to verification:</p>
+<ol>
+<li><strong>Determining intended behavior.</strong> Where is the source of truth for how the product should behave? If an agent was used to describe the behavior and write the ticket description, was this captured accurately?</li>
+<li><strong>Verifying implemented behavior.</strong> Once the code has been implemented, how can we easily verify that the application implements the intended behavior?</li>
+</ol>
+<ul>
+<li><strong>Agent user</strong>: must determine if the agent captured the task correctly</li>
+<li><strong>Reviewer</strong>: must infer the expected behavior from the descriptions</li>
+<li><strong>Agent itself</strong>: relies on those descriptions during future iterations of work and reviews</li>
+</ul>
+<p>In many cases, we implicitly assume that the description is correct simply because it looks
+structured and detailed. But the clarity is often superficial. Are the contributor and reviewer
+actually aligned on the intended behavior?</p>
+<p>Even when the application code and tests appear reasonable, manually running and validating
+the application reveals new problems. It’s time-consuming and doesn’t scale well when agents
+are producing large volumes of code.</p>
+<h2 id="hypothesis">Hypothesis</h2>
+<p>What if we could <em>see</em> the behavior of the application directly, instead of inferring
+it from code or descriptions? If the behavior is visually observable, and any change to it is
+obvious, whether intended or unintended, review and verification become easier and thereby
+we ship less buggy products.</p>
+<p><strong>Snapshot tests could make it easier to review changes for all parties involved,
+and make it safe to use agents in future iterations.</strong></p>
+<p>To test this hypothesis, we <a href="#method-mining">mined</a> all 311 merged PRs from the
+<a href="https://github.com/OpenHands/openhands-cli">Openhands-CLI</a>
 repository (Sep 2025 – May 2026), <a href="#method-classification">classified</a> each by
-    type, authorship, and snapshot involvement, then analyzed
+type, authorship, and snapshot involvement, then analyzed
 <a href="#method-snapshot">commit-level history</a> to understand <em>how</em> snapshot tests
-    are actually used. Snapshot tests were adopted in January 2026. For details on the snapshot
-    testing approach itself, see the <a href="#appendix">Appendix</a>.
-</p> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/0_summary_dashboard.png" alt="Summary dashboard showing 311 PRs, 68% agent-authored, 46 touching snapshots"> <figcaption>Repository contains 311 PRs of which 68% are agent-authored</figcaption> </figure> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Snapshot adoption timeline"> <figcaption>Before January 2026, zero PRs touched snapshot files. After adoption, 19–33% of monthly PRs include snapshot changes.</figcaption> </figure> <h2>Where Do Bugs Live?</h2> <p>
-Not all bugs are visual — and snapshot tests can only help with bugs that change rendered
-    output. This distinction is critical: counting all bug-fixes against snapshot coverage
-    inflates the apparent gap.
-</p> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix domain breakdown"> <figcaption>The largest category is TUI widgets &amp; screens (38), where 12 involved snapshots (green). But 27 bugs (35%) are entirely non-visual: CLI core, config/state, API/auth. Snapshot tests are structurally irrelevant for these.</figcaption> </figure> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/deep_17_severity_by_domain.png" alt="Bug severity by domain"> <figcaption>Critical bugs skew non-visual (44%) — crashes, auth failures, dependency issues. UX regressions are predominantly visual (75%), the natural domain for snapshot tests.</figcaption> </figure> <blockquote> <strong>Framing matters.</strong> "85% of bug-fix PRs ship without touching snapshots" sounds
-    damning, but 35% of those bugs are in code that snapshots <em>can't</em> cover — API auth,
-    CLI argument parsing, dependency pinning. The honest denominator is the 51 visual bug-fixes,
-    where 12 (24%) have snapshot involvement. That's still a coverage gap — but it's a different
-    conversation than "85%."
-</blockquote> <h2>What's Actually Covered?</h2> <p>
-Among the 51 visual (TUI) bug-fixes, what fraction hit paths that snapshot tests guard?
-    We analyzed this at three levels of precision.
-</p> <h3>Level 1: Did the bug-fix PR touch snapshots?</h3> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png" alt="Bug-fix coverage gap"> <figcaption>Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage.</figcaption> </figure> <h3>Level 2: Path-level analysis</h3> <p>
-Zooming into the 35 post-adoption TUI bug-fixes, we checked whether the bug-fix PR touched
-    the same code <em>paths</em> covered by snapshots — not just the same files.
-</p> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown"> <figcaption>34% hit directly covered paths (fix PR updates snapshots). 57% are in files with <em>some</em> snapshot coverage but the specific bug path was uncovered. 9% are fully uncovered.</figcaption> </figure> <h3>Level 3: Accounting for indirect coverage</h3> <p>
-Snapshot tests don't just test rendering — they implicitly test the full stack behind what's
-    rendered. A test that renders a conversation after switching implicitly exercises persistence.
-    We <a href="#method-indirect">read every snapshot test file</a> (20 test classes + conftest) and asked:
-<em>would the snapshot output actually change if this bug existed?</em> </p> <p>Strict criteria for "indirectly covered":</p> <ol> <li>A snapshot test exercises a flow through this code path</li> <li>The bug would produce <strong>visibly different</strong> output</li> <li>The test's input data would trigger the bug</li> </ol> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Reclassified path-level coverage"> <figcaption>After accounting for indirect coverage: 46% of TUI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered. 16 (46%) remain in adjacent-but-uncovered paths. <strong>Revised: 46% covered, 54% uncovered.</strong></figcaption> </figure> <h2>Where Coverage Exists, It Works</h2> <p>
-The evidence for snapshot value is strongest in areas that have coverage.
-    Three independent signals confirm this.
-</p> <h3>Forcing function: every feature must acknowledge visual impact</h3> <p>
-After adoption, <strong>46% of TUI-changing feature PRs</strong> include snapshot updates —
-    up from 0%. Nearly every visual change passes through a "did you mean to change how this
-    looks?" gate.
-</p> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/deep_4_forcing_function.png" alt="Forcing function over time"> <figcaption>Feature PRs (green) climb to 100% snapshot involvement. Bug-fix PRs (red) follow at ~35–50% — lower because many bugs are non-visual or on uncovered paths.</figcaption> </figure> <h3>Development guard: 58 "code first, fix snapshots later" commits</h3> <p>
-Of 27 multi-commit snapshot PRs, <strong>18 (67%)</strong> show code written first, then a
-    later commit fixing broken snapshots — evidence that existing tests caught unintended
-    visual changes during development.
-</p> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot guarding behavior"> <figcaption>Feature PRs generated the most snapshot-fix commits (24, across 9 PRs). Refactors generated 11 — code restructuring was caught changing visual output.</figcaption> </figure> <blockquote> <strong>100% hit rate:</strong> 9 out of 9 multi-commit feature PRs touching snapshot-covered
-    areas had to fix snapshot tests AFTER their initial code. Every single feature that touched
-    covered areas had existing behavior guarded.
-</blockquote> <h3>Review speed: 2× faster first review</h3> <p>
-PRs with snapshot changes get first review in <strong>0.9 hours</strong> vs
-<strong>1.7 hours</strong> for non-snapshot PRs, despite being 8× larger by file count.
-</p> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/deep_6_review_speed.png" alt="Review speed comparison"> <figcaption>Snapshot PRs get first review ~2× faster.</figcaption> </figure> <p> <strong>Caveat:</strong> This is correlational, not causal. Snapshot PRs may be faster to review
-    because SVG diffs provide instant visual understanding — or because they're more routine,
-    involve the same reviewers, or have different complexity profiles. The data doesn't distinguish
-    these explanations.
-</p> <h2>The Bug Rate and Its Limits</h2> <p>
-Did snapshot tests reduce the bug rate? The raw timeline tells a complicated story.
-</p> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/5_bug_rate_timeline.png" alt="Critical vs UX regression bug rate over time"> <figcaption>Critical bugs (red) drop to zero by March 2026. UX regressions (orange) spike
-    in the adoption month, settle through Feb–Apr, then spike again in May. At face value,
-    UX regressions got worse.</figcaption> </figure> <p>
-But the raw per-month rate (% of agent PRs that are UX bugs) is misleading — monthly
-    sample sizes range from 5 to 63, and the May spike comes from just 3 bugs in a
-    low-PR month. The right normalization: UX bugs per cumulative TUI feature shipped.
-    This controls for codebase growth and sample size.
-</p> <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/deep_10_bug_rate_with_context.png" alt="Normalized UX regression rate"> <figcaption>Normalized view: UX bugs per cumulative TUI feature. Pre-adoption peaked at 0.45.
-    The adoption month (Jan 2026) started at 0.44 — same level, coinciding with a huge feature
-    push. The settled post-adoption rate (Feb–Apr) drops to 0.02–0.10, which is 4–20× lower.
-    The May spike barely registers when normalized against the growing feature base.</figcaption> </figure> <p>
-Still, the overall TUI bug-to-feature ratio went from <strong>0.60 to 0.95</strong> —
-    essentially flat. Snapshot tests didn't reduce the total bug count because 54% of visual
-    bugs are on uncovered paths. You can't prevent bugs in areas you don't cover.
-</p> <h2>Actionable Gaps</h2> <p>
-The data points to specific, fixable coverage gaps — not a blanket "write more tests" recommendation.
-</p> <h3>1. Settings persistence (7 bugs, 1 test would cover)</h3> <p>
-7 of 16 adjacent-but-uncovered bugs are in <code>settings_screen.py</code> and related modules.
-    The repo tests the <em>first-time setup flow</em> (no saved config) and the
+are actually used. Snapshot tests were adopted in January 2026. For details on the snapshot
+testing approach itself, see the <a href="#appendix">Appendix</a>.</p>
+<figure> <img src="/img/snapshot-analysis/0_summary_dashboard.png" alt="Summary dashboard showing 311 PRs, 68% agent-authored, 46 touching snapshots"> <figcaption>Repository contains 311 PRs of which 68% are agent-authored</figcaption> </figure>
+<figure> <img src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Snapshot adoption timeline"> <figcaption>Before January 2026, zero PRs touched snapshot files. After adoption, 19–33% of monthly PRs include snapshot changes.</figcaption> </figure>
+<h2 id="where-do-bugs-live">Where Do Bugs Live?</h2>
+<p>Not all bugs are visual — and snapshot tests can only help with bugs that change rendered
+output. This distinction is critical: counting all bug-fixes against snapshot coverage
+inflates the apparent gap.</p>
+<figure> <img src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix domain breakdown"> <figcaption>The largest category is TUI widgets &amp; screens (38), where 12 involved snapshots (green). But 27 bugs (35%) are entirely non-visual: CLI core, config/state, API/auth. Snapshot tests are structurally irrelevant for these.</figcaption> </figure>
+<figure> <img src="/img/snapshot-analysis/deep_17_severity_by_domain.png" alt="Bug severity by domain"> <figcaption>Critical bugs skew non-visual (44%) — crashes, auth failures, dependency issues. UX regressions are predominantly visual (75%), the natural domain for snapshot tests.</figcaption> </figure>
+<blockquote>
+<p><strong>Framing matters.</strong> “85% of bug-fix PRs ship without touching snapshots” sounds
+damning, but 35% of those bugs are in code that snapshots <em>can’t</em> cover — API auth,
+CLI argument parsing, dependency pinning. The honest denominator is the 51 visual bug-fixes,
+where 12 (24%) have snapshot involvement. That’s still a coverage gap — but it’s a different
+conversation than “85%.”</p>
+</blockquote>
+<h2 id="whats-actually-covered">What’s Actually Covered?</h2>
+<p>Among the 51 visual (TUI) bug-fixes, what fraction hit paths that snapshot tests guard?
+We analyzed this at three levels of precision.</p>
+<h3 id="level-1-did-the-bug-fix-pr-touch-snapshots">Level 1: Did the bug-fix PR touch snapshots?</h3>
+<figure> <img src="/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png" alt="Bug-fix coverage gap"> <figcaption>Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage.</figcaption> </figure>
+<h3 id="level-2-path-level-analysis">Level 2: Path-level analysis</h3>
+<p>Zooming into the 35 post-adoption TUI bug-fixes, we checked whether the bug-fix PR touched
+the same code <em>paths</em> covered by snapshots — not just the same files.</p>
+<figure> <img src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown"> <figcaption>34% hit directly covered paths (fix PR updates snapshots). 57% are in files with some snapshot coverage but the specific bug path was uncovered. 9% are fully uncovered.</figcaption> </figure>
+<h3 id="level-3-accounting-for-indirect-coverage">Level 3: Accounting for indirect coverage</h3>
+<p>Snapshot tests don’t just test rendering — they implicitly test the full stack behind what’s
+rendered. A test that renders a conversation after switching implicitly exercises persistence.
+We <a href="#method-indirect">read every snapshot test file</a> (20 test classes + conftest) and asked:
+<em>would the snapshot output actually change if this bug existed?</em></p>
+<p>Strict criteria for “indirectly covered”:</p>
+<ol>
+<li>A snapshot test exercises a flow through this code path</li>
+<li>The bug would produce <strong>visibly different</strong> output</li>
+<li>The test’s input data would trigger the bug</li>
+</ol>
+<figure> <img src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Reclassified path-level coverage"> <figcaption>After accounting for indirect coverage: 46% of TUI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered. 16 (46%) remain in adjacent-but-uncovered paths. Revised: 46% covered, 54% uncovered.</figcaption> </figure>
+<h2 id="where-coverage-exists-it-works">Where Coverage Exists, It Works</h2>
+<p>The evidence for snapshot value is strongest in areas that have coverage.
+Three independent signals confirm this.</p>
+<h3 id="forcing-function-every-feature-must-acknowledge-visual-impact">Forcing function: every feature must acknowledge visual impact</h3>
+<p>After adoption, <strong>46% of TUI-changing feature PRs</strong> include snapshot updates —
+up from 0%. Nearly every visual change passes through a “did you mean to change how this
+looks?” gate.</p>
+<figure> <img src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Forcing function over time"> <figcaption>Feature PRs (green) climb to 100% snapshot involvement. Bug-fix PRs (red) follow at ~35–50% — lower because many bugs are non-visual or on uncovered paths.</figcaption> </figure>
+<h3 id="development-guard-58-code-first-fix-snapshots-later-commits">Development guard: 58 “code first, fix snapshots later” commits</h3>
+<p>Of 27 multi-commit snapshot PRs, <strong>18 (67%)</strong> show code written first, then a
+later commit fixing broken snapshots — evidence that existing tests caught unintended
+visual changes during development.</p>
+<figure> <img src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot guarding behavior"> <figcaption>Feature PRs generated the most snapshot-fix commits (24, across 9 PRs). Refactors generated 11 — code restructuring was caught changing visual output.</figcaption> </figure>
+<blockquote>
+<p><strong>100% hit rate:</strong> 9 out of 9 multi-commit feature PRs touching snapshot-covered
+areas had to fix snapshot tests AFTER their initial code. Every single feature that touched
+covered areas had existing behavior guarded.</p>
+</blockquote>
+<h3 id="review-speed-2-faster-first-review">Review speed: 2× faster first review</h3>
+<p>PRs with snapshot changes get first review in <strong>0.9 hours</strong> vs
+<strong>1.7 hours</strong> for non-snapshot PRs, despite being 8× larger by file count.</p>
+<figure> <img src="/img/snapshot-analysis/deep_6_review_speed.png" alt="Review speed comparison"> <figcaption>Snapshot PRs get first review ~2× faster.</figcaption> </figure>
+<p><strong>Caveat:</strong> This is correlational, not causal. Snapshot PRs may be faster to review
+because SVG diffs provide instant visual understanding — or because they’re more routine,
+involve the same reviewers, or have different complexity profiles. The data doesn’t distinguish
+these explanations.</p>
+<h2 id="the-bug-rate-and-its-limits">The Bug Rate and Its Limits</h2>
+<p>Did snapshot tests reduce the bug rate? The raw timeline tells a complicated story.</p>
+<figure> <img src="/img/snapshot-analysis/5_bug_rate_timeline.png" alt="Critical vs UX regression bug rate over time"> <figcaption>Critical bugs (red) drop to zero by March 2026. UX regressions (orange) spike in the adoption month, settle through Feb–Apr, then spike again in May. At face value, UX regressions got worse.</figcaption> </figure>
+<p>But the raw per-month rate (% of agent PRs that are UX bugs) is misleading — monthly
+sample sizes range from 5 to 63, and the May spike comes from just 3 bugs in a
+low-PR month. The right normalization: UX bugs per cumulative TUI feature shipped.
+This controls for codebase growth and sample size.</p>
+<figure> <img src="/img/snapshot-analysis/deep_10_bug_rate_with_context.png" alt="Normalized UX regression rate"> <figcaption>Normalized view: UX bugs per cumulative TUI feature. Pre-adoption peaked at 0.45. The adoption month (Jan 2026) started at 0.44 — same level, coinciding with a huge feature push. The settled post-adoption rate (Feb–Apr) drops to 0.02–0.10, which is 4–20× lower. The May spike barely registers when normalized against the growing feature base.</figcaption> </figure>
+<p>Still, the overall TUI bug-to-feature ratio went from <strong>0.60 to 0.95</strong> —
+essentially flat. Snapshot tests didn’t reduce the total bug count because 54% of visual
+bugs are on uncovered paths. You can’t prevent bugs in areas you don’t cover.</p>
+<h2 id="actionable-gaps">Actionable Gaps</h2>
+<p>The data points to specific, fixable coverage gaps — not a blanket “write more tests” recommendation.</p>
+<h3 id="1-settings-persistence-7-bugs-1-test-would-cover">1. Settings persistence (7 bugs, 1 test would cover)</h3>
+<p>7 of 16 adjacent-but-uncovered bugs are in <code>settings_screen.py</code> and related modules.
+The repo tests the <em>first-time setup flow</em> (no saved config) and the
 <em>critic settings tab</em>, but no test saves settings, closes the modal, and reopens to
-    verify persistence. A single "save → reload → snapshot" test would indirectly cover model
-    name persistence, condensation defaults, dropdown ordering, and clear behavior.
-</p> <h3>2. Missing event types in test trajectories (4 bugs)</h3> <p>
-The e2e snapshot tests use recorded LLM trajectories for deterministic replay. But the current
-    trajectories don't include <code>ConversationErrorEvent</code>, messages with markup
-    characters, or critic-enabled <code>MessageEvent</code>. Adding 2–3 trajectories with these
-    event types would extend coverage to code paths already exercised by the test framework but
-    never triggered by the test data.
-</p> <h3>3. Notification rendering (2 bugs)</h3> <p>
-No snapshot test captures notification display (toast-style overlays). Settings change
-    notifications and conversation notifications both had bugs that went uncaught.
-</p> <h3>4. Bug-fix coverage discipline</h3> <p>
-Only 1 of 78 bug-fix PRs added new snapshot coverage retroactively.
-    When a visual bug is fixed, adding a snapshot that captures the corrected rendering
-    would prevent the exact recurrence — the highest-value coverage extension possible.
-</p> <h2>Verdict</h2> <p> <strong>Snapshot tests work where they exist — but coverage is shallow.</strong> </p> <p>The evidence for snapshot value is concrete and multi-signal:</p> <ul> <li><strong>100% of feature PRs</strong> in covered areas had to fix broken snapshots during development (9/9 multi-commit feature PRs). Existing behavior was guarded.</li> <li><strong>58 snapshot-fix commits</strong> across 20 PRs show developers being forced to acknowledge visual changes at the commit level.</li> <li>The <strong>normalized UX regression rate dropped 4–20×</strong> in the settled post-adoption period (Feb–Apr 2026) compared to the pre-adoption peak.</li> </ul> <p>But coverage is shallow:</p> <ul> <li><strong>54% of TUI bugs</strong> (after accounting for indirect coverage) are on uncovered code paths — mostly settings persistence and untested event types.</li> <li><strong>Only 1 of 78 bug-fix PRs</strong> added new snapshot coverage retroactively.</li> <li><strong>35% of all bugs are non-visual</strong> — snapshots are structurally irrelevant for API crashes, auth failures, and dependency issues.</li> </ul> <p>
-The biggest ROI: a handful of targeted tests (settings save→reload, new event type
-    trajectories, notification capture) would close the majority of the coverage gap with
-    minimal effort.
-</p> <h2>Methodology</h2> <p>
-Everything in this analysis is reproducible from two scripts and a GitHub token.
-    The full pipeline, data, and graphs are at
-<a href="https://github.com/malhotra5/snapshot-tests-analysis" target="_blank" rel="noopener noreferrer">snapshot-tests-analysis</a>.
-</p> <h3 id="method-mining">Step 1: Mining (GitHub API → JSON)</h3> <p> <code>scripts/mine_github.py</code> pulls every merged PR from
-<a href="https://github.com/OpenHands/openhands-cli" target="_blank" rel="noopener noreferrer">openhands-cli</a>
-via the GitHub REST API and <code>gh</code> CLI. For each PR it collects:
-</p> <ul> <li><strong>PR metadata</strong> — title, body, author, labels, branch names, created/merged timestamps, additions/deletions, changed file count</li> <li><strong>File-level diffs</strong> — every file changed with its status (added/modified/removed) and line counts</li> <li><strong>Commit history</strong> — full commit messages per PR, which enabled the "code first, fix snapshots later" analysis</li> <li><strong>Review data</strong> — reviewer logins, review decision, time-to-first-review</li> <li><strong>Linked issues</strong> — cross-referenced issue titles, bodies, and authors</li> <li><strong>Release mapping</strong> — which release tag (if any) includes each PR</li> <li><strong>Authorship detection</strong> — heuristic markers for agent-authored PRs (co-authored-by tags, conversation links, bot authors)</li> </ul> <p>
-Output: a single <code>mined_prs.json</code> file with 42 fields per PR across all 311 merged PRs.
-    No LLM is involved in this step — it's pure API data.
-</p> <h3 id="method-classification">Step 2: Classification (LLM + heuristics → CSV)</h3> <p> <code>scripts/categorize_prs.py</code> classifies each PR along four dimensions.
-    It runs two classifiers in parallel and keeps both outputs:
-</p> <p><strong>Heuristic classifier</strong> (keyword-based, no LLM):</p> <ul> <li>PR type — title keyword matching ("fix" → bug-fix, "feat" → feature, "bump" → version-bump, etc.)</li> <li>Bug severity — title keyword matching ("crash" → critical, "display" → ux-regression, "typo" → polish)</li> <li>Snapshot involvement — file path matching (<code>*.svg</code> in <code>snapshot</code> directories)</li> <li>Agent authorship — co-author tags and bot usernames</li> </ul> <p><strong>LLM classifier</strong> (gpt-4o-mini via <a href="https://docs.openhands.dev/sdk" target="_blank" rel="noopener noreferrer">OpenHands SDK</a>):</p> <ul> <li>PR type — same categories but with full context (title, description, file list, linked issues)</li> <li>Bug severity — critical / ux-regression / polish, with definitions in the system prompt</li> <li>Whether the PR touches TUI code — the LLM sees the actual file paths and description, catching cases keywords miss</li> <li>Rationale — a 1-2 sentence explanation stored alongside each classification for auditability</li> </ul> <p>
-The report uses the LLM classifications (<code>llm_pr_type</code>, <code>llm_bug_severity</code>,
+verify persistence. A single “save → reload → snapshot” test would indirectly cover model
+name persistence, condensation defaults, dropdown ordering, and clear behavior.</p>
+<h3 id="2-missing-event-types-in-test-trajectories-4-bugs">2. Missing event types in test trajectories (4 bugs)</h3>
+<p>The e2e snapshot tests use recorded LLM trajectories for deterministic replay. But the current
+trajectories don’t include <code>ConversationErrorEvent</code>, messages with markup
+characters, or critic-enabled <code>MessageEvent</code>. Adding 2–3 trajectories with these
+event types would extend coverage to code paths already exercised by the test framework but
+never triggered by the test data.</p>
+<h3 id="3-notification-rendering-2-bugs">3. Notification rendering (2 bugs)</h3>
+<p>No snapshot test captures notification display (toast-style overlays). Settings change
+notifications and conversation notifications both had bugs that went uncaught.</p>
+<h3 id="4-bug-fix-coverage-discipline">4. Bug-fix coverage discipline</h3>
+<p>Only 1 of 78 bug-fix PRs added new snapshot coverage retroactively.
+When a visual bug is fixed, adding a snapshot that captures the corrected rendering
+would prevent the exact recurrence — the highest-value coverage extension possible.</p>
+<h2 id="verdict">Verdict</h2>
+<p><strong>Snapshot tests work where they exist — but coverage is shallow.</strong></p>
+<p>The evidence for snapshot value is concrete and multi-signal:</p>
+<ul>
+<li><strong>100% of feature PRs</strong> in covered areas had to fix broken snapshots during development (9/9 multi-commit feature PRs). Existing behavior was guarded.</li>
+<li><strong>58 snapshot-fix commits</strong> across 20 PRs show developers being forced to acknowledge visual changes at the commit level.</li>
+<li>The <strong>normalized UX regression rate dropped 4–20×</strong> in the settled post-adoption period (Feb–Apr 2026) compared to the pre-adoption peak.</li>
+</ul>
+<p>But coverage is shallow:</p>
+<ul>
+<li><strong>54% of TUI bugs</strong> (after accounting for indirect coverage) are on uncovered code paths — mostly settings persistence and untested event types.</li>
+<li><strong>Only 1 of 78 bug-fix PRs</strong> added new snapshot coverage retroactively.</li>
+<li><strong>35% of all bugs are non-visual</strong> — snapshots are structurally irrelevant for API crashes, auth failures, and dependency issues.</li>
+</ul>
+<p>The biggest ROI: a handful of targeted tests (settings save→reload, new event type
+trajectories, notification capture) would close the majority of the coverage gap with
+minimal effort.</p>
+<h2 id="methodology">Methodology</h2>
+<p>Everything in this analysis is reproducible from two scripts and a GitHub token.
+The full pipeline, data, and graphs are at
+<a href="https://github.com/malhotra5/snapshot-tests-analysis">snapshot-tests-analysis</a>.</p>
+<h3 id="method-mining">Step 1: Mining (GitHub API → JSON)</h3>
+<p><code>scripts/mine_github.py</code> pulls every merged PR from
+<a href="https://github.com/OpenHands/openhands-cli">openhands-cli</a>
+via the GitHub REST API and <code>gh</code> CLI. For each PR it collects:</p>
+<ul>
+<li><strong>PR metadata</strong> — title, body, author, labels, branch names, created/merged timestamps, additions/deletions, changed file count</li>
+<li><strong>File-level diffs</strong> — every file changed with its status (added/modified/removed) and line counts</li>
+<li><strong>Commit history</strong> — full commit messages per PR, which enabled the “code first, fix snapshots later” analysis</li>
+<li><strong>Review data</strong> — reviewer logins, review decision, time-to-first-review</li>
+<li><strong>Linked issues</strong> — cross-referenced issue titles, bodies, and authors</li>
+<li><strong>Release mapping</strong> — which release tag (if any) includes each PR</li>
+<li><strong>Authorship detection</strong> — heuristic markers for agent-authored PRs (co-authored-by tags, conversation links, bot authors)</li>
+</ul>
+<p>Output: a single <code>mined_prs.json</code> file with 42 fields per PR across all 311 merged PRs.
+No LLM is involved in this step — it’s pure API data.</p>
+<h3 id="method-classification">Step 2: Classification (LLM + heuristics → CSV)</h3>
+<p><code>scripts/categorize_prs.py</code> classifies each PR along four dimensions.
+It runs two classifiers in parallel and keeps both outputs:</p>
+<p><strong>Heuristic classifier</strong> (keyword-based, no LLM):</p>
+<ul>
+<li>PR type — title keyword matching (“fix” → bug-fix, “feat” → feature, “bump” → version-bump, etc.)</li>
+<li>Bug severity — title keyword matching (“crash” → critical, “display” → ux-regression, “typo” → polish)</li>
+<li>Snapshot involvement — file path matching (<code>*.svg</code> in <code>snapshot</code> directories)</li>
+<li>Agent authorship — co-author tags and bot usernames</li>
+</ul>
+<p><strong>LLM classifier</strong> (gpt-4o-mini via <a href="https://docs.openhands.dev/sdk">OpenHands SDK</a>):</p>
+<ul>
+<li>PR type — same categories but with full context (title, description, file list, linked issues)</li>
+<li>Bug severity — critical / ux-regression / polish, with definitions in the system prompt</li>
+<li>Whether the PR touches TUI code — the LLM sees the actual file paths and description, catching cases keywords miss</li>
+<li>Rationale — a 1-2 sentence explanation stored alongside each classification for auditability</li>
+</ul>
+<p>The report uses the LLM classifications (<code>llm_pr_type</code>, <code>llm_bug_severity</code>,
 <code>llm_touches_tui</code>) as the primary labels, falling back to heuristics when the LLM
-    call fails. The heuristic labels are retained in the CSV for comparison.
-</p> <h3 id="method-snapshot">Step 3: Snapshot-specific analysis (heuristic)</h3> <p>
-Several analyses required no LLM — just reading file paths, commit messages, and timestamps:
-</p> <ul> <li><strong>Commit-level pattern detection</strong> — for each multi-commit PR, check if snapshot-related keywords
-    ("snapshot", "update snap", "regenerate", "baseline") appear only in later commits, indicating
-    the "code first, fix snapshots later" pattern</li> <li><strong>Bug-fix coverage gap</strong> — for each bug-fix PR, classify as "no snapshots touched" / "modified existing" /
-    "added new" based on the Git status of snapshot SVG files</li> <li><strong>Suite reuse</strong> — extract test suite names from snapshot file paths and count unique PRs per suite</li> <li><strong>Review speed</strong> — compare <code>hours_to_first_review</code> between snapshot and non-snapshot PRs</li> </ul> <h3 id="method-indirect">Step 4: Indirect coverage analysis (manual + scripted)</h3> <p>
-This was the most labor-intensive step. We cloned openhands-cli and read all 20 snapshot test
-    files (~2,500 lines of test code), including <code>conftest.py</code> fixtures and trajectory
-    replay helpers. From this, <code>scripts/analyze_indirect_coverage.py</code> builds:
-</p> <ul> <li>A <strong>coverage map</strong> — which test suite exercises which functional behaviors
-    (e.g., <code>TestConfirmationMode</code> exercises scrolling, confirmation panel, agent execution)</li> <li>A <strong>per-bug classification</strong> — for each of the 20 "file covered, path uncovered" bugs,
-    whether a snapshot test would <em>actually produce different output</em> if the bug existed.
-    Each classification includes a written rationale.</li> </ul> <h3>Step 5: Visualization</h3> <p> <code>scripts/generate_deep_analysis_graphs.py</code> produces all 18 matplotlib graphs.
+call fails. The heuristic labels are retained in the CSV for comparison.</p>
+<h3 id="method-snapshot">Step 3: Snapshot-specific analysis (heuristic)</h3>
+<p>Several analyses required no LLM — just reading file paths, commit messages, and timestamps:</p>
+<ul>
+<li><strong>Commit-level pattern detection</strong> — for each multi-commit PR, check if snapshot-related keywords (“snapshot”, “update snap”, “regenerate”, “baseline”) appear only in later commits, indicating the “code first, fix snapshots later” pattern</li>
+<li><strong>Bug-fix coverage gap</strong> — for each bug-fix PR, classify as “no snapshots touched” / “modified existing” / “added new” based on the Git status of snapshot SVG files</li>
+<li><strong>Suite reuse</strong> — extract test suite names from snapshot file paths and count unique PRs per suite</li>
+<li><strong>Review speed</strong> — compare <code>hours_to_first_review</code> between snapshot and non-snapshot PRs</li>
+</ul>
+<h3 id="method-indirect">Step 4: Indirect coverage analysis (manual + scripted)</h3>
+<p>This was the most labor-intensive step. We cloned openhands-cli and read all 20 snapshot test
+files (~2,500 lines of test code), including <code>conftest.py</code> fixtures and trajectory
+replay helpers. From this, <code>scripts/analyze_indirect_coverage.py</code> builds:</p>
+<ul>
+<li>A <strong>coverage map</strong> — which test suite exercises which functional behaviors (e.g., <code>TestConfirmationMode</code> exercises scrolling, confirmation panel, agent execution)</li>
+<li>A <strong>per-bug classification</strong> — for each of the 20 “file covered, path uncovered” bugs, whether a snapshot test would <em>actually produce different output</em> if the bug existed. Each classification includes a written rationale.</li>
+</ul>
+<h3 id="step-5-visualization">Step 5: Visualization</h3>
+<p><code>scripts/generate_deep_analysis_graphs.py</code> produces all 18 matplotlib graphs.
 <code>scripts/generate_report.py</code> assembles the self-contained HTML report with
-    base64-embedded images. Both are runnable with <code>uv run</code>.
-</p> <h3>Limitations</h3> <ul> <li><strong>LLM classification accuracy</strong> — gpt-4o-mini misclassifies some edge cases (e.g., a PR
-    titled "fix: add feature X" gets classified as bug-fix). We spot-checked ~30 PRs and found
-    ~90% agreement with human judgment. The heuristic labels provide a second opinion.</li> <li><strong>Agent authorship detection</strong> — relies on co-author tags and known bot usernames.
-    PRs where a human manually committed agent-generated code would be counted as human-authored.</li> <li><strong>Indirect coverage is subjective</strong> — our B1 (indirectly covered) classifications
-    are judgment calls about whether a snapshot would visibly change. Different reviewers might
-    classify 1-2 borderline cases differently, but the overall split (4 B1 vs 16 B2) is robust.</li> <li><strong>Single repository</strong> — all findings are specific to openhands-cli. Generalizing to
-    other agent-driven projects requires similar analysis in those codebases.</li> </ul> <h2 id="appendix">Appendix: Snapshot Testing in the OpenHands CLI</h2> <p>
-I experimented with snapshot testing in the
-<a href="https://github.com/OpenHands/openhands-cli" target="_blank" rel="noopener noreferrer">OpenHands command-line interface (CLI)</a>
+base64-embedded images. Both are runnable with <code>uv run</code>.</p>
+<h3 id="limitations">Limitations</h3>
+<ul>
+<li><strong>LLM classification accuracy</strong> — gpt-4o-mini misclassifies some edge cases (e.g., a PR titled “fix: add feature X” gets classified as bug-fix). We spot-checked ~30 PRs and found ~90% agreement with human judgment. The heuristic labels provide a second opinion.</li>
+<li><strong>Agent authorship detection</strong> — relies on co-author tags and known bot usernames. PRs where a human manually committed agent-generated code would be counted as human-authored.</li>
+<li><strong>Indirect coverage is subjective</strong> — our B1 (indirectly covered) classifications are judgment calls about whether a snapshot would visibly change. Different reviewers might classify 1-2 borderline cases differently, but the overall split (4 B1 vs 16 B2) is robust.</li>
+<li><strong>Single repository</strong> — all findings are specific to openhands-cli. Generalizing to other agent-driven projects requires similar analysis in those codebases.</li>
+</ul>
+<h2 id="appendix">Appendix: Snapshot Testing in the OpenHands CLI</h2>
+<p>I experimented with snapshot testing in the
+<a href="https://github.com/OpenHands/openhands-cli">OpenHands command-line interface (CLI)</a>
 codebase. The CLI is built using
-<a href="https://textual.textualize.io/" target="_blank" rel="noopener noreferrer">Textual</a>,
-    a Python library for building terminal UIs. One advantage of Textual is that it provides
-    excellent support for snapshot testing — rendering widgets to SVG and comparing them
-    across runs.
-</p> <h3>Two Kinds of Snapshots</h3> <p>Snapshots were used in two ways:</p> <h4>1. Component Snapshots</h4> <p>
-We capture standalone renders of individual components. These snapshots allow us to
-    verify that specific UI components render correctly in isolation. If a change alters
-    the output, the snapshot test fails and shows the difference.
-</p> <h4>2. Behavioral Snapshots</h4> <p>
-We also capture a sequence of snapshots over time, effectively emulating a short video of
-    the application's behavior. This allows us to test interactive flows — for example:
-</p> <ol> <li>Start the CLI</li> <li>Send a message</li> <li>Observe the agent response</li> <li>Watch the UI update</li> </ol> <p>
-The sequence of frames becomes a behavioral recording of the feature.
-</p> <h3>Why Snapshots Help</h3> <p>A picture is worth a thousand words. Snapshots allow:</p> <ul> <li><strong>Authors</strong> to confirm that their change behaves correctly</li> <li><strong>Reviewers</strong> to understand the behavior quickly</li> <li><strong>Agents</strong> to validate whether their outputs changed the system</li> </ul> <p>
-Once snapshots are committed to the repository, they become part of the system history.
-    Future pull requests automatically check against them. If behavior changes, the snapshot
-    test fails. The failure is visually obvious, showing exactly how the behavior differs
-    from the expected output.
-</p> <p>
-They are cheap to maintain, and in this specific scenario are not flaky. Agents do well
-    generating these tests.
-</p> <h3>Example Snapshot Test</h3> <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> pytest</span></span>
+<a href="https://textual.textualize.io/">Textual</a>,
+a Python library for building terminal UIs. One advantage of Textual is that it provides
+excellent support for snapshot testing — rendering widgets to SVG and comparing them
+across runs.</p>
+<h3 id="two-kinds-of-snapshots">Two Kinds of Snapshots</h3>
+<p>Snapshots were used in two ways:</p>
+<h4 id="1-component-snapshots">1. Component Snapshots</h4>
+<p>We capture standalone renders of individual components. These snapshots allow us to
+verify that specific UI components render correctly in isolation. If a change alters
+the output, the snapshot test fails and shows the difference.</p>
+<h4 id="2-behavioral-snapshots">2. Behavioral Snapshots</h4>
+<p>We also capture a sequence of snapshots over time, effectively emulating a short video of
+the application’s behavior. This allows us to test interactive flows — for example:</p>
+<ol>
+<li>Start the CLI</li>
+<li>Send a message</li>
+<li>Observe the agent response</li>
+<li>Watch the UI update</li>
+</ol>
+<p>The sequence of frames becomes a behavioral recording of the feature.</p>
+<h3 id="why-snapshots-help">Why Snapshots Help</h3>
+<p>A picture is worth a thousand words. Snapshots allow:</p>
+<ul>
+<li><strong>Authors</strong> to confirm that their change behaves correctly</li>
+<li><strong>Reviewers</strong> to understand the behavior quickly</li>
+<li><strong>Agents</strong> to validate whether their outputs changed the system</li>
+</ul>
+<p>Once snapshots are committed to the repository, they become part of the system history.
+Future pull requests automatically check against them. If behavior changes, the snapshot
+test fails. The failure is visually obvious, showing exactly how the behavior differs
+from the expected output.</p>
+<p>They are cheap to maintain, and in this specific scenario are not flaky. Agents do well
+generating these tests.</p>
+<h3 id="example-snapshot-test">Example Snapshot Test</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> pytest</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> textual.pilot </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Pilot</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> .helpers </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> type_text, wait_for_app_ready, wait_for_idle</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> openhands.sdk.security.confirmation_policy </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> NeverConfirm</span></span>
@@ -205,12 +279,12 @@ They are cheap to maintain, and in this specific scenario are not flaky. Agents 
 <span class="line"></span>
 <span class="line"></span>
 <span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> TestEchoHelloWorld</span><span style="color:#E1E4E8">:</span></span>
-<span class="line"><span style="color:#9ECBFF">    """Test echo hello world conversation."""</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Test echo hello world conversation.&quot;&quot;&quot;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#6A737D">    # Specify pre-seed LLM responses trajectory</span></span>
 <span class="line"><span style="color:#B392F0">    @pytest.mark.parametrize</span><span style="color:#E1E4E8">(</span></span>
-<span class="line"><span style="color:#9ECBFF">        "mock_llm_with_trajectory"</span><span style="color:#E1E4E8">,</span></span>
-<span class="line"><span style="color:#E1E4E8">        [</span><span style="color:#9ECBFF">"simple_echo_hello_world"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;mock_llm_with_trajectory&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        [</span><span style="color:#9ECBFF">&quot;simple_echo_hello_world&quot;</span><span style="color:#E1E4E8">],</span></span>
 <span class="line"><span style="color:#FFAB70">        indirect</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#E1E4E8">    )</span></span>
 <span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> test_echo_hello_world_conversation</span><span style="color:#E1E4E8">(</span></span>
@@ -219,10 +293,10 @@ They are cheap to maintain, and in this specific scenario are not flaky. Agents 
 <span class="line"><span style="color:#E1E4E8">        mock_llm_with_trajectory,</span></span>
 <span class="line"><span style="color:#E1E4E8">    ):</span></span>
 <span class="line"><span style="color:#F97583">        async</span><span style="color:#F97583"> def</span><span style="color:#B392F0"> run_conversation</span><span style="color:#E1E4E8">(pilot: Pilot):</span></span>
-<span class="line"><span style="color:#9ECBFF">            """Simulate user typing and submitting a command."""</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;&quot;&quot;Simulate user typing and submitting a command.&quot;&quot;&quot;</span></span>
 <span class="line"><span style="color:#F97583">            await</span><span style="color:#E1E4E8"> wait_for_app_ready(pilot)</span></span>
-<span class="line"><span style="color:#F97583">            await</span><span style="color:#E1E4E8"> type_text(pilot, </span><span style="color:#9ECBFF">"echo hello world"</span><span style="color:#E1E4E8">)</span></span>
-<span class="line"><span style="color:#F97583">            await</span><span style="color:#E1E4E8"> pilot.press(</span><span style="color:#9ECBFF">"enter"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">            await</span><span style="color:#E1E4E8"> type_text(pilot, </span><span style="color:#9ECBFF">&quot;echo hello world&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">            await</span><span style="color:#E1E4E8"> pilot.press(</span><span style="color:#9ECBFF">&quot;enter&quot;</span><span style="color:#E1E4E8">)</span></span>
 <span class="line"><span style="color:#F97583">            await</span><span style="color:#E1E4E8"> wait_for_idle(pilot)</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#6A737D">        # Use fixed conversation ID from fixture</span></span>
@@ -231,7 +305,7 @@ They are cheap to maintain, and in this specific scenario are not flaky. Agents 
 <span class="line"><span style="color:#FFAB70">            exit_confirmation</span><span style="color:#F97583">=</span><span style="color:#79B8FF">False</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#FFAB70">            initial_confirmation_policy</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">NeverConfirm(),</span></span>
 <span class="line"><span style="color:#FFAB70">            resume_conversation_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">mock_llm_with_trajectory[</span></span>
-<span class="line"><span style="color:#9ECBFF">                "conversation_id"</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;conversation_id&quot;</span></span>
 <span class="line"><span style="color:#E1E4E8">            ],</span></span>
 <span class="line"><span style="color:#E1E4E8">        )</span></span>
 <span class="line"></span>
@@ -240,19 +314,22 @@ They are cheap to maintain, and in this specific scenario are not flaky. Agents 
 <span class="line"><span style="color:#E1E4E8">            app,</span></span>
 <span class="line"><span style="color:#FFAB70">            terminal_size</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">120</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">40</span><span style="color:#E1E4E8">),</span></span>
 <span class="line"><span style="color:#FFAB70">            run_before</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">run_conversation,</span></span>
-<span class="line"><span style="color:#E1E4E8">        )</span></span></code></pre> <h3>Limitations of Snapshot Testing</h3> <p>
-It is difficult to generalize this exact approach to every codebase. Not all systems have
-    easily visualizable behavior, and not all frameworks support snapshot testing as naturally
-    as Textual. Snapshots can become expensive to run as more tests accumulate. They cannot
-    capture animations, as those are hard to capture at precise moments and create flaky tests
-    as a consequence. They work best when relying less on external services.
-</p> <h3>Lessons Learned</h3> <p>
-The specific tooling may vary across projects, but the underlying principle seems broadly
-    useful. To make codebases more compatible with autonomous agents, we likely need two properties:
-</p> <ol> <li><strong>Behavior should be easy to visualize</strong></li> <li><strong>Behavioral changes should fail in obvious and reliable ways</strong></li> </ol> <p>
-When these conditions are met, both humans and agents gain a much clearer signal about
-    whether the system behaves as intended.
-</p>  </div> <!-- Citation --> <section class="citation-block mt-12 pt-8 border-t border-gray-200" data-astro-cid-kt4wdg4p> <div class="flex items-start justify-between" data-astro-cid-kt4wdg4p> <details class="citation-details flex-1" data-astro-cid-kt4wdg4p> <summary class="cursor-pointer select-none inline-flex items-center gap-1.5" data-astro-cid-kt4wdg4p> <h2 class="text-lg font-semibold text-gray-800" data-astro-cid-kt4wdg4p>Citation</h2> <svg class="citation-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-astro-cid-kt4wdg4p> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" data-astro-cid-kt4wdg4p></path> </svg> </summary> <div class="mt-3" data-astro-cid-kt4wdg4p> <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-xs text-gray-700 overflow-x-auto font-mono leading-relaxed whitespace-pre" data-astro-cid-kt4wdg4p>@online{malhotrarohit2026blog,
+<span class="line"><span style="color:#E1E4E8">        )</span></span></code></pre>
+<h3 id="limitations-of-snapshot-testing">Limitations of Snapshot Testing</h3>
+<p>It is difficult to generalize this exact approach to every codebase. Not all systems have
+easily visualizable behavior, and not all frameworks support snapshot testing as naturally
+as Textual. Snapshots can become expensive to run as more tests accumulate. They cannot
+capture animations, as those are hard to capture at precise moments and create flaky tests
+as a consequence. They work best when relying less on external services.</p>
+<h3 id="lessons-learned">Lessons Learned</h3>
+<p>The specific tooling may vary across projects, but the underlying principle seems broadly
+useful. To make codebases more compatible with autonomous agents, we likely need two properties:</p>
+<ol>
+<li><strong>Behavior should be easy to visualize</strong></li>
+<li><strong>Behavioral changes should fail in obvious and reliable ways</strong></li>
+</ol>
+<p>When these conditions are met, both humans and agents gain a much clearer signal about
+whether the system behaves as intended.</p>  </div> <!-- Citation --> <section class="citation-block mt-12 pt-8 border-t border-gray-200" data-astro-cid-kt4wdg4p> <div class="flex items-start justify-between" data-astro-cid-kt4wdg4p> <details class="citation-details flex-1" data-astro-cid-kt4wdg4p> <summary class="cursor-pointer select-none inline-flex items-center gap-1.5" data-astro-cid-kt4wdg4p> <h2 class="text-lg font-semibold text-gray-800" data-astro-cid-kt4wdg4p>Citation</h2> <svg class="citation-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-astro-cid-kt4wdg4p> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" data-astro-cid-kt4wdg4p></path> </svg> </summary> <div class="mt-3" data-astro-cid-kt4wdg4p> <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-xs text-gray-700 overflow-x-auto font-mono leading-relaxed whitespace-pre" data-astro-cid-kt4wdg4p>@online{malhotrarohit2026blog,
   author = {Rohit Malhotra},
   title = {Do Snapshot Tests Help in Agent-Driven Development?},
   year = {2026},
