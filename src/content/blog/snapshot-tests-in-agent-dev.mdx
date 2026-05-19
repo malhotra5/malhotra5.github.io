@@ -26,7 +26,7 @@ I hypothesized there are two problems with respect to verification:
 1. **Determining intended behavior.** Where is the source of truth for how the product should behave? If an agent details application behavior in a ticket description, is it accurate? The agent user needs to spend time determining whether the task was captured properly. Are the contributor and reviewer actually aligned on the intended behavior? Reviewers depend on the legitimacy of this, and so does the agent itself during future iterations of work.&#x20;
 2. **Verifying implemented behavior.** Once the code has been implemented, how can we easily verify that the application implements the intended behavior? Manually running and validating the application reveals new problems. It's time-consuming and doesn't scale well when agents are producing large volumes of code.
 
-## Visualizing application behavior to improve verification bottlenecks&#x20;
+## Analyzing whether visualizating application behavior improves verification&#x20;
 
 <Comment
   note="There are two specific aspects that we seem to be discussing
@@ -45,13 +45,7 @@ So we need to address each during the results sections"
 - Snapshots over time (demonstrate cutoff date for when snapshots were introduced) "
 />
 
-What if we could *see* the behavior of the application directly, instead of inferring
-it from code or descriptions? If the behavior is visually observable, and any change to it is
-obvious, whether intended or unintended, review and verification become easier and thereby
-we ship less buggy products.
-
-**Snapshot tests could make it easier to review changes for all parties involved,
-and make it safe to use agents in future iterations.**
+I hypothesize that if application behavior is visually observable, and any change in existing behavior are obvious, we make it **easier to verify changes and safer to use agents in future development efforts.**
 
 To test this hypothesis, we [mined](#step-1-mining-github-api--json) all 311 merged PRs from the [Openhands-CLI](https://github.com/OpenHands/openhands-cli) repository (Sep 2025 – May 2026), [classified](#step-2-classification-llm--heuristics--csv) each by type, authorship, and snapshot involvement, then analyzed [commit-level history](#step-3-snapshot-specific-analysis-heuristic) to understand *how* snapshot tests are actually used. Snapshot tests were adopted in January 2026. For details on the snapshot testing approach itself, see the [Appendix](#appendix-snapshot-testing-in-the-openhands-cli).
 
@@ -61,9 +55,7 @@ To test this hypothesis, we [mined](#step-1-mining-github-api--json) all 311 mer
 
 ## Where Do Bugs Live?
 
-Not all bugs are visual — and snapshot tests can only help with bugs that change rendered
-output. This distinction is critical: counting all bug-fixes against snapshot coverage
-inflates the apparent gap.
+Not all bugs are visual. Snapshot tests can only help with bugs that change rendered output. This distinction is critical: counting all bug-fixes against snapshot coverage inflates the apparent gap.
 
 <Figure src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix domain breakdown" caption="The largest category is TUI widgets & screens (38), where 12 involved snapshots (green). But 27 bugs (35%) are entirely non-visual: CLI core, config/state, API/auth. Snapshot tests are structurally irrelevant for these." />
 
