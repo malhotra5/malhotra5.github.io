@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev --port 12000 --host 0.0.0.0",
+    "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "editor": "cd tools/editor && npm start",
+    "editor": "cd tools/editor && (test -d node_modules || npm install) && npm start",
     "editor:install": "cd tools/editor && npm install"
   },
   "dependencies": {
