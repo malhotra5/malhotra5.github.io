@@ -1,6 +1,6 @@
 import React from 'react';
 import { config, fields, collection } from '@keystatic/core';
-import { block, wrapper } from '@keystatic/core/content-components';
+import { block, mark } from '@keystatic/core/content-components';
 
 export default config({
   storage: { kind: 'local' },
@@ -143,43 +143,17 @@ export default config({
                   props.value.note,
                 ),
             }),
-            Highlight: wrapper({
+            Highlight: mark({
               label: 'Highlight',
-              description: 'Highlight a section with an editorial comment — hidden on the site',
+              icon: React.createElement('span', null, '🖍️'),
+              tag: 'span',
+              style: { backgroundColor: '#FFF176', padding: '0 2px', borderRadius: '2px' },
               schema: {
-                comment: fields.text({
-                  label: 'Comment',
-                  multiline: true,
-                  validation: { isRequired: true },
+                note: fields.text({
+                  label: 'Note',
+                  description: 'Optional comment on this highlight',
                 }),
               },
-              ContentView: (props) =>
-                React.createElement(
-                  'div',
-                  {
-                    style: {
-                      margin: '0.5rem 0',
-                      padding: '0.75rem 1rem',
-                      background: '#FFF3E0',
-                      borderLeft: '4px solid #FF9800',
-                      borderRadius: '4px',
-                    },
-                  },
-                  React.createElement(
-                    'div',
-                    {
-                      style: {
-                        fontSize: '0.75rem',
-                        fontWeight: 'bold',
-                        color: '#E65100',
-                        marginBottom: '0.5rem',
-                      },
-                    },
-                    '💬 ',
-                    props.value.comment,
-                  ),
-                  props.children,
-                ),
             }),
           },
         }),
