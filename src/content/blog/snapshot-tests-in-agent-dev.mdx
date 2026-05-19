@@ -46,7 +46,7 @@ To test this hypothesis, I [mined](#step-1-mining-github-api--json) all 311 merg
 
 68% of all PRs are agent authored. Percentage of agent-authored PRs over time are relatively consistent (excluding the second month), giving a reasonable baseline for investigating effects of snapshot tests.&#x20;
 
-<Figure src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Before January 2026, zero PRs touched snapshot files. After adoption, 19–33% of monthly PRs include snapshot changes." caption="Before January 2026, zero PRs touched snapshot files. After adoption, 19–33% of monthly PRs include snapshot changes." />
+<Figure src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Monthly snapshot involvement across all PRs, Sep 2025 – May 2026." caption="Monthly snapshot involvement across all PRs, Sep 2025 – May 2026." />
 
 Snapshots were introduced in January 2026, which were predominantly authored by agents. Not every PR includes snapshot changes, which we'll explore is either due to behavioral changes that aren't related to the UI or because of a lack of adding disciplined coverage to UI.
 
@@ -107,7 +107,7 @@ After adoption, **46% of TUI-changing feature PRs** include snapshot updates —
 up from 0%. Nearly every visual change passes through a "did you mean to change how this
 looks?" gate.
 
-<Figure src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Bug fixes including snapshot updates over time" caption="Bug fixes including snapshot updates over time" />
+<Figure src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month." caption="Percentage of feature and bug-fix PRs that include snapshot changes, by month." />
 
 Feature PRs (green) climb to 100% snapshot involvement. Bug-fix PRs (red) follow at \~35–50% — lower because many bugs are non-visual or on uncovered paths.
 
@@ -117,7 +117,7 @@ Of 27 multi-commit snapshot PRs, **18 (67%)** show code written first, then a
 later commit fixing broken snapshots — evidence that existing tests caught unintended
 visual changes during development.
 
-<Figure src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot guarding behavior" caption="Feature PRs generated the most snapshot-fix commits (24, across 9 PRs). Refactors generated 11 — code restructuring was caught changing visual output." />
+<Figure src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot-fix commits by PR type (later-in-PR commits only)." caption="Snapshot-fix commits by PR type (later-in-PR commits only)." />
 
 Feature PRs generated the most snapshot-fix commits (24, across 9 PRs). Refactors generated 11; code restructuring was caught changing visual output.
 
