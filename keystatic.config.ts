@@ -1,5 +1,22 @@
 import { config, fields, collection } from '@keystatic/core';
 
+const figureComponent = {
+  label: 'Figure',
+  description: 'An image with alt text and optional caption',
+  schema: {
+    src: fields.text({
+      label: 'Image path',
+      description: 'e.g. /img/hero.png',
+      validation: { isRequired: true },
+    }),
+    alt: fields.text({
+      label: 'Alt text',
+      validation: { isRequired: true },
+    }),
+    caption: fields.text({ label: 'Caption' }),
+  },
+};
+
 export default config({
   storage: { kind: 'local' },
   ui: {
@@ -49,6 +66,7 @@ export default config({
         author: fields.text({ label: 'Author' }),
         content: fields.mdx({
           label: 'Content',
+          components: { Figure: figureComponent },
         }),
       },
     }),

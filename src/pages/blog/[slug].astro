@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
+import Figure from '../../components/Figure.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -26,5 +27,5 @@ const { title, description, date, image, imageCaption, readTime, originalUrl, ta
   tags={tags}
   author={author}
 >
-  <Content />
+  <Content components={{ Figure }} />
 </BlogPostLayout>
