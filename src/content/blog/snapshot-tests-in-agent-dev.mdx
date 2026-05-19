@@ -26,7 +26,9 @@ I hypothesized there are two problems with respect to verification:
 1. **Determining intended behavior.** Where is the source of truth for how the product should behave? If an agent details application behavior in a ticket description, is it accurate? The agent user needs to spend time determining whether the task was captured properly. Are the contributor and reviewer actually aligned on the intended behavior? Reviewers depend on the legitimacy of this, and so does the agent itself during future iterations of work.&#x20;
 2. **Verifying implemented behavior.** Once the code has been implemented, how can we easily verify that the application implements the intended behavior? Manually running and validating the application reveals new problems. It's time-consuming and doesn't scale well when agents are producing large volumes of code.
 
-## Analyzing whether visualizating application behavior improves verification&#x20;
+I hypothesize that if application behavior is visually observable, and any change in existing behavior are obvious, we make it **easier to verify changes and safer to use agents in future development efforts.**
+
+## Analyzing whether visualizing application behavior improves verification&#x20;
 
 <Comment
   note="There are two specific aspects that we seem to be discussing
@@ -38,24 +40,17 @@ I hypothesized there are two problems with respect to verification:
 So we need to address each during the results sections"
 />
 
-<Figure src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Agent-authored PRs over time showing consistent volume before and after snapshot adoption" caption="Agent-authored PR volume remains consistent before and after snapshot adoption in January 2026, establishing a stable baseline for comparison." />
-
-<Comment
-  note="Introductory figure remaining:
-- Snapshots over time (demonstrate cutoff date for when snapshots were introduced) "
-/>
-
-I hypothesize that if application behavior is visually observable, and any change in existing behavior are obvious, we make it **easier to verify changes and safer to use agents in future development efforts.**
-
 To test this hypothesis, we [mined](#step-1-mining-github-api--json) all 311 merged PRs from the [Openhands-CLI](https://github.com/OpenHands/openhands-cli) repository (Sep 2025 – May 2026), [classified](#step-2-classification-llm--heuristics--csv) each by type, authorship, and snapshot involvement, then analyzed [commit-level history](#step-3-snapshot-specific-analysis-heuristic) to understand *how* snapshot tests are actually used. Snapshot tests were adopted in January 2026. For details on the snapshot testing approach itself, see the [Appendix](#appendix-snapshot-testing-in-the-openhands-cli).
 
-<Figure src="/img/snapshot-analysis/0_summary_dashboard.png" alt="Summary dashboard showing 311 PRs, 68% agent-authored, 46 touching snapshots" caption="Repository contains 311 PRs of which 68% are agent-authored" />
+<Figure src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Agent-authored PRs over time showing relatively consistent volume before and after snapshot adoption" caption="Agent-authored PR volume remains relatively consistent before and after snapshot adoption in January 2026, establishing a stable baseline for comparison." />
+
+68% of all PRs are agent authored. The percentage of agent authored PRs are lower prior to snapshot, especially for the second month. Excluding this we see relatively consistent percentage of agent authored PRs before and after snapshot adoption, which gives us a reasonable baseline for investigating effects of snapshot tests.&#x20;
 
 <Figure src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Snapshot adoption timeline" caption="Before January 2026, zero PRs touched snapshot files. After adoption, 19–33% of monthly PRs include snapshot changes." />
 
-## Where Do Bugs Live?
+### Where Do Bugs Live?
 
-Not all bugs are visual. Snapshot tests can only help with bugs that change rendered output. This distinction is critical: counting all bug-fixes against snapshot coverage inflates the apparent gap.
+Not all bugs are visual. Snapshot tests helps with bugs that change rendered output. This distinction is critical: counting all bug-fixes against snapshot coverage inflates the apparent gap.
 
 <Figure src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix domain breakdown" caption="The largest category is TUI widgets & screens (38), where 12 involved snapshots (green). But 27 bugs (35%) are entirely non-visual: CLI core, config/state, API/auth. Snapshot tests are structurally irrelevant for these." />
 
@@ -67,23 +62,23 @@ Not all bugs are visual. Snapshot tests can only help with bugs that change rend
 > where 12 (24%) have snapshot involvement. That's still a coverage gap — but it's a different
 > conversation than "85%."
 
-## What's Actually Covered?
+### What's Actually Covered?
 
 Among the 51 visual (TUI) bug-fixes, what fraction hit paths that snapshot tests guard?
 We analyzed this at three levels of precision.
 
-### Level 1: Did the bug-fix PR touch snapshots?
+#### Level 1: Did the bug-fix PR touch snapshots?
 
 <Figure src="/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png" alt="Bug-fix coverage gap" caption="Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage." />
 
-### Level 2: Path-level analysis
+#### Level 2: Path-level analysis
 
 Zooming into the 35 post-adoption TUI bug-fixes, we checked whether the bug-fix PR touched
 the same code *paths* covered by snapshots — not just the same files.
 
 <Figure src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown" caption="34% hit directly covered paths (fix PR updates snapshots). 57% are in files with some snapshot coverage but the specific bug path was uncovered. 9% are fully uncovered." />
 
-### Level 3: Accounting for indirect coverage
+#### Level 3: Accounting for indirect coverage
 
 Snapshot tests don't just test rendering — they implicitly test the full stack behind what's
 rendered. A test that renders a conversation after switching implicitly exercises persistence.
