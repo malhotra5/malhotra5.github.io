@@ -1,6 +1,6 @@
 import React from 'react';
 import { config, fields, collection } from '@keystatic/core';
-import { block, wrapper } from '@keystatic/core/content-components';
+import { block, mark } from '@keystatic/core/content-components';
 import { highlighterIcon } from '@keystar/ui/icon/icons/highlighterIcon';
 
 export default config({
@@ -144,50 +144,16 @@ export default config({
                   props.value.note,
                 ),
             }),
-            Highlight: wrapper({
+            Highlight: mark({
               label: 'Highlight',
-              description: 'Highlight a section and attach a note',
               icon: highlighterIcon,
+              tag: 'span',
+              style: { backgroundColor: '#FFF176', padding: '0 2px', borderRadius: '2px' },
               schema: {
                 note: fields.text({
                   label: 'Note',
                   description: 'Optional comment on this highlight',
                 }),
-              },
-              NodeView: (props) => {
-                return React.createElement(
-                  'div',
-                  {
-                    style: {
-                      backgroundColor: '#FFF9C4',
-                      borderLeft: '4px solid #FDD835',
-                      borderRadius: '4px',
-                      padding: '0.5rem 0.75rem',
-                      margin: '0.25rem 0',
-                      position: 'relative' as const,
-                    },
-                  },
-                  props.children,
-                  React.createElement('input', {
-                    type: 'text',
-                    value: props.value.note,
-                    onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-                      props.onChange({ ...props.value, note: e.target.value }),
-                    placeholder: '💬 Add a note\u2026',
-                    style: {
-                      display: 'block',
-                      width: '100%',
-                      marginTop: '0.5rem',
-                      padding: '0.375rem 0.5rem',
-                      fontSize: '0.8125rem',
-                      color: '#6B5900',
-                      backgroundColor: '#FFF8E1',
-                      border: '1px solid #FFE082',
-                      borderRadius: '4px',
-                      outline: 'none',
-                    },
-                  }),
-                );
               },
             }),
           },
