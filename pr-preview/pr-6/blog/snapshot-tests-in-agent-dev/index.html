@@ -30,6 +30,7 @@ Originally on Substack ↗
 </ol>
 <h2 id="analyzing-whether-visualizating-application-behavior-improves-verification">Analyzing whether visualizating application behavior improves verification </h2>
 
+<figure> <img src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Agent-authored PRs over time showing consistent volume before and after snapshot adoption"> <figcaption>Agent-authored PR volume remains consistent before and after snapshot adoption in January 2026, establishing a stable baseline for comparison.</figcaption> </figure>
 
 <p>I hypothesize that if application behavior is visually observable, and any change in existing behavior are obvious, we make it <strong>easier to verify changes and safer to use agents in future development efforts.</strong></p>
 <p>To test this hypothesis, we <a href="#step-1-mining-github-api--json">mined</a> all 311 merged PRs from the <a href="https://github.com/OpenHands/openhands-cli">Openhands-CLI</a> repository (Sep 2025 – May 2026), <a href="#step-2-classification-llm--heuristics--csv">classified</a> each by type, authorship, and snapshot involvement, then analyzed <a href="#step-3-snapshot-specific-analysis-heuristic">commit-level history</a> to understand <em>how</em> snapshot tests are actually used. Snapshot tests were adopted in January 2026. For details on the snapshot testing approach itself, see the <a href="#appendix-snapshot-testing-in-the-openhands-cli">Appendix</a>.</p>
