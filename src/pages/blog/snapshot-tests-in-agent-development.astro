@@ -62,10 +62,10 @@ class TestEchoHelloWorld:
 
   <p>
     Just in the last couple years, agents are being used liberally in all parts of
-    the software development cycle. In addition to code, surrounding artifacts — ticket
-    descriptions, PR descriptions, documentation, Slack comments — are generated with agents.
-    With lots of code produced quickly, much of the time saved during generation is lost
-    during review and verification. People using code agents may also break things, and
+    the software development cycle. In addition to code, surrounding artifacts such as ticket
+    descriptions, PR descriptions, documentation, Slack comments are also generated with agents.
+    Even though we seemingly save much time by producing code quickly, its lost during review
+    and verification. It's unavoidable, as code agents also break things, and
     we need a way to make agents safe to use for everyone.
   </p>
 
@@ -84,13 +84,6 @@ class TestEchoHelloWorld:
       can we easily verify that the application implements the intended behavior?
     </li>
   </ol>
-
-  <p>
-    Agents now generate the surrounding artifacts — ticket and PR descriptions, documentation,
-    and comments. These artifacts can be quite descriptive and difficult to parse. Even with
-    efforts to force concise descriptions, it is not always clear whether the agent accurately
-    captured the intended behavior. This creates cognitive overhead for everyone involved:
-  </p>
 
   <ul>
     <li><strong>Agent user</strong>: must determine if the agent captured the task correctly</li>
@@ -115,8 +108,8 @@ class TestEchoHelloWorld:
   <p>
     What if we could <em>see</em> the behavior of the application directly, instead of inferring
     it from code or descriptions? If the behavior is visually observable, and any change to it is
-    obvious — whether intended or unintended — both review and verification become dramatically
-    easier.
+    obvious, whether intended or unintended, review and verification become easier and thereby 
+    we ship less buggy products.
   </p>
 
   <p>
@@ -126,7 +119,7 @@ class TestEchoHelloWorld:
 
   <p>
     To test this hypothesis, we <a href="#method-mining">mined</a> all 311 merged PRs from the
-    <a href="https://github.com/OpenHands/openhands-cli" target="_blank" rel="noopener noreferrer">openhands-cli</a>
+    <a href="https://github.com/OpenHands/openhands-cli" target="_blank" rel="noopener noreferrer">Openhands-CLI</a>
     repository (Sep 2025 – May 2026), <a href="#method-classification">classified</a> each by
     type, authorship, and snapshot involvement, then analyzed
     <a href="#method-snapshot">commit-level history</a> to understand <em>how</em> snapshot tests
