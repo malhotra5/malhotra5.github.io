@@ -40,13 +40,15 @@ I hypothesize that if application behavior is visually observable, and any chang
 So we need to address each during the results sections"
 />
 
-To test this hypothesis, we [mined](#step-1-mining-github-api--json) all 311 merged PRs from the [Openhands-CLI](https://github.com/OpenHands/openhands-cli) repository (Sep 2025 – May 2026), [classified](#step-2-classification-llm--heuristics--csv) each by type, authorship, and snapshot involvement, then analyzed [commit-level history](#step-3-snapshot-specific-analysis-heuristic) to understand *how* snapshot tests are actually used. Snapshot tests were adopted in January 2026. For details on the snapshot testing approach itself, see the [Appendix](#appendix-snapshot-testing-in-the-openhands-cli).
+To test this hypothesis, I [mined](#step-1-mining-github-api--json) all 311 merged PRs from the [Openhands-CLI](https://github.com/OpenHands/openhands-cli) repository (Sep 2025 – May 2026), [classified](#step-2-classification-llm--heuristics--csv) each by type, authorship, and snapshot involvement, then analyzed [commit-level history](#step-3-snapshot-specific-analysis-heuristic) to understand *how* snapshot tests are actually used. Snapshot tests were adopted in January 2026. For the anatomy of a snapshot test, see the [Appendix](#appendix-snapshot-testing-in-the-openhands-cli).
 
 <Figure src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Agent-authored PRs over time showing relatively consistent volume before and after snapshot adoption" caption="Agent-authored PR volume remains relatively consistent before and after snapshot adoption in January 2026, establishing a stable baseline for comparison." />
 
 68% of all PRs are agent authored. The percentage of agent authored PRs are lower prior to snapshot, especially for the second month. Excluding this we see relatively consistent percentage of agent authored PRs before and after snapshot adoption, which gives us a reasonable baseline for investigating effects of snapshot tests.&#x20;
 
 <Figure src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Snapshot adoption timeline" caption="Before January 2026, zero PRs touched snapshot files. After adoption, 19–33% of monthly PRs include snapshot changes." />
+
+
 
 ### Where Do Bugs Live?
 
