@@ -113,13 +113,23 @@ We mined the "Run snapshot tests" check-run result for every commit in every pos
 
 <Figure src="/img/snapshot-analysis/deep_19_ci_outcomes.png" alt="Left: 128 PRs with snapshot CI, 29 triggered failures. Right: of those 29, 16 updated baselines, 10 fixed code, 3 merged with failure." caption="Snapshot CI outcomes across 128 post-adoption PRs." />
 
-Of those 29 failures:
+Of those 29 failures, a PR-level classification (does the final PR contain snapshot file changes?) gives:
 
-- **16 (55%) updated baselines** — the visual change was intentional. The developer acknowledged it by updating the snapshot, and the new behavior is now protected going forward.
-- **10 (34%) fixed their code** — the snapshot caught an unintended change. The developer fixed the code to match the existing baseline rather than updating it. These are concrete regressions prevented.
+- **16 (55%) updated baselines** — the PR includes snapshot file changes, suggesting the visual change was intentional and acknowledged.
+- **10 (34%) fixed their code** — no snapshot files changed, so the developer fixed code to match the existing baseline.
 - **3 (10%) merged with CI still failing** — snapshot tests were advisory (not a required check) during part of the adoption period. These PRs ([#595](https://github.com/OpenHands/openhands-cli/pull/595), [#698](https://github.com/OpenHands/openhands-cli/pull/698), [#699](https://github.com/OpenHands/openhands-cli/pull/699)) bypassed the signal.
 
-The 10 code fixes span multiple PR types — features, dependency bumps, CI changes, docs — showing that snapshot tests catch unintended visual side effects even from PRs that aren't primarily about the UI.
+#### Test-level cross-reference: the real regression rate is higher
+
+The PR-level view undercounts regressions caught. A PR can update baselines for *some* tests (intentional changes) while fixing code for *others* (regressions) — and the PR-level classification only sees the aggregate.
+
+GitHub retains CI job logs for ~90 days. For the **9 most recent PRs with failures** (March–May 2026, PR #595 onward), we downloaded the logs, extracted the specific failing test names, and checked whether each failing test's snapshot directory was actually modified in the final PR.
+
+The result: **every failing test across all 9 PRs was resolved by a code fix, not a baseline update.** Two PRs that the PR-level classification called "resolved_baseline" (#719, #715) were reclassified — they did update baselines, but for *different* tests than the ones that were failing. The failing tests' baselines were never touched; the developers fixed their code instead.
+
+<Figure src="/img/snapshot-analysis/deep_21_test_level_vs_pr_level.png" alt="Per-PR bar chart of failing snapshot tests. All bars are blue (code fixed). PRs #715 and #719 are highlighted as reclassified from 'baseline updated'." caption="How failing snapshot tests were actually resolved (5 PRs with parseable CI logs, March–May 2026). Red labels mark PRs reclassified from the PR-level view." />
+
+We don't have logs for the 20 older PRs (Feb 2026 and earlier) — GitHub retains CI logs for ~90 days. But the pattern in this sample is striking: the PR-level classification called 2 of 9 "baseline updates" when both were actually code fixes. If this ratio holds for the earlier PRs, the real regression-catch rate across all 29 failures is substantially higher than the 34% the PR-level view suggests.
 
 ### Development pattern: code first, fix snapshots later
 
