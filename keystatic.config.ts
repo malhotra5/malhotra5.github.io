@@ -1,3 +1,4 @@
+import React from 'react';
 import { config, fields, collection } from '@keystatic/core';
 import { block } from '@keystatic/core/content-components';
 
@@ -50,6 +51,12 @@ export default config({
         author: fields.text({ label: 'Author' }),
         content: fields.mdx({
           label: 'Content',
+          options: {
+            image: {
+              directory: 'public/img',
+              publicPath: '/img/',
+            },
+          },
           components: {
             Figure: block({
               label: 'Figure',
@@ -65,6 +72,37 @@ export default config({
                   validation: { isRequired: true },
                 }),
                 caption: fields.text({ label: 'Caption' }),
+              },
+              ContentView: (props) => {
+                return React.createElement(
+                  'figure',
+                  {
+                    style: {
+                      margin: '1rem 0',
+                      textAlign: 'center' as const,
+                    },
+                  },
+                  React.createElement('img', {
+                    src: props.value.src,
+                    alt: props.value.alt,
+                    style: {
+                      maxWidth: '100%',
+                      borderRadius: '8px',
+                    },
+                  }),
+                  props.value.caption &&
+                    React.createElement(
+                      'figcaption',
+                      {
+                        style: {
+                          marginTop: '0.5rem',
+                          fontSize: '0.875rem',
+                          color: '#666',
+                        },
+                      },
+                      props.value.caption,
+                    ),
+                );
               },
             }),
           },
