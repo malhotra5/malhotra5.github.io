@@ -34,7 +34,7 @@ Originally on Substack ↗
 <p>To test this hypothesis, I <a href="#step-1-mining-github-api--json">mined</a> all 311 merged PRs from the <a href="https://github.com/OpenHands/openhands-cli">Openhands-CLI</a> repository (Sep 2025 – May 2026), <a href="#step-2-classification-llm--heuristics--csv">classified</a> each by type, authorship, and snapshot involvement, then analyzed <a href="#step-3-snapshot-specific-analysis-heuristic">commit-level history</a> to understand <em>how</em> snapshot tests are actually used. Snapshot tests were adopted in January 2026. For the anatomy of a snapshot test, see the <a href="#appendix-snapshot-testing-in-the-openhands-cli">Appendix</a>.</p>
 <figure> <img src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Monthly PR volume by authorship (agent vs human), Sep 2025 – May 2026."> <figcaption>Monthly PR volume by authorship (agent vs human), Sep 2025 – May 2026.</figcaption> </figure>
 <p>68% of all PRs are agent authored. Percentage of agent-authored PRs over time are relatively consistent (excluding the second month), giving a reasonable baseline for investigating effects of snapshot tests. </p>
-<figure> <img src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Before January 2026, zero PRs touched snapshot files. After adoption, 19–33% of monthly PRs include snapshot changes."> <figcaption>Before January 2026, zero PRs touched snapshot files. After adoption, 19–33% of monthly PRs include snapshot changes.</figcaption> </figure>
+<figure> <img src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Monthly snapshot involvement across all PRs, Sep 2025 – May 2026."> <figcaption>Monthly snapshot involvement across all PRs, Sep 2025 – May 2026.</figcaption> </figure>
 <p>Snapshots were introduced in January 2026, which were predominantly authored by agents. Not every PR includes snapshot changes, which we’ll explore is either due to behavioral changes that aren’t related to the UI or because of a lack of adding disciplined coverage to UI.</p>
 <h3 id="where-do-bugs-live">Where Do Bugs Live?</h3>
 <p>Not all bugs are visual. Snapshot tests helps with bugs that change rendered output. Counting all bug-fixes against snapshot coverage inflates the count.</p>
@@ -72,13 +72,13 @@ Three independent signals confirm this.</p>
 <p>After adoption, <strong>46% of TUI-changing feature PRs</strong> include snapshot updates —
 up from 0%. Nearly every visual change passes through a “did you mean to change how this
 looks?” gate.</p>
-<figure> <img src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Bug fixes including snapshot updates over time"> <figcaption>Bug fixes including snapshot updates over time</figcaption> </figure>
+<figure> <img src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month."> <figcaption>Percentage of feature and bug-fix PRs that include snapshot changes, by month.</figcaption> </figure>
 <p>Feature PRs (green) climb to 100% snapshot involvement. Bug-fix PRs (red) follow at ~35–50% — lower because many bugs are non-visual or on uncovered paths.</p>
 <h3 id="development-guard-58-code-first-fix-snapshots-later-commits">Development guard: 58 “code first, fix snapshots later” commits</h3>
 <p>Of 27 multi-commit snapshot PRs, <strong>18 (67%)</strong> show code written first, then a
 later commit fixing broken snapshots — evidence that existing tests caught unintended
 visual changes during development.</p>
-<figure> <img src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot guarding behavior"> <figcaption>Feature PRs generated the most snapshot-fix commits (24, across 9 PRs). Refactors generated 11 — code restructuring was caught changing visual output.</figcaption> </figure>
+<figure> <img src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot-fix commits by PR type (later-in-PR commits only)."> <figcaption>Snapshot-fix commits by PR type (later-in-PR commits only).</figcaption> </figure>
 <p>Feature PRs generated the most snapshot-fix commits (24, across 9 PRs). Refactors generated 11; code restructuring was caught changing visual output.</p>
 <blockquote>
 <p><strong>100% hit rate:</strong> 9 out of 9 multi-commit feature PRs touching snapshot-covered
