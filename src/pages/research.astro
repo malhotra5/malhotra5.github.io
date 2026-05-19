@@ -43,21 +43,21 @@ const ME = 'Rohit Malhotra';
 ---
 
 <BaseLayout title="Research — Rohit Malhotra" currentPage="research">
-  <section class="pt-32 pb-16 bg-white min-h-screen">
+  <section class="pt-32 pb-16 bg-white dark:bg-dark min-h-screen">
     <div class="max-w-4xl mx-auto px-6">
       <SectionHeading title="Research" />
 
-      <p class="text-gray-text text-lg md:text-xl text-center leading-relaxed mb-16">
+      <p class="text-gray-text dark:text-gray-300 text-lg md:text-xl text-center leading-relaxed mb-16">
         I'm attempting to specialize in NLP. I'm interested in getting the most
         out of LLMs without changing their weights (i.e Agents).
       </p>
 
       <!-- Publications -->
-      <h3 class="text-3xl font-bold text-gray-800 text-center mb-10">Publications</h3>
+      <h3 class="text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-10">Publications</h3>
 
       <div class="flex items-center gap-4 mb-6">
         <span class="text-lg font-semibold text-accent">2026</span>
-        <div class="h-px flex-1 bg-gray-200"></div>
+        <div class="h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
       </div>
 
       <div class="flex flex-col gap-6 mb-16">
@@ -66,19 +66,19 @@ const ME = 'Rohit Malhotra';
             href={paper.url}
             target="_blank"
             rel="noopener noreferrer"
-            class="block p-6 rounded-lg border-2 border-gray-200
+            class="block p-6 rounded-lg border-2 border-gray-200 dark:border-gray-700
                    hover:border-accent hover:shadow-md transition-all duration-300 group"
           >
-            <h4 class="text-lg font-semibold text-gray-800 group-hover:text-accent transition-colors">
+            <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100 group-hover:text-accent transition-colors">
               {paper.title}
               <span class="text-xs text-gray-400 ml-1">↗</span>
             </h4>
 
-            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
               {paper.authors.map((author, i) => (
                 <>
                   {author === ME ? (
-                    <span class="underline underline-offset-2 font-medium text-gray-700">{author}</span>
+                    <span class="underline underline-offset-2 font-medium text-gray-700 dark:text-gray-200">{author}</span>
                   ) : (
                     <span>{author}</span>
                   )}
@@ -88,7 +88,7 @@ const ME = 'Rohit Malhotra';
             </p>
 
             {paper.venue && (
-              <p class="text-sm text-gray-500 mt-1 italic">
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 italic">
                 {paper.venue}.{paper.location && ` ${paper.location}.`}{paper.date && ` ${paper.date}.`}
               </p>
             )}
@@ -97,11 +97,11 @@ const ME = 'Rohit Malhotra';
       </div>
 
       <!-- Projects -->
-      <h3 class="text-3xl font-bold text-gray-800 text-center mb-10">Projects</h3>
+      <h3 class="text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-10">Projects</h3>
 
       <div class="flex items-center gap-4 mb-6">
         <span class="text-lg font-semibold text-accent">2024</span>
-        <div class="h-px flex-1 bg-gray-200"></div>
+        <div class="h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
       </div>
 
       <div class="flex flex-col gap-6">
@@ -110,19 +110,19 @@ const ME = 'Rohit Malhotra';
             href={project.url}
             target="_blank"
             rel="noopener noreferrer"
-            class="block p-6 rounded-lg border-2 border-gray-200
+            class="block p-6 rounded-lg border-2 border-gray-200 dark:border-gray-700
                    hover:border-accent hover:shadow-md transition-all duration-300 group"
           >
-            <h4 class="text-lg font-semibold text-gray-800 group-hover:text-accent transition-colors">
+            <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100 group-hover:text-accent transition-colors">
               {project.title}
               <span class="text-xs text-gray-400 ml-1">↗</span>
             </h4>
 
-            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
               {project.authors.map((author, i) => (
                 <>
                   {author === ME ? (
-                    <span class="underline underline-offset-2 font-medium text-gray-700">{author}</span>
+                    <span class="underline underline-offset-2 font-medium text-gray-700 dark:text-gray-200">{author}</span>
                   ) : (
                     <span>{author}</span>
                   )}

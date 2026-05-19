@@ -16,17 +16,17 @@ const { title, description, date, slug, image, readTime, tags = [] } = Astro.pro
 
 <a
   href={base(`/blog/${slug}`)}
-  class="block rounded-lg border-2 border-gray-200 overflow-hidden
+  class="block rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden
          hover:border-accent hover:shadow-md transition-all duration-300 group"
 >
   <div class:list={['flex flex-col', image && 'md:flex-row']}>
     <!-- Text -->
     <div class:list={['p-6', image && 'md:flex-1 md:min-w-0']}>
-      <h3 class="text-xl md:text-2xl font-bold text-gray-800 group-hover:text-accent transition-colors mb-2 leading-snug">
+      <h3 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100 group-hover:text-accent transition-colors mb-2 leading-snug">
         {title}
       </h3>
 
-      <p class="text-gray-text text-sm leading-relaxed mb-4 line-clamp-3">
+      <p class="text-gray-text dark:text-gray-300 text-sm leading-relaxed mb-4 line-clamp-3">
         {description}
       </p>
 
@@ -39,7 +39,7 @@ const { title, description, date, slug, image, readTime, tags = [] } = Astro.pro
 
     <!-- Image -->
     {image && (
-      <div class="w-full md:w-64 lg:w-72 shrink-0 aspect-[2/1] md:aspect-auto overflow-hidden bg-gray-100 order-first md:order-last">
+      <div class="w-full md:w-64 lg:w-72 shrink-0 aspect-[2/1] md:aspect-auto overflow-hidden bg-gray-100 dark:bg-gray-800 order-first md:order-last">
         <img
           src={image}
           alt={title}
