@@ -34,7 +34,11 @@
   }
 
   body {
-    @apply font-raleway text-white overflow-x-hidden m-0;
+    @apply font-raleway overflow-x-hidden m-0 bg-white text-gray-800 transition-colors duration-300;
+  }
+
+  html.dark body {
+    @apply bg-dark text-gray-100;
   }
 
   a {
@@ -125,7 +129,7 @@
   }
 
   .modal-panel {
-    @apply fixed top-0 right-0 h-full w-[600px] max-w-full bg-black text-white overflow-y-auto z-50;
+    @apply fixed top-0 right-0 h-full w-[600px] max-w-full bg-white dark:bg-gray-900 text-gray-800 dark:text-white overflow-y-auto z-50;
     transform: translateX(100%);
     transition: transform 0.4s ease-in-out;
     padding: 2rem;

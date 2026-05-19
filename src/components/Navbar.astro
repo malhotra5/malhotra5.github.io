@@ -47,18 +47,50 @@ const navLinks = [
           </a>
         </li>
       ))}
+      <li>
+        <button
+          id="theme-toggle"
+          class="theme-toggle p-2 rounded-full transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+          aria-label="Toggle dark mode"
+        >
+          <!-- Sun icon (shown in dark mode) -->
+          <svg class="theme-icon-sun w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.66 7.66l-.71-.71M4.05 4.05l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <!-- Moon icon (shown in light mode) -->
+          <svg class="theme-icon-moon w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+          </svg>
+        </button>
+      </li>
     </ul>
 
-    <!-- Mobile hamburger -->
-    <button
-      id="mobile-menu-btn"
-      class="md:hidden flex flex-col gap-1.5 p-2"
-      aria-label="Toggle navigation"
-    >
-      <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
-      <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
-      <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
-    </button>
+    <div class="flex items-center gap-2 md:hidden">
+      <!-- Mobile theme toggle -->
+      <button
+        id="theme-toggle-mobile"
+        class="theme-toggle p-2 rounded-full transition-colors duration-300"
+        aria-label="Toggle dark mode"
+      >
+        <svg class="theme-icon-sun w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.66 7.66l-.71-.71M4.05 4.05l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <svg class="theme-icon-moon w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+        </svg>
+      </button>
+
+      <!-- Mobile hamburger -->
+      <button
+        id="mobile-menu-btn"
+        class="flex flex-col gap-1.5 p-2"
+        aria-label="Toggle navigation"
+      >
+        <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
+        <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
+        <span class="hamburger-bar block w-6 h-0.5 transition-colors duration-300" />
+      </button>
+    </div>
   </div>
 
   <!-- Mobile sidenav -->
@@ -93,50 +125,99 @@ const navLinks = [
   const hamburgerBars = document.querySelectorAll('.hamburger-bar');
   const isTransparent = nav.dataset.transparent === 'true';
 
+  function isDark() {
+    return document.documentElement.classList.contains('dark');
+  }
+
   function applyNavStyle(scrolled: boolean) {
     const solid = !isTransparent || scrolled;
+    const dark = isDark();
 
     // Nav background
+    nav.classList.remove('bg-transparent', 'bg-white/95', 'bg-dark/95', 'backdrop-blur-sm', 'shadow-sm');
     if (solid) {
-      nav.classList.remove('bg-transparent');
-      nav.classList.add('bg-white/95', 'backdrop-blur-sm', 'shadow-sm');
+      nav.classList.add(dark ? 'bg-dark/95' : 'bg-white/95', 'backdrop-blur-sm', 'shadow-sm');
     } else {
       nav.classList.add('bg-transparent');
-      nav.classList.remove('bg-white/95', 'backdrop-blur-sm', 'shadow-sm');
     }
 
     // Brand color
-    brand.classList.toggle('text-white', !solid);
-    brand.classList.toggle('hover:text-accent', true);
-    brand.classList.toggle('text-dark', solid);
+    brand.classList.remove('text-white', 'text-dark', 'text-gray-100');
+    brand.classList.add('hover:text-accent');
+    if (!solid) {
+      brand.classList.add('text-white');
+    } else {
+      brand.classList.add(dark ? 'text-gray-100' : 'text-dark');
+    }
 
     // Link colors
     navLinksEls.forEach((link) => {
       const isActive = link.classList.contains('nav-link--active');
+      link.classList.remove('text-white/80', 'hover:text-white', 'text-gray-600', 'hover:text-dark', 'text-gray-300', 'hover:text-gray-100');
       if (isActive) {
         link.classList.add('text-accent');
-        link.classList.remove('text-white/80', 'text-gray-600');
-      } else if (solid) {
-        link.classList.remove('text-white/80', 'hover:text-white');
-        link.classList.add('text-gray-600', 'hover:text-dark');
-      } else {
+      } else if (!solid) {
         link.classList.add('text-white/80', 'hover:text-white');
-        link.classList.remove('text-gray-600', 'hover:text-dark');
+      } else if (dark) {
+        link.classList.add('text-gray-300', 'hover:text-gray-100');
+      } else {
+        link.classList.add('text-gray-600', 'hover:text-dark');
       }
     });
 
     // Hamburger bars
     hamburgerBars.forEach((bar) => {
-      bar.classList.toggle('bg-white', !solid);
-      bar.classList.toggle('bg-dark', solid);
+      bar.classList.remove('bg-white', 'bg-dark', 'bg-gray-100');
+      if (!solid) {
+        bar.classList.add('bg-white');
+      } else {
+        bar.classList.add(dark ? 'bg-gray-100' : 'bg-dark');
+      }
+    });
+
+    // Theme toggle icon colors
+    document.querySelectorAll('.theme-toggle').forEach((toggle) => {
+      toggle.classList.remove('text-gray-600', 'text-gray-300', 'text-white');
+      if (!solid) {
+        toggle.classList.add('text-white');
+      } else {
+        toggle.classList.add(dark ? 'text-gray-300' : 'text-gray-600');
+      }
     });
   }
 
-  // Apply immediately for initial state
+  // Theme toggle icons
+  function syncThemeIcons() {
+    const dark = isDark();
+    document.querySelectorAll('.theme-icon-sun').forEach((el) => el.classList.toggle('hidden', !dark));
+    document.querySelectorAll('.theme-icon-moon').forEach((el) => el.classList.toggle('hidden', dark));
+  }
+
+  function toggleTheme() {
+    const dark = !isDark();
+    document.documentElement.classList.toggle('dark', dark);
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+    syncThemeIcons();
+    applyNavStyle(window.scrollY > 50);
+  }
+
+  // Init
+  syncThemeIcons();
   applyNavStyle(window.scrollY > 50);
 
-  // Update on scroll
   window.addEventListener('scroll', () => applyNavStyle(window.scrollY > 50), { passive: true });
+
+  document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+  document.getElementById('theme-toggle-mobile')?.addEventListener('click', toggleTheme);
+
+  // Listen for system theme changes when no user preference saved
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      document.documentElement.classList.toggle('dark', e.matches);
+      syncThemeIcons();
+      applyNavStyle(window.scrollY > 50);
+    }
+  });
 
   // Mobile sidenav
   const btn = document.getElementById('mobile-menu-btn');
