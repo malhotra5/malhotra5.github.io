@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import CitationBlock from '../components/CitationBlock.astro';
 import { base } from '../utils/base';
 
 interface Props {
@@ -11,9 +12,10 @@ interface Props {
   readTime?: string;
   originalUrl?: string;
   tags?: string[];
+  author?: string;
 }
 
-const { title, description, date, image, imageCaption, readTime, originalUrl, tags = [] } = Astro.props;
+const { title, description, date, image, imageCaption, readTime, originalUrl, tags = [], author } = Astro.props;
 ---
 
 <BaseLayout
@@ -82,6 +84,9 @@ const { title, description, date, image, imageCaption, readTime, originalUrl, ta
       <div class="blog-content">
         <slot />
       </div>
+
+      <!-- Citation -->
+      <CitationBlock title={title} date={date} author={author} />
     </div>
   </article>
 </BaseLayout>
