@@ -20,14 +20,14 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
       - run: npm run build
-      - run: touch dist/.nojekyll
+      - run: touch dist/client/.nojekyll
 
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist
+          folder: dist/client
           clean-exclude: pr-preview
