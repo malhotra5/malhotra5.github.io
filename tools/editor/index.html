@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Editor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Raleway:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #04C2C9;
+      --dark: #252934;
+      --gray-text: #616161;
+      --bg: #f9fafb;
+      --sidebar-w: 280px;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg);
+      color: #333;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--dark);
+      color: #ccc;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .sidebar-header h1 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 18px;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .sidebar-header p { font-size: 12px; color: #888; margin-top: 4px; }
+
+    .new-draft-btn {
+      margin: 16px 20px;
+      padding: 10px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .new-draft-btn:hover { opacity: 0.85; }
+
+    .draft-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+    .draft-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .draft-item:hover { background: rgba(255,255,255,0.05); }
+    .draft-item.active { border-left-color: var(--accent); background: rgba(255,255,255,0.08); }
+
+    .draft-item-title {
+      font-size: 13px; color: #ddd;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
+    }
+
+    .draft-item-delete {
+      background: none; border: none; color: #666;
+      cursor: pointer; font-size: 16px; padding: 0 4px;
+    }
+
+    .draft-item-delete:hover { color: #e44; }
+
+    /* ── Main ── */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ── Meta bar ── */
+    .meta-bar {
+      padding: 16px 32px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .meta-field { display: flex; flex-direction: column; gap: 4px; }
+
+    .meta-field label {
+      font-size: 11px; text-transform: uppercase;
+      letter-spacing: 0.5px; color: #999; font-weight: 600;
+    }
+
+    .meta-field input {
+      padding: 6px 10px; border: 1px solid #ddd;
+      border-radius: 4px; font-size: 13px; font-family: inherit; outline: none;
+    }
+
+    .meta-field input:focus { border-color: var(--accent); }
+    .meta-field.wide { flex: 1; min-width: 200px; }
+    .meta-field.medium { width: 180px; }
+    .meta-field.narrow { width: 120px; }
+
+    .meta-actions { display: flex; gap: 8px; align-items: flex-end; margin-left: auto; }
+
+    .save-status { font-size: 12px; color: #999; align-self: center; margin-right: 8px; }
+
+    .publish-btn {
+      padding: 8px 20px; background: var(--accent); color: #fff;
+      border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+
+    .publish-btn:hover { opacity: 0.85; }
+
+    .figure-btn {
+      padding: 8px 14px; background: #f3f4f6; color: #555;
+      border: 1px solid #ddd; border-radius: 6px; font-size: 13px; cursor: pointer;
+    }
+
+    .figure-btn:hover { background: #e5e7eb; }
+
+    /* ── Editor area ── */
+    .editor-scroll {
+      flex: 1; overflow-y: auto; display: flex; flex-direction: column;
+    }
+
+    .editor-wrap {
+      max-width: 780px; width: 100%; margin: 0 auto;
+      display: flex; flex-direction: column; flex: 1;
+    }
+
+    /* Quill customization to match blog styles */
+    .ql-toolbar.ql-snow { border: none; border-bottom: 1px solid #e5e7eb; background: #fff; }
+    .ql-container.ql-snow { border: none; flex: 1; font-family: 'Open Sans', sans-serif; font-size: 16px; }
+
+    .ql-editor {
+      padding: 40px 32px;
+      color: var(--gray-text);
+      line-height: 1.75;
+      min-height: 400px;
+    }
+
+    .ql-editor h2 { font-size: 24px; font-weight: 700; color: #1f2937; margin-top: 32px; margin-bottom: 12px; }
+    .ql-editor h3 { font-size: 20px; font-weight: 600; color: #1f2937; margin-top: 24px; margin-bottom: 8px; }
+    .ql-editor p { margin-bottom: 16px; }
+    .ql-editor strong { color: #374151; }
+    .ql-editor a { color: var(--accent); }
+    .ql-editor blockquote {
+      border-left: 4px solid rgba(4,194,201,0.3);
+      padding-left: 16px; color: #6b7280; font-style: italic;
+    }
+    .ql-editor img { max-width: 100%; border-radius: 8px; }
+    .ql-editor .ql-editor-placeholder { color: #aaa; }
+
+    /* ── Empty state ── */
+    .empty-state {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      color: #aaa; font-size: 16px;
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+      display: flex; align-items: center; justify-content: center; z-index: 100;
+    }
+
+    .modal-overlay.hidden { display: none; }
+
+    .modal {
+      background: #fff; border-radius: 12px; padding: 24px;
+      width: 420px; max-width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .modal h3 { font-family: 'Raleway', sans-serif; font-size: 18px; margin-bottom: 16px; }
+    .modal .field { margin-bottom: 12px; }
+    .modal label { display: block; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
+    .modal input { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; outline: none; }
+    .modal input:focus { border-color: var(--accent); }
+
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+    .modal-actions button { padding: 8px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
+    .btn-cancel { background: #e5e7eb; color: #555; }
+    .btn-confirm { background: var(--accent); color: #fff; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      padding: 12px 20px; background: var(--dark); color: #fff;
+      border-radius: 8px; font-size: 14px; z-index: 200;
+      opacity: 0; transform: translateY(10px); transition: all 0.3s; pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1>📝 Blog Editor</h1>
+      <p>WYSIWYG → MDX</p>
+    </div>
+    <button class="new-draft-btn" id="newDraftBtn">+ New Draft</button>
+    <div class="draft-list" id="draftList"></div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main" id="mainArea">
+    <div class="empty-state">Select a draft or create a new one to start writing.</div>
+  </div>
+
+  <!-- Figure modal -->
+  <div class="modal-overlay hidden" id="figureModal">
+    <div class="modal">
+      <h3>Insert Figure</h3>
+      <div class="field">
+        <label>Image path (e.g. /img/chart.png)</label>
+        <input type="text" id="figureSrc" placeholder="/img/..." />
+      </div>
+      <div class="field">
+        <label>Alt text</label>
+        <input type="text" id="figureAlt" placeholder="Description of the image" />
+      </div>
+      <div class="field">
+        <label>Caption (optional)</label>
+        <input type="text" id="figureCaption" placeholder="Caption shown below image" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="figureCancelBtn">Cancel</button>
+        <button class="btn-confirm" id="figureConfirmBtn">Insert</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+  <script>
+    // ── State ──
+    let quill = null;
+    let currentDraftId = null;
+    let autoSaveTimer = null;
+
+    // ── Init ──
+    document.getElementById('newDraftBtn').addEventListener('click', newDraft);
+    document.getElementById('figureCancelBtn').addEventListener('click', () => document.getElementById('figureModal').classList.add('hidden'));
+    document.getElementById('figureConfirmBtn').addEventListener('click', confirmFigure);
+    loadDraftList();
+
+    // ── Draft list ──
+    async function loadDraftList() {
+      const res = await fetch('/api/drafts');
+      const drafts = await res.json();
+      const list = document.getElementById('draftList');
+      list.innerHTML = '';
+
+      for (const d of drafts) {
+        const div = document.createElement('div');
+        div.className = 'draft-item' + (d.id === currentDraftId ? ' active' : '');
+        div.innerHTML =
+          '<span class="draft-item-title">' + esc(d.title || 'Untitled') + '</span>' +
+          '<button class="draft-item-delete" title="Delete">&times;</button>';
+        div.querySelector('.draft-item-title').addEventListener('click', () => openDraft(d.id));
+        div.querySelector('.draft-item-delete').addEventListener('click', async (e) => {
+          e.stopPropagation();
+          if (confirm('Delete "' + (d.title || 'Untitled') + '"?')) {
+            await fetch('/api/drafts/' + d.id, { method: 'DELETE' });
+            if (currentDraftId === d.id) { currentDraftId = null; showEmptyState(); }
+            loadDraftList();
+          }
+        });
+        list.appendChild(div);
+      }
+    }
+
+    function newDraft() {
+      currentDraftId = 'draft-' + Date.now();
+      showEditor({ title: '', description: '', tags: '', date: '', readTime: '', image: '', htmlContent: '' });
+      autoSave();
+      loadDraftList();
+    }
+
+    async function openDraft(id) {
+      const res = await fetch('/api/drafts/' + id);
+      const data = await res.json();
+      currentDraftId = id;
+      showEditor(data);
+      loadDraftList();
+    }
+
+    function showEmptyState() {
+      document.getElementById('mainArea').innerHTML =
+        '<div class="empty-state">Select a draft or create a new one to start writing.</div>';
+    }
+
+    function showEditor(data) {
+      const main = document.getElementById('mainArea');
+      main.innerHTML =
+        '<div class="meta-bar">' +
+          '<div class="meta-field wide"><label>Title</label><input id="metaTitle" value="' + esc(data.title || '') + '" placeholder="Post title" /></div>' +
+          '<div class="meta-field wide"><label>Description</label><input id="metaDesc" value="' + esc(data.description || '') + '" placeholder="Short description" /></div>' +
+          '<div class="meta-field medium"><label>Tags (comma-separated)</label><input id="metaTags" value="' + esc(Array.isArray(data.tags) ? data.tags.join(', ') : (data.tags || '')) + '" placeholder="AI, Testing" /></div>' +
+          '<div class="meta-field narrow"><label>Date</label><input id="metaDate" value="' + esc(data.date || '') + '" placeholder="Sep 24, 2025" /></div>' +
+          '<div class="meta-field narrow"><label>Read time</label><input id="metaReadTime" value="' + esc(data.readTime || '') + '" placeholder="5 min read" /></div>' +
+          '<div class="meta-field medium"><label>Hero image</label><input id="metaImage" value="' + esc(data.image || '') + '" placeholder="/img/hero.png" /></div>' +
+          '<div class="meta-actions">' +
+            '<span class="save-status" id="saveStatus">Ready</span>' +
+            '<button class="figure-btn" id="figureBtn">🖼 Figure</button>' +
+            '<button class="publish-btn" id="publishBtn">Publish as MDX</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="editor-scroll"><div class="editor-wrap"><div id="editorEl"></div></div></div>';
+
+      // Init Quill
+      quill = new Quill('#editorEl', {
+        theme: 'snow',
+        placeholder: 'Start writing your blog post...',
+        modules: {
+          toolbar: [
+            [{ header: [2, 3, false] }],
+            ['bold', 'italic', 'underline'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['blockquote', 'code-block'],
+            ['link', 'image'],
+            ['clean'],
+          ],
+        },
+      });
+
+      // Load existing content
+      if (data.htmlContent) {
+        quill.clipboard.dangerouslyPasteHTML(data.htmlContent);
+      }
+
+      // Auto-save on text change
+      quill.on('text-change', scheduleAutoSave);
+
+      // Auto-save on meta field changes
+      ['metaTitle', 'metaDesc', 'metaTags', 'metaDate', 'metaReadTime', 'metaImage'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('input', scheduleAutoSave);
+      });
+
+      document.getElementById('figureBtn').addEventListener('click', openFigureModal);
+      document.getElementById('publishBtn').addEventListener('click', publish);
+    }
+
+    // ── Figure modal ──
+    function openFigureModal() {
+      document.getElementById('figureSrc').value = '';
+      document.getElementById('figureAlt').value = '';
+      document.getElementById('figureCaption').value = '';
+      document.getElementById('figureModal').classList.remove('hidden');
+      setTimeout(function() { document.getElementById('figureSrc').focus(); }, 50);
+    }
+
+    function confirmFigure() {
+      var src = document.getElementById('figureSrc').value.trim();
+      var alt = document.getElementById('figureAlt').value.trim();
+      var caption = document.getElementById('figureCaption').value.trim();
+      if (!src) return;
+      var range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'image', src);
+      // Store caption as alt text in the img element after insert
+      setTimeout(function() {
+        var imgs = document.querySelectorAll('#editorEl img[src="' + src + '"]');
+        imgs.forEach(function(img) {
+          img.alt = alt;
+          if (caption) img.title = caption;
+        });
+      }, 50);
+      document.getElementById('figureModal').classList.add('hidden');
+      scheduleAutoSave();
+    }
+
+    // ── Auto-save ──
+    function scheduleAutoSave() {
+      clearTimeout(autoSaveTimer);
+      setStatus('Unsaved changes...');
+      autoSaveTimer = setTimeout(autoSave, 1000);
+    }
+
+    async function autoSave() {
+      if (!currentDraftId || !quill) return;
+      var data = gatherDraft();
+      await fetch('/api/drafts/' + currentDraftId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      setStatus('Saved');
+      loadDraftList();
+    }
+
+    function gatherDraft() {
+      var tagsVal = (document.getElementById('metaTags') || {}).value || '';
+      var tags = tagsVal.split(',').map(function(t) { return t.trim(); }).filter(Boolean);
+      var html = quill.getSemanticHTML();
+
+      return {
+        title: (document.getElementById('metaTitle') || {}).value || '',
+        description: (document.getElementById('metaDesc') || {}).value || '',
+        tags: tags,
+        date: (document.getElementById('metaDate') || {}).value || '',
+        readTime: (document.getElementById('metaReadTime') || {}).value || '',
+        image: (document.getElementById('metaImage') || {}).value || '',
+        htmlContent: html,
+        body: htmlToMdx(html),
+      };
+    }
+
+    // ── Publish ──
+    async function publish() {
+      if (!currentDraftId) return;
+      await autoSave();
+
+      var data = gatherDraft();
+      if (!data.title) { toast('Please add a title before publishing'); return; }
+
+      var slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      var draft = Object.assign({}, data, { slug: slug });
+
+      await fetch('/api/drafts/' + currentDraftId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(draft),
+      });
+
+      var res = await fetch('/api/publish/' + currentDraftId, { method: 'POST' });
+      var result = await res.json();
+
+      if (result.ok) {
+        toast('Published! → ' + result.path);
+      } else {
+        toast('Error: ' + (result.error || 'unknown'));
+      }
+    }
+
+    // ── HTML → MDX ──
+    function htmlToMdx(html) {
+      var div = document.createElement('div');
+      div.innerHTML = html;
+      return nodeToMdx(div).trim();
+    }
+
+    function nodeToMdx(node) {
+      var md = '';
+      for (var i = 0; i < node.childNodes.length; i++) {
+        var child = node.childNodes[i];
+        if (child.nodeType === 3) { md += child.textContent; continue; }
+        if (child.nodeType !== 1) continue;
+        var tag = child.tagName.toLowerCase();
+        switch (tag) {
+          case 'h2': md += '\n## ' + inline(child) + '\n\n'; break;
+          case 'h3': md += '\n### ' + inline(child) + '\n\n'; break;
+          case 'p':
+            var inner = inline(child);
+            if (inner.trim()) md += inner + '\n\n';
+            break;
+          case 'ul': md += listMd(child, '-') + '\n'; break;
+          case 'ol': md += listMd(child, '1.') + '\n'; break;
+          case 'blockquote':
+            var bqInner = nodeToMdx(child).trim();
+            md += bqInner.split('\n').map(function(l) { return '> ' + l; }).join('\n') + '\n\n';
+            break;
+          case 'pre':
+            var code = child.querySelector('code');
+            md += '```\n' + (code ? code.textContent : child.textContent) + '\n```\n\n';
+            break;
+          case 'hr': md += '---\n\n'; break;
+          case 'img':
+            var src = child.getAttribute('src') || '';
+            var alt = child.getAttribute('alt') || '';
+            var cap = child.getAttribute('title') || '';
+            if (cap) {
+              md += '\n<Figure\n  src="' + src + '"\n  alt="' + alt + '"\n  caption="' + cap + '"\n/>\n\n';
+            } else {
+              md += '![' + alt + '](' + src + ')\n\n';
+            }
+            break;
+          default: md += nodeToMdx(child);
+        }
+      }
+      return md;
+    }
+
+    function inline(node) {
+      var md = '';
+      for (var i = 0; i < node.childNodes.length; i++) {
+        var child = node.childNodes[i];
+        if (child.nodeType === 3) { md += child.textContent; continue; }
+        if (child.nodeType !== 1) continue;
+        var tag = child.tagName.toLowerCase();
+        switch (tag) {
+          case 'strong': case 'b': md += '**' + inline(child) + '**'; break;
+          case 'em': case 'i': md += '*' + inline(child) + '*'; break;
+          case 'u': md += inline(child); break;
+          case 'code': md += '`' + child.textContent + '`'; break;
+          case 'a':
+            md += '[' + inline(child) + '](' + (child.getAttribute('href') || '') + ')';
+            break;
+          case 'img':
+            var s = child.getAttribute('src') || '';
+            var a = child.getAttribute('alt') || '';
+            var c = child.getAttribute('title') || '';
+            if (c) md += '\n<Figure\n  src="' + s + '"\n  alt="' + a + '"\n  caption="' + c + '"\n/>\n';
+            else md += '![' + a + '](' + s + ')';
+            break;
+          case 'br': md += '\n'; break;
+          default: md += inline(child);
+        }
+      }
+      return md;
+    }
+
+    function listMd(ul, marker) {
+      var md = '', idx = 1;
+      for (var i = 0; i < ul.children.length; i++) {
+        var li = ul.children[i];
+        if (li.tagName.toLowerCase() !== 'li') continue;
+        var prefix = marker === '1.' ? idx + '. ' : '- ';
+        md += prefix + inline(li).trim() + '\n';
+        idx++;
+      }
+      return md;
+    }
+
+    // ── Helpers ──
+    function setStatus(text) {
+      var el = document.getElementById('saveStatus');
+      if (el) el.textContent = text;
+    }
+
+    function toast(msg) {
+      var el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(function() { el.classList.remove('show'); }, 3000);
+    }
+
+    function esc(s) { return (s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+  </script>
+</body>
+</html>
