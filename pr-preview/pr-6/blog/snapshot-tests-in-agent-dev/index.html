@@ -72,12 +72,13 @@ Three independent signals confirm this.</p>
 <figure> <img src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month."> <figcaption>Percentage of feature and bug-fix PRs that include snapshot changes, by month.</figcaption> </figure>
 <p>Feature PRs (green) climb to 100% — every TUI feature now passes through a “did you mean to change how this looks?” gate. Bug-fix PRs (red) plateau at ~35–50%. Since this graph is already filtered to TUI (visual) bugs, the gap isn’t about non-visual code — it’s about coverage depth. Of the 34 post-adoption TUI bug-fixes, 12 land on snapshot-covered paths and update the baseline to reflect the corrected behavior. The other 22 fix bugs on paths that have no snapshot tests at all (settings persistence, notifications, dropdown ordering), so there’s no baseline to update.</p>
 <h3 id="the-protection-loop">The protection loop</h3>
-<p>Once a bug-fix updates a baseline, that corrected behavior is guarded going forward. The evidence: across 27 multi-commit snapshot PRs, <strong>18 (67%)</strong> show code written first, then a later commit fixing broken snapshots — the existing baselines caught unintended visual changes mid-development.</p>
+<p>Once a baseline exists, any PR that changes the rendered output has to deal with it — either by fixing the code (the change was unintended) or by updating the baseline (the change was intentional and now explicitly acknowledged). Either outcome is valuable: one prevents regressions, the other creates a reviewable record of deliberate changes and protects the new behavior going forward.</p>
+<p>Across 27 multi-commit snapshot PRs, <strong>18 (67%)</strong> show code written first, then a later commit addressing broken snapshots.</p>
 <figure> <img src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot-fix commits by PR type (later-in-PR commits only)."> <figcaption>Snapshot-fix commits by PR type (later-in-PR commits only).</figcaption> </figure>
-<p>Feature PRs generated the most snapshot-fix commits (24 across 9 PRs) — new features breaking existing baselines and being forced to acknowledge the change. Refactors generated 11; code restructuring that wasn’t intended to change behavior was caught doing exactly that.</p>
+<p>Feature PRs generated the most snapshot-fix commits (24 across 9 PRs). Refactors generated 11 — code restructuring that wasn’t intended to change visual output was caught doing exactly that.</p>
 <blockquote>
 <p><strong>100% hit rate:</strong> 9 out of 9 multi-commit feature PRs touching snapshot-covered
-areas had to fix snapshot tests after their initial code.</p>
+areas had to address snapshot tests after their initial code.</p>
 </blockquote>
 <h3 id="review-speed-2-faster-first-review">Review speed: 2× faster first review</h3>
 <p>PRs with snapshot changes get first review in <strong>0.9 hours</strong> vs
