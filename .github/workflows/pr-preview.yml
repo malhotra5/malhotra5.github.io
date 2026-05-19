@@ -30,8 +30,8 @@ jobs:
       - if: github.event.action != 'closed'
         run: |
           npm run build -- --base /pr-preview/pr-${{ github.event.pull_request.number }}/
-          touch dist/.nojekyll
+          touch dist/client/.nojekyll
 
       - uses: rossjrw/pr-preview-action@v1
         with:
-          source-dir: dist
+          source-dir: dist/client
