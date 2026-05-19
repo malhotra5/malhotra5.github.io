@@ -45,13 +45,13 @@ we ship less buggy products.
 **Snapshot tests could make it easier to review changes for all parties involved,
 and make it safe to use agents in future iterations.**
 
-To test this hypothesis, we [mined](#method-mining) all 311 merged PRs from the
+To test this hypothesis, we [mined](#step-1-mining-github-api--json) all 311 merged PRs from the
 [Openhands-CLI](https://github.com/OpenHands/openhands-cli)
-repository (Sep 2025 – May 2026), [classified](#method-classification) each by
+repository (Sep 2025 – May 2026), [classified](#step-2-classification-llm--heuristics--csv) each by
 type, authorship, and snapshot involvement, then analyzed
-[commit-level history](#method-snapshot) to understand *how* snapshot tests
+[commit-level history](#step-3-snapshot-specific-analysis-heuristic) to understand *how* snapshot tests
 are actually used. Snapshot tests were adopted in January 2026. For details on the snapshot
-testing approach itself, see the [Appendix](#appendix).
+testing approach itself, see the [Appendix](#appendix-snapshot-testing-in-the-openhands-cli).
 
 <Figure
   src="/img/snapshot-analysis/0_summary_dashboard.png"
@@ -117,7 +117,7 @@ the same code *paths* covered by snapshots — not just the same files.
 
 Snapshot tests don't just test rendering — they implicitly test the full stack behind what's
 rendered. A test that renders a conversation after switching implicitly exercises persistence.
-We [read every snapshot test file](#method-indirect) (20 test classes + conftest) and asked:
+We [read every snapshot test file](#step-4-indirect-coverage-analysis-manual--scripted) (20 test classes + conftest) and asked:
 *would the snapshot output actually change if this bug existed?*
 
 Strict criteria for "indirectly covered":
@@ -263,7 +263,7 @@ Everything in this analysis is reproducible from two scripts and a GitHub token.
 The full pipeline, data, and graphs are at
 [snapshot-tests-analysis](https://github.com/malhotra5/snapshot-tests-analysis).
 
-<h3 id="method-mining">Step 1: Mining (GitHub API → JSON)</h3>
+### Step 1: Mining (GitHub API → JSON)
 
 `scripts/mine_github.py` pulls every merged PR from
 [openhands-cli](https://github.com/OpenHands/openhands-cli)
@@ -280,7 +280,7 @@ via the GitHub REST API and `gh` CLI. For each PR it collects:
 Output: a single `mined_prs.json` file with 42 fields per PR across all 311 merged PRs.
 No LLM is involved in this step — it's pure API data.
 
-<h3 id="method-classification">Step 2: Classification (LLM + heuristics → CSV)</h3>
+### Step 2: Classification (LLM + heuristics → CSV)
 
 `scripts/categorize_prs.py` classifies each PR along four dimensions.
 It runs two classifiers in parallel and keeps both outputs:
@@ -303,7 +303,7 @@ The report uses the LLM classifications (`llm_pr_type`, `llm_bug_severity`,
 `llm_touches_tui`) as the primary labels, falling back to heuristics when the LLM
 call fails. The heuristic labels are retained in the CSV for comparison.
 
-<h3 id="method-snapshot">Step 3: Snapshot-specific analysis (heuristic)</h3>
+### Step 3: Snapshot-specific analysis (heuristic)
 
 Several analyses required no LLM — just reading file paths, commit messages, and timestamps:
 
@@ -312,7 +312,7 @@ Several analyses required no LLM — just reading file paths, commit messages, a
 - **Suite reuse** — extract test suite names from snapshot file paths and count unique PRs per suite
 - **Review speed** — compare `hours_to_first_review` between snapshot and non-snapshot PRs
 
-<h3 id="method-indirect">Step 4: Indirect coverage analysis (manual + scripted)</h3>
+### Step 4: Indirect coverage analysis (manual + scripted)
 
 This was the most labor-intensive step. We cloned openhands-cli and read all 20 snapshot test
 files (~2,500 lines of test code), including `conftest.py` fixtures and trajectory
@@ -334,7 +334,7 @@ base64-embedded images. Both are runnable with `uv run`.
 - **Indirect coverage is subjective** — our B1 (indirectly covered) classifications are judgment calls about whether a snapshot would visibly change. Different reviewers might classify 1-2 borderline cases differently, but the overall split (4 B1 vs 16 B2) is robust.
 - **Single repository** — all findings are specific to openhands-cli. Generalizing to other agent-driven projects requires similar analysis in those codebases.
 
-<h2 id="appendix">Appendix: Snapshot Testing in the OpenHands CLI</h2>
+## Appendix: Snapshot Testing in the OpenHands CLI
 
 I experimented with snapshot testing in the
 [OpenHands command-line interface (CLI)](https://github.com/OpenHands/openhands-cli)
