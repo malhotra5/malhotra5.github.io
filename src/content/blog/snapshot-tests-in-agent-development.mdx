@@ -1,41 +1,42 @@
 ---
-title: "Do Snapshot Tests Help in Agent-Driven Development?"
-description: "An empirical analysis of 311 pull requests in the openhands-cli repository, where 68% of PRs are authored by AI agents. We examine whether snapshot tests actually catch bugs, guard behavior, and improve the development process."
-date: "May 18, 2026"
-image: "/img/snapshot-analysis/deep_10_bug_rate_with_context.png"
-readTime: "12 min read"
-tags: ["AI Agents", "Testing", "Snapshot Tests", "Empirical Analysis"]
+title: Do Snapshot Tests Help in Agent-Driven Development?
+description: >-
+  An empirical analysis of 311 pull requests in the openhands-cli repository,
+  where 68% of PRs are authored by AI agents. We examine whether snapshot tests
+  actually catch bugs, guard behavior, and improve the development process.
+date: May 18, 2026
+image: /img/snapshot-analysis/deep_10_bug_rate_with_context.png
+readTime: 12 min read
+originalUrl: >-
+  https://rohitmalh.substack.com/p/e1ec40f1-a3e7-4e02-9ad2-fb7e7b6da735?postPreview=paid&updated=2026-05-19T03%3A08%3A27.445Z&audience=everyone&free_preview=false&freemail=true
+tags:
+  - AI Agents
+  - Testing
+  - Snapshot Tests
+  - Empirical Analysis
 ---
+Agents are now employed liberally in all parts of the software development cycle. They generate code and surrounding artifacts e.g. ticket descriptions, PR descriptions, documentation, Slack comments. Seemingly we're developing applications faster than ever. In reality, we see neither experience increased velocity or improved product quality. The time saved is spent reviewing and verifying code, as agents frequently break things. Thus, I'm in a pursuit of finding improved ways to verify code that makes agents safe to use for everyone.
 
-Just in the last couple years, agents are being used liberally in all parts of
-the software development cycle. In addition to code, surrounding artifacts such as ticket
-descriptions, PR descriptions, documentation, Slack comments are also generated with agents.
-Even though we seemingly save much time doing this, it is lost during review
-and verification. It's unavoidable, as code agents can break things, and
-we need a way to make agents safe to use for everyone.
+<Comment note="Include image of time to merge not improving with use of agents; find reference to external blog post or paper" />
 
---insert image on time to merge PRs not changing--
-
-## Code changes are unsafe unless they can be easily reviewed, verfied, and maintained.
+## Verification is an ambiguous and time consuming task
 
 I hypothesized there are two problems with respect to verification:
 
-1. **Determining intended behavior.** Where is the source of truth for how the product should behave? If an agent was used to describe the behavior and write the ticket description, was this captured accurately?
-2. **Verifying implemented behavior.** Once the code has been implemented, how can we easily verify that the application implements the intended behavior?
+1. **Determining intended behavior.** Where is the source of truth for how the product should behave? If an agent details application behavior in a ticket description, is it accurate? The agent user needs to spend time determining whether the task was captured properly. Are the contributor and reviewer actually aligned on the intended behavior? Reviewers depend on the legitimacy of this, and so does the agent itself during future iterations of work.&#x20;
+2. **Verifying implemented behavior.** Once the code has been implemented, how can we easily verify that the application implements the intended behavior? Manually running and validating the application reveals new problems. It's time-consuming and doesn't scale well when agents are producing large volumes of code.
 
-- **Agent user**: must determine if the agent captured the task correctly
-- **Reviewer**: must infer the expected behavior from the descriptions
-- **Agent itself**: relies on those descriptions during future iterations of work and reviews
+## Visualizing application behavior to improve verification bottlenecks&#x20;
 
-In many cases, we implicitly assume that the description is correct simply because it looks
-structured and detailed. But the clarity is often superficial. Are the contributor and reviewer
-actually aligned on the intended behavior?
+<Comment
+  note="There are two specific aspects that we seem to be discussing
 
-Even when the application code and tests appear reasonable, manually running and validating
-the application reveals new problems. It's time-consuming and doesn't scale well when agents
-are producing large volumes of code.
+- speed at which we ship code
+- quality with which we ship code (less buggy, fewer regressions)
 
-## Hypothesis
+
+So we need to address each during the results sections"
+/>
 
 What if we could *see* the behavior of the application directly, instead of inferring
 it from code or descriptions? If the behavior is visually observable, and any change to it is
@@ -45,25 +46,11 @@ we ship less buggy products.
 **Snapshot tests could make it easier to review changes for all parties involved,
 and make it safe to use agents in future iterations.**
 
-To test this hypothesis, we [mined](#step-1-mining-github-api--json) all 311 merged PRs from the
-[Openhands-CLI](https://github.com/OpenHands/openhands-cli)
-repository (Sep 2025 – May 2026), [classified](#step-2-classification-llm--heuristics--csv) each by
-type, authorship, and snapshot involvement, then analyzed
-[commit-level history](#step-3-snapshot-specific-analysis-heuristic) to understand *how* snapshot tests
-are actually used. Snapshot tests were adopted in January 2026. For details on the snapshot
-testing approach itself, see the [Appendix](#appendix-snapshot-testing-in-the-openhands-cli).
+To test this hypothesis, we [mined](#step-1-mining-github-api--json) all 311 merged PRs from the [Openhands-CLI](https://github.com/OpenHands/openhands-cli) repository (Sep 2025 – May 2026), [classified](#step-2-classification-llm--heuristics--csv) each by type, authorship, and snapshot involvement, then analyzed [commit-level history](#step-3-snapshot-specific-analysis-heuristic) to understand *how* snapshot tests are actually used. Snapshot tests were adopted in January 2026. For details on the snapshot testing approach itself, see the [Appendix](#appendix-snapshot-testing-in-the-openhands-cli).
 
-<Figure
-  src="/img/snapshot-analysis/0_summary_dashboard.png"
-  alt="Summary dashboard showing 311 PRs, 68% agent-authored, 46 touching snapshots"
-  caption="Repository contains 311 PRs of which 68% are agent-authored"
-/>
+<Figure src="/img/snapshot-analysis/0_summary_dashboard.png" alt="Summary dashboard showing 311 PRs, 68% agent-authored, 46 touching snapshots" caption="Repository contains 311 PRs of which 68% are agent-authored" />
 
-<Figure
-  src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png"
-  alt="Snapshot adoption timeline"
-  caption="Before January 2026, zero PRs touched snapshot files. After adoption, 19–33% of monthly PRs include snapshot changes."
-/>
+<Figure src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Snapshot adoption timeline" caption="Before January 2026, zero PRs touched snapshot files. After adoption, 19–33% of monthly PRs include snapshot changes." />
 
 ## Where Do Bugs Live?
 
@@ -71,17 +58,9 @@ Not all bugs are visual — and snapshot tests can only help with bugs that chan
 output. This distinction is critical: counting all bug-fixes against snapshot coverage
 inflates the apparent gap.
 
-<Figure
-  src="/img/snapshot-analysis/deep_16_bugfix_domain.png"
-  alt="Bug-fix domain breakdown"
-  caption="The largest category is TUI widgets & screens (38), where 12 involved snapshots (green). But 27 bugs (35%) are entirely non-visual: CLI core, config/state, API/auth. Snapshot tests are structurally irrelevant for these."
-/>
+<Figure src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix domain breakdown" caption="The largest category is TUI widgets & screens (38), where 12 involved snapshots (green). But 27 bugs (35%) are entirely non-visual: CLI core, config/state, API/auth. Snapshot tests are structurally irrelevant for these." />
 
-<Figure
-  src="/img/snapshot-analysis/deep_17_severity_by_domain.png"
-  alt="Bug severity by domain"
-  caption="Critical bugs skew non-visual (44%) — crashes, auth failures, dependency issues. UX regressions are predominantly visual (75%), the natural domain for snapshot tests."
-/>
+<Figure src="/img/snapshot-analysis/deep_17_severity_by_domain.png" alt="Bug severity by domain" caption="Critical bugs skew non-visual (44%) — crashes, auth failures, dependency issues. UX regressions are predominantly visual (75%), the natural domain for snapshot tests." />
 
 > **Framing matters.** "85% of bug-fix PRs ship without touching snapshots" sounds
 > damning, but 35% of those bugs are in code that snapshots *can't* cover — API auth,
@@ -96,22 +75,14 @@ We analyzed this at three levels of precision.
 
 ### Level 1: Did the bug-fix PR touch snapshots?
 
-<Figure
-  src="/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png"
-  alt="Bug-fix coverage gap"
-  caption="Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage."
-/>
+<Figure src="/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png" alt="Bug-fix coverage gap" caption="Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage." />
 
 ### Level 2: Path-level analysis
 
 Zooming into the 35 post-adoption TUI bug-fixes, we checked whether the bug-fix PR touched
 the same code *paths* covered by snapshots — not just the same files.
 
-<Figure
-  src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png"
-  alt="Path-level coverage breakdown"
-  caption="34% hit directly covered paths (fix PR updates snapshots). 57% are in files with some snapshot coverage but the specific bug path was uncovered. 9% are fully uncovered."
-/>
+<Figure src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown" caption="34% hit directly covered paths (fix PR updates snapshots). 57% are in files with some snapshot coverage but the specific bug path was uncovered. 9% are fully uncovered." />
 
 ### Level 3: Accounting for indirect coverage
 
@@ -126,11 +97,7 @@ Strict criteria for "indirectly covered":
 2. The bug would produce **visibly different** output
 3. The test's input data would trigger the bug
 
-<Figure
-  src="/img/snapshot-analysis/deep_18_reclassified_coverage.png"
-  alt="Reclassified path-level coverage"
-  caption="After accounting for indirect coverage: 46% of TUI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered. 16 (46%) remain in adjacent-but-uncovered paths. Revised: 46% covered, 54% uncovered."
-/>
+<Figure src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Reclassified path-level coverage" caption="After accounting for indirect coverage: 46% of TUI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered. 16 (46%) remain in adjacent-but-uncovered paths. Revised: 46% covered, 54% uncovered." />
 
 ## Where Coverage Exists, It Works
 
@@ -143,11 +110,7 @@ After adoption, **46% of TUI-changing feature PRs** include snapshot updates —
 up from 0%. Nearly every visual change passes through a "did you mean to change how this
 looks?" gate.
 
-<Figure
-  src="/img/snapshot-analysis/deep_4_forcing_function.png"
-  alt="Forcing function over time"
-  caption="Feature PRs (green) climb to 100% snapshot involvement. Bug-fix PRs (red) follow at ~35–50% — lower because many bugs are non-visual or on uncovered paths."
-/>
+<Figure src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Forcing function over time" caption="Feature PRs (green) climb to 100% snapshot involvement. Bug-fix PRs (red) follow at ~35–50% — lower because many bugs are non-visual or on uncovered paths." />
 
 ### Development guard: 58 "code first, fix snapshots later" commits
 
@@ -155,11 +118,7 @@ Of 27 multi-commit snapshot PRs, **18 (67%)** show code written first, then a
 later commit fixing broken snapshots — evidence that existing tests caught unintended
 visual changes during development.
 
-<Figure
-  src="/img/snapshot-analysis/deep_14_snapshot_guarding.png"
-  alt="Snapshot guarding behavior"
-  caption="Feature PRs generated the most snapshot-fix commits (24, across 9 PRs). Refactors generated 11 — code restructuring was caught changing visual output."
-/>
+<Figure src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot guarding behavior" caption="Feature PRs generated the most snapshot-fix commits (24, across 9 PRs). Refactors generated 11 — code restructuring was caught changing visual output." />
 
 > **100% hit rate:** 9 out of 9 multi-commit feature PRs touching snapshot-covered
 > areas had to fix snapshot tests AFTER their initial code. Every single feature that touched
@@ -170,11 +129,7 @@ visual changes during development.
 PRs with snapshot changes get first review in **0.9 hours** vs
 **1.7 hours** for non-snapshot PRs, despite being 8× larger by file count.
 
-<Figure
-  src="/img/snapshot-analysis/deep_6_review_speed.png"
-  alt="Review speed comparison"
-  caption="Snapshot PRs get first review ~2× faster."
-/>
+<Figure src="/img/snapshot-analysis/deep_6_review_speed.png" alt="Review speed comparison" caption="Snapshot PRs get first review ~2× faster." />
 
 **Caveat:** This is correlational, not causal. Snapshot PRs may be faster to review
 because SVG diffs provide instant visual understanding — or because they're more routine,
@@ -185,22 +140,14 @@ these explanations.
 
 Did snapshot tests reduce the bug rate? The raw timeline tells a complicated story.
 
-<Figure
-  src="/img/snapshot-analysis/5_bug_rate_timeline.png"
-  alt="Critical vs UX regression bug rate over time"
-  caption="Critical bugs (red) drop to zero by March 2026. UX regressions (orange) spike in the adoption month, settle through Feb–Apr, then spike again in May. At face value, UX regressions got worse."
-/>
+<Figure src="/img/snapshot-analysis/5_bug_rate_timeline.png" alt="Critical vs UX regression bug rate over time" caption="Critical bugs (red) drop to zero by March 2026. UX regressions (orange) spike in the adoption month, settle through Feb–Apr, then spike again in May. At face value, UX regressions got worse." />
 
 But the raw per-month rate (% of agent PRs that are UX bugs) is misleading — monthly
 sample sizes range from 5 to 63, and the May spike comes from just 3 bugs in a
 low-PR month. The right normalization: UX bugs per cumulative TUI feature shipped.
 This controls for codebase growth and sample size.
 
-<Figure
-  src="/img/snapshot-analysis/deep_10_bug_rate_with_context.png"
-  alt="Normalized UX regression rate"
-  caption="Normalized view: UX bugs per cumulative TUI feature. Pre-adoption peaked at 0.45. The adoption month (Jan 2026) started at 0.44 — same level, coinciding with a huge feature push. The settled post-adoption rate (Feb–Apr) drops to 0.02–0.10, which is 4–20× lower. The May spike barely registers when normalized against the growing feature base."
-/>
+<Figure src="/img/snapshot-analysis/deep_10_bug_rate_with_context.png" alt="Normalized UX regression rate" caption="Normalized view: UX bugs per cumulative TUI feature. Pre-adoption peaked at 0.45. The adoption month (Jan 2026) started at 0.44 — same level, coinciding with a huge feature push. The settled post-adoption rate (Feb–Apr) drops to 0.02–0.10, which is 4–20× lower. The May spike barely registers when normalized against the growing feature base." />
 
 Still, the overall TUI bug-to-feature ratio went from **0.60 to 0.95** —
 essentially flat. Snapshot tests didn't reduce the total bug count because 54% of visual
@@ -243,15 +190,15 @@ would prevent the exact recurrence — the highest-value coverage extension poss
 
 The evidence for snapshot value is concrete and multi-signal:
 
-- **100% of feature PRs** in covered areas had to fix broken snapshots during development (9/9 multi-commit feature PRs). Existing behavior was guarded.
-- **58 snapshot-fix commits** across 20 PRs show developers being forced to acknowledge visual changes at the commit level.
-- The **normalized UX regression rate dropped 4–20×** in the settled post-adoption period (Feb–Apr 2026) compared to the pre-adoption peak.
+* **100% of feature PRs** in covered areas had to fix broken snapshots during development (9/9 multi-commit feature PRs). Existing behavior was guarded.
+* **58 snapshot-fix commits** across 20 PRs show developers being forced to acknowledge visual changes at the commit level.
+* The **normalized UX regression rate dropped 4–20×** in the settled post-adoption period (Feb–Apr 2026) compared to the pre-adoption peak.
 
 But coverage is shallow:
 
-- **54% of TUI bugs** (after accounting for indirect coverage) are on uncovered code paths — mostly settings persistence and untested event types.
-- **Only 1 of 78 bug-fix PRs** added new snapshot coverage retroactively.
-- **35% of all bugs are non-visual** — snapshots are structurally irrelevant for API crashes, auth failures, and dependency issues.
+* **54% of TUI bugs** (after accounting for indirect coverage) are on uncovered code paths — mostly settings persistence and untested event types.
+* **Only 1 of 78 bug-fix PRs** added new snapshot coverage retroactively.
+* **35% of all bugs are non-visual** — snapshots are structurally irrelevant for API crashes, auth failures, and dependency issues.
 
 The biggest ROI: a handful of targeted tests (settings save→reload, new event type
 trajectories, notification capture) would close the majority of the coverage gap with
@@ -269,13 +216,13 @@ The full pipeline, data, and graphs are at
 [openhands-cli](https://github.com/OpenHands/openhands-cli)
 via the GitHub REST API and `gh` CLI. For each PR it collects:
 
-- **PR metadata** — title, body, author, labels, branch names, created/merged timestamps, additions/deletions, changed file count
-- **File-level diffs** — every file changed with its status (added/modified/removed) and line counts
-- **Commit history** — full commit messages per PR, which enabled the "code first, fix snapshots later" analysis
-- **Review data** — reviewer logins, review decision, time-to-first-review
-- **Linked issues** — cross-referenced issue titles, bodies, and authors
-- **Release mapping** — which release tag (if any) includes each PR
-- **Authorship detection** — heuristic markers for agent-authored PRs (co-authored-by tags, conversation links, bot authors)
+* **PR metadata** — title, body, author, labels, branch names, created/merged timestamps, additions/deletions, changed file count
+* **File-level diffs** — every file changed with its status (added/modified/removed) and line counts
+* **Commit history** — full commit messages per PR, which enabled the "code first, fix snapshots later" analysis
+* **Review data** — reviewer logins, review decision, time-to-first-review
+* **Linked issues** — cross-referenced issue titles, bodies, and authors
+* **Release mapping** — which release tag (if any) includes each PR
+* **Authorship detection** — heuristic markers for agent-authored PRs (co-authored-by tags, conversation links, bot authors)
 
 Output: a single `mined_prs.json` file with 42 fields per PR across all 311 merged PRs.
 No LLM is involved in this step — it's pure API data.
@@ -287,17 +234,17 @@ It runs two classifiers in parallel and keeps both outputs:
 
 **Heuristic classifier** (keyword-based, no LLM):
 
-- PR type — title keyword matching ("fix" → bug-fix, "feat" → feature, "bump" → version-bump, etc.)
-- Bug severity — title keyword matching ("crash" → critical, "display" → ux-regression, "typo" → polish)
-- Snapshot involvement — file path matching (`*.svg` in `snapshot` directories)
-- Agent authorship — co-author tags and bot usernames
+* PR type — title keyword matching ("fix" → bug-fix, "feat" → feature, "bump" → version-bump, etc.)
+* Bug severity — title keyword matching ("crash" → critical, "display" → ux-regression, "typo" → polish)
+* Snapshot involvement — file path matching (`*.svg` in `snapshot` directories)
+* Agent authorship — co-author tags and bot usernames
 
 **LLM classifier** (gpt-4o-mini via [OpenHands SDK](https://docs.openhands.dev/sdk)):
 
-- PR type — same categories but with full context (title, description, file list, linked issues)
-- Bug severity — critical / ux-regression / polish, with definitions in the system prompt
-- Whether the PR touches TUI code — the LLM sees the actual file paths and description, catching cases keywords miss
-- Rationale — a 1-2 sentence explanation stored alongside each classification for auditability
+* PR type — same categories but with full context (title, description, file list, linked issues)
+* Bug severity — critical / ux-regression / polish, with definitions in the system prompt
+* Whether the PR touches TUI code — the LLM sees the actual file paths and description, catching cases keywords miss
+* Rationale — a 1-2 sentence explanation stored alongside each classification for auditability
 
 The report uses the LLM classifications (`llm_pr_type`, `llm_bug_severity`,
 `llm_touches_tui`) as the primary labels, falling back to heuristics when the LLM
@@ -307,19 +254,19 @@ call fails. The heuristic labels are retained in the CSV for comparison.
 
 Several analyses required no LLM — just reading file paths, commit messages, and timestamps:
 
-- **Commit-level pattern detection** — for each multi-commit PR, check if snapshot-related keywords ("snapshot", "update snap", "regenerate", "baseline") appear only in later commits, indicating the "code first, fix snapshots later" pattern
-- **Bug-fix coverage gap** — for each bug-fix PR, classify as "no snapshots touched" / "modified existing" / "added new" based on the Git status of snapshot SVG files
-- **Suite reuse** — extract test suite names from snapshot file paths and count unique PRs per suite
-- **Review speed** — compare `hours_to_first_review` between snapshot and non-snapshot PRs
+* **Commit-level pattern detection** — for each multi-commit PR, check if snapshot-related keywords ("snapshot", "update snap", "regenerate", "baseline") appear only in later commits, indicating the "code first, fix snapshots later" pattern
+* **Bug-fix coverage gap** — for each bug-fix PR, classify as "no snapshots touched" / "modified existing" / "added new" based on the Git status of snapshot SVG files
+* **Suite reuse** — extract test suite names from snapshot file paths and count unique PRs per suite
+* **Review speed** — compare `hours_to_first_review` between snapshot and non-snapshot PRs
 
 ### Step 4: Indirect coverage analysis (manual + scripted)
 
 This was the most labor-intensive step. We cloned openhands-cli and read all 20 snapshot test
-files (~2,500 lines of test code), including `conftest.py` fixtures and trajectory
+files (\~2,500 lines of test code), including `conftest.py` fixtures and trajectory
 replay helpers. From this, `scripts/analyze_indirect_coverage.py` builds:
 
-- A **coverage map** — which test suite exercises which functional behaviors (e.g., `TestConfirmationMode` exercises scrolling, confirmation panel, agent execution)
-- A **per-bug classification** — for each of the 20 "file covered, path uncovered" bugs, whether a snapshot test would *actually produce different output* if the bug existed. Each classification includes a written rationale.
+* A **coverage map** — which test suite exercises which functional behaviors (e.g., `TestConfirmationMode` exercises scrolling, confirmation panel, agent execution)
+* A **per-bug classification** — for each of the 20 "file covered, path uncovered" bugs, whether a snapshot test would *actually produce different output* if the bug existed. Each classification includes a written rationale.
 
 ### Step 5: Visualization
 
@@ -329,10 +276,10 @@ base64-embedded images. Both are runnable with `uv run`.
 
 ### Limitations
 
-- **LLM classification accuracy** — gpt-4o-mini misclassifies some edge cases (e.g., a PR titled "fix: add feature X" gets classified as bug-fix). We spot-checked ~30 PRs and found ~90% agreement with human judgment. The heuristic labels provide a second opinion.
-- **Agent authorship detection** — relies on co-author tags and known bot usernames. PRs where a human manually committed agent-generated code would be counted as human-authored.
-- **Indirect coverage is subjective** — our B1 (indirectly covered) classifications are judgment calls about whether a snapshot would visibly change. Different reviewers might classify 1-2 borderline cases differently, but the overall split (4 B1 vs 16 B2) is robust.
-- **Single repository** — all findings are specific to openhands-cli. Generalizing to other agent-driven projects requires similar analysis in those codebases.
+* **LLM classification accuracy** — gpt-4o-mini misclassifies some edge cases (e.g., a PR titled "fix: add feature X" gets classified as bug-fix). We spot-checked \~30 PRs and found \~90% agreement with human judgment. The heuristic labels provide a second opinion.
+* **Agent authorship detection** — relies on co-author tags and known bot usernames. PRs where a human manually committed agent-generated code would be counted as human-authored.
+* **Indirect coverage is subjective** — our B1 (indirectly covered) classifications are judgment calls about whether a snapshot would visibly change. Different reviewers might classify 1-2 borderline cases differently, but the overall split (4 B1 vs 16 B2) is robust.
+* **Single repository** — all findings are specific to openhands-cli. Generalizing to other agent-driven projects requires similar analysis in those codebases.
 
 ## Appendix: Snapshot Testing in the OpenHands CLI
 
@@ -370,9 +317,9 @@ The sequence of frames becomes a behavioral recording of the feature.
 
 A picture is worth a thousand words. Snapshots allow:
 
-- **Authors** to confirm that their change behaves correctly
-- **Reviewers** to understand the behavior quickly
-- **Agents** to validate whether their outputs changed the system
+* **Authors** to confirm that their change behaves correctly
+* **Reviewers** to understand the behavior quickly
+* **Agents** to validate whether their outputs changed the system
 
 Once snapshots are committed to the repository, they become part of the system history.
 Future pull requests automatically check against them. If behavior changes, the snapshot
