@@ -7,14 +7,18 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "editor": "cd tools/editor && (test -d node_modules || npm install) && npm start",
-    "editor:install": "cd tools/editor && npm install"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.14",
+    "@astrojs/node": "^9.5.5",
+    "@astrojs/react": "^5.0.5",
     "@astrojs/tailwind": "^6.0.2",
+    "@keystatic/astro": "^5.0.6",
+    "@keystatic/core": "^0.5.50",
     "astro": "^5.18.1",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
     "tailwindcss": "^3.4.19"
   }
 }
