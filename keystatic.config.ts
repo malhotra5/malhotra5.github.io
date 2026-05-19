@@ -1,6 +1,7 @@
 import React from 'react';
 import { config, fields, collection } from '@keystatic/core';
 import { block, mark } from '@keystatic/core/content-components';
+import { highlighterIcon } from '@keystar/ui/icon/icons/highlighterIcon';
 
 export default config({
   storage: { kind: 'local' },
@@ -145,7 +146,7 @@ export default config({
             }),
             Highlight: mark({
               label: 'Highlight',
-              icon: React.createElement('span', null, '🖍️'),
+              icon: highlighterIcon,
               tag: 'span',
               style: { backgroundColor: '#FFF176', padding: '0 2px', borderRadius: '2px' },
               schema: {
