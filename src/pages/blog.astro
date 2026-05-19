@@ -1,20 +1,11 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import BlogCard from '../components/BlogCard.astro';
 
-const posts = [
-  {
-    title: 'Proof in Production: Evaluating Effectiveness of SWE Agents with A/B Tests',
-    description:
-      'SWE-Agents are setting new benchmark records, yet underperform in the real world. Beneath the hype, only A/B testing can prove their effectiveness.',
-    date: 'Sep 24, 2025',
-    slug: 'proof-in-production',
-    image: '/img/swe-bench-scores.png',
-    readTime: '5 min read',
-    tags: ['AI Agents', 'SWE', 'A/B Testing', 'Evaluation'],
-  },
-];
+const posts = (await getCollection('blog'))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 ---
 
 <BaseLayout title="Blog — Rohit Malhotra" currentPage="blog">
@@ -24,7 +15,15 @@ const posts = [
 
       <div class="flex flex-col gap-6">
         {posts.map((post) => (
-          <BlogCard {...post} />
+          <BlogCard
+            title={post.data.title}
+            description={post.data.description}
+            date={post.data.date}
+            slug={post.id.replace(/\.mdx?$/, '')}
+            image={post.data.image}
+            readTime={post.data.readTime}
+            tags={post.data.tags}
+          />
         ))}
       </div>
     </div>
