@@ -140,6 +140,22 @@ const { title, description, date, image, imageCaption, readTime, originalUrl, ta
     @apply text-sm text-gray-400 text-center mt-3 italic;
   }
 
+  .blog-content code {
+    @apply bg-gray-100 text-pink text-sm px-1.5 py-0.5 rounded font-mono;
+  }
+
+  .blog-content pre {
+    @apply rounded-lg my-6 overflow-x-auto text-sm;
+  }
+
+  .blog-content pre code {
+    @apply bg-transparent text-inherit p-0 rounded-none;
+  }
+
+  .blog-content h4 {
+    @apply text-lg font-semibold text-gray-800 mt-6 mb-2;
+  }
+
   .blog-content hr {
     @apply border-gray-200 my-8;
   }

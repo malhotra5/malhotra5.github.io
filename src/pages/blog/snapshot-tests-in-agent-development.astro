@@ -1,8 +1,54 @@
 ---
 import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
+import { Code } from 'astro:components';
 import { base } from '../../utils/base';
 
 const IMG = base('/img/snapshot-analysis');
+
+const snapshotTestExample = `import pytest
+from textual.pilot import Pilot
+from .helpers import type_text, wait_for_app_ready, wait_for_idle
+from openhands.sdk.security.confirmation_policy import NeverConfirm
+from openhands_cli.tui.textual_app import OpenHandsApp
+
+
+class TestEchoHelloWorld:
+    """Test echo hello world conversation."""
+
+    # Specify pre-seed LLM responses trajectory
+    @pytest.mark.parametrize(
+        "mock_llm_with_trajectory",
+        ["simple_echo_hello_world"],
+        indirect=True,
+    )
+    def test_echo_hello_world_conversation(
+        self,
+        snap_compare,
+        mock_llm_with_trajectory,
+    ):
+        async def run_conversation(pilot: Pilot):
+            """Simulate user typing and submitting a command."""
+            await wait_for_app_ready(pilot)
+            await type_text(pilot, "echo hello world")
+            await pilot.press("enter")
+            await wait_for_idle(pilot)
+
+        # Use fixed conversation ID from fixture
+        # for deterministic snapshots
+        app = OpenHandsApp(
+            exit_confirmation=False,
+            initial_confirmation_policy=NeverConfirm(),
+            resume_conversation_id=mock_llm_with_trajectory[
+                "conversation_id"
+            ],
+        )
+
+        # Run simulation + take snapshot
+        assert snap_compare(
+            app,
+            terminal_size=(120, 40),
+            run_before=run_conversation,
+        )`;
 ---
 
 <BlogPostLayout
@@ -512,50 +558,7 @@ const IMG = base('/img/snapshot-analysis');
 
   <h3>Example Snapshot Test</h3>
 
-  <pre><code>{`import pytest
-from textual.pilot import Pilot
-from .helpers import type_text, wait_for_app_ready, wait_for_idle
-from openhands.sdk.security.confirmation_policy import NeverConfirm
-from openhands_cli.tui.textual_app import OpenHandsApp
-
-
-class TestEchoHelloWorld:
-    """Test echo hello world conversation."""
-
-    # Specify pre-seed LLM responses trajectory
-    @pytest.mark.parametrize(
-        "mock_llm_with_trajectory",
-        ["simple_echo_hello_world"],
-        indirect=True,
-    )
-    def test_echo_hello_world_conversation(
-        self,
-        snap_compare,
-        mock_llm_with_trajectory,
-    ):
-        async def run_conversation(pilot: Pilot):
-            """Simulate user typing and submitting a command."""
-            await wait_for_app_ready(pilot)
-            await type_text(pilot, "echo hello world")
-            await pilot.press("enter")
-            await wait_for_idle(pilot)
-
-        # Use fixed conversation ID from fixture
-        # for deterministic snapshots
-        app = OpenHandsApp(
-            exit_confirmation=False,
-            initial_confirmation_policy=NeverConfirm(),
-            resume_conversation_id=mock_llm_with_trajectory[
-                "conversation_id"
-            ],
-        )
-
-        # Run simulation + take snapshot
-        assert snap_compare(
-            app,
-            terminal_size=(120, 40),
-            run_before=run_conversation,
-        )`}</code></pre>
+  <Code code={snapshotTestExample} lang="python" theme="github-dark" />
 
   <h3>Limitations of Snapshot Testing</h3>
 
