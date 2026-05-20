@@ -66,7 +66,7 @@ Overall 10% fixed code to prevent a regression, and 41% prevented regressions in
 
 ### Snapshot force explicit acknowledgment for visual changes
 
-These snapshot updates to PRs have changed over time. We'll take new UI related PRs and bug-fixes for example.
+These snapshot updates to PRs change over time. We'll take new UI related PRs and bug-fixes for example.
 
 <Figure src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month." caption="Percentage of feature and bug-fix PRs that include snapshot changes and/or add new snapshots, by month." />
 
@@ -81,38 +81,31 @@ PRs with snapshot changes get first review in **0.9 hours** vs
 
 This is correlational, not causal. Snapshot PRs may be faster to review because SVG diffs provide instant visual understanding, or involve the same reviewers, or have different complexity profiles. The data doesn't distinguish these explanations.
 
-## But Coverage Is Shallow
-
-The evidence above comes from areas where snapshots exist. How much of the codebase do they actually cover?
-
-### The bug rate
+## Bug rate spikes at snapshot test adoption period
 
 Did snapshot tests reduce the rate of bugs introduced by agent-authored code?
 
-To answer this, we need to know who *introduced* each bug — not just who wrote the fix. We ran `git blame` on the parent commit of every bug-fix PR to trace which prior PR last touched the lines being patched, then mapped that commit to its originating PR and author (see [Methodology](#bug-origin-tracing)). Of 73 critical and UX-regression bug-fixes, 62 were traced to an originating PR (55 with high confidence).
+To answer this, we need to know who *introduced* each bug. It was determined by running `git blame` on the parent commit of every bug-fix PR to trace which prior PR last touched the lines being patched, then mapped that commit to its originating PR and author (see [Methodology](#bug-origin-tracing)). Of 73 critical and UX-regression bug-fixes, 62 were traced to an originating PR (55 with high confidence).
 
-We normalize by cumulative UI PRs — the total number of TUI-touching PRs merged up to that month. This controls for codebase growth: as more UI code ships, there's more surface area to break. A flat normalized line means bugs are growing proportionally with the codebase; a declining line means they're growing slower.
+We normalize by cumulative UI PRs, the total number of TUI-touching PRs merged up to that month. This controls for codebase growth: as more UI code ships, there's more surface area to break. A flat normalized line means bugs are growing proportionally with the codebase; a declining line means they're growing slower.
 
 <Figure src="/img/snapshot-analysis/deep_10_bug_rate_with_context.png" alt="Agent-introduced bug rate normalized by cumulative UI work" caption="Agent-introduced bugs per cumulative UI PR. Pre-adoption, UX regressions were flat or rising (0.11–0.12) — bugs grew as fast as the codebase. Post-adoption, both lines decline steadily. The January spike coincides with a major feature push." />
 
-Pre-adoption, the agent-introduced UX regression rate was **flat or rising** (0.11 → 0.11 → 0.12) — bugs grew at least as fast as the codebase. Post-adoption, it reversed: 0.15 → 0.04 → 0.01 → 0.01 → 0.01. Agent-introduced critical bugs followed a similar trajectory, declining from 0.06 to near-zero by March.
+Pre-adoption, the agent-introduced UX regression rate was **flat or rising**. Bugs grew at least as fast as the codebase. Post-adoption, it reversed eventually. Agent-introduced critical bugs followed a similar trajectory, declining to near-zero by March.
 
-The trend reversal is the important signal. Cumulative normalization naturally declines over time, but it was *not* declining pre-adoption — it was getting worse. Something changed. Snapshot adoption is one of the things that changed, alongside codebase maturity, improved agent prompts, and team process stabilization. We can't isolate the causal contribution of snapshots, but the timing is consistent with a benefit.
+We can't isolate the causal contribution of snapshots, but the timing is consistent with a benefit. Codebase maturity, agent driven code review, etc could affect bug rates.
 
-### Where do bugs live?
+## Snapshot coverage has a level of indirection
 
 Not all bugs are visual. Snapshot tests help with bugs that change rendered output. Counting all bug-fixes against snapshot coverage inflates the count.
 
 <Figure src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes" caption="UI widgets & screens is the largest category (38 bugs), but 27 bugs (35%) are entirely non-visual — CLI core, config/state, API/auth — where snapshots are structurally irrelevant." />
 
-<Figure src="/img/snapshot-analysis/deep_17_severity_by_domain.png" alt="Severity breakdown for bug types" caption="Critical bugs skew non-visual (44% — crashes, auth failures, dependency issues). UX regressions are predominantly visual (75%), the natural domain for snapshot tests." />
-
 85% of bug-fix PRs ship without touching snapshots, but 35% of those bugs are in code that snapshots *can't* cover (API auth, CLI argument parsing, dependency pinning). The relevant denominator is the 51 visual bug-fixes, where 12 (24%) have snapshot involvement. That's still a coverage gap, but a different one than the headline number suggests.
 
-### What's actually covered?
+### Snapshot tests can provider coverage for UI and ..
 
-Among the 51 visual (UI) bug-fixes, what fraction hit paths that snapshot tests guard?
-We analyzed this at three levels of precision.
+Among the 51 visual (UI) bug-fixes, what fraction hit paths that snapshot tests guard? This is analyzed at three levels of precision.
 
 #### Level 1: Did the bug-fix PR touch snapshots?
 
@@ -121,9 +114,6 @@ We analyzed this at three levels of precision.
 Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage.
 
 #### Level 2: Path-level analysis
-
-Zooming into the 35 post-adoption UI bug-fixes, we checked whether the bug-fix PR touched
-the same code *paths* covered by snapshots (not just the same files).
 
 <Figure src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown" caption="Most post-adoption UI bugs land on paths where snapshot files exist but the specific bug path is uncovered (orange)." />
 
@@ -173,6 +163,8 @@ When a visual bug is fixed, adding a snapshot that captures the corrected render
 would prevent the exact recurrence — the highest-value coverage extension possible.
 
 ## Verdict
+
+Snapshot test seem to be correlated with better bug outcomes. At the very least, a visualization of behavior tends to have quicker response times from reviewers. However, its clear that I may have over-estimated the impact of snapshot tests alone.
 
 **Snapshot tests work where they exist — but coverage is shallow.**
 
