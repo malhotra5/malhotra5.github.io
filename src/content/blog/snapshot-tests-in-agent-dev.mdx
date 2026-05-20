@@ -266,7 +266,19 @@ Several analyses required no LLM — just reading file paths, commit messages, a
 * **Suite reuse** — extract test suite names from snapshot file paths and count unique PRs per suite
 * **Review speed** — compare `hours_to_first_review` between snapshot and non-snapshot PRs
 
-### Step 4: Indirect coverage analysis (manual + scripted)
+### Step 4: CI failure mining and test-level cross-reference
+
+`scripts/mine_snapshot_ci.py` queries the GitHub Check Runs API for every commit in every post-adoption PR, extracting the "Run snapshot tests" result (success/failure/skipped). This produces the 128 PRs with snapshot CI data and the 29 that triggered at least one failure.
+
+`scripts/mine_test_level_failures.py` goes deeper for PRs where CI logs are still available (~90 day retention). For each failing commit, it downloads the job log, extracts specific failing test names via pytest `FAILED` line parsing, maps each test to its snapshot directory, and checks whether that directory was modified in the final merged PR. This determines at the individual test level whether the resolution was a code fix (snapshot unchanged — regression caught) or a baseline update (snapshot updated — intentional change).
+
+Outputs are persisted as CSVs:
+* `data/snapshot_ci_results_v2.csv` — per-PR CI sequence and classification
+* `data/test_level_failures.csv` — per-test detail (PR, commit, failing test, resolution)
+* `data/test_level_summary.csv` — per-PR summary with refined classification
+* `data/pr_changed_snapshot_files.csv` — all snapshot files changed in each PR's merge diff
+
+### Step 5: Indirect coverage analysis (manual + scripted)
 
 This was the most labor-intensive step. We cloned openhands-cli and read all 20 snapshot test
 files (\~2,500 lines of test code), including `conftest.py` fixtures and trajectory
@@ -275,16 +287,20 @@ replay helpers. From this, `scripts/analyze_indirect_coverage.py` builds:
 * A **coverage map** — which test suite exercises which functional behaviors (e.g., `TestConfirmationMode` exercises scrolling, confirmation panel, agent execution)
 * A **per-bug classification** — for each of the 20 "file covered, path uncovered" bugs, whether a snapshot test would *actually produce different output* if the bug existed. Each classification includes a written rationale.
 
-### Step 5: Visualization
+### Step 6: Visualization
 
-`scripts/generate_deep_analysis_graphs.py` produces all 18 matplotlib graphs.
-`scripts/generate_report.py` assembles the self-contained HTML report with
-base64-embedded images. Both are runnable with `uv run`.
+Graph scripts live alongside the analysis code:
+* `scripts/generate_deep_analysis_graphs.py` — coverage, bug domain, review speed, adoption timeline, and commit-level pattern graphs
+* `scripts/generate_ci_outcome_graph.py` — snapshot CI failure resolution by PR type
+* `scripts/generate_report.py` — self-contained HTML report with base64-embedded images
+
+All are runnable with `uv run`.
 
 ### Limitations
 
 * **LLM classification accuracy** — gpt-4o-mini misclassifies some edge cases (e.g., a PR titled "fix: add feature X" gets classified as bug-fix). We spot-checked \~30 PRs and found \~90% agreement with human judgment. The heuristic labels provide a second opinion.
 * **Agent authorship detection** — relies on co-author tags and known bot usernames. PRs where a human manually committed agent-generated code would be counted as human-authored.
+* **CI log expiry** — GitHub retains job logs for \~90 days. Only 9 of 29 failing PRs had logs available for test-level verification (March–May 2026). The remaining 20 use a coarser PR-level heuristic (whether the merged PR contains any snapshot file changes), which cannot distinguish between updating the *failing* test's baseline vs. updating a different test's baseline.
 * **Indirect coverage is subjective** — our B1 (indirectly covered) classifications are judgment calls about whether a snapshot would visibly change. Different reviewers might classify 1-2 borderline cases differently, but the overall split (4 B1 vs 16 B2) is robust.
 * **Single repository** — all findings are specific to openhands-cli. Generalizing to other agent-driven projects requires similar analysis in those codebases.
 
@@ -403,3 +419,7 @@ useful. To make codebases more compatible with autonomous agents, we likely need
 
 When these conditions are met, both humans and agents gain a much clearer signal about
 whether the system behaves as intended.
+
+---
+
+*Disclosure: An AI agent ([OpenHands](https://github.com/All-Hands-AI/OpenHands)) assisted with data mining, graph generation, and drafting portions of this post. All analysis decisions, interpretations, and editorial judgment are the author's.*
