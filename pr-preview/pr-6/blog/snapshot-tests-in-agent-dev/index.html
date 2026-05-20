@@ -42,37 +42,11 @@ Originally on Substack ↗
 <p>To test this hypothesis, I <a href="#mining">mined</a> all 311 merged PRs from the <a href="https://github.com/OpenHands/openhands-cli">OpenHands-CLI</a> repository (Sep 2025 – May 2026), <a href="#classification">classified</a> each by type, authorship, and snapshot involvement, then analyzed commit-level history to understand <em>how</em> snapshot tests are actually used. Snapshot tests were adopted in January 2026. For the anatomy of a snapshot test, see the <a href="#appendix">Appendix</a>.</p>
 <figure> <img src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Monthly PR volume by authorship (agent vs human), Sep 2025 – May 2026."> <figcaption>68% of PRs are agent-authored, with a relatively consistent ratio over time — giving a reasonable baseline for investigating effects of snapshot adoption.</figcaption> </figure>
 <figure> <img src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Monthly snapshot involvement across all PRs, Sep 2025 – May 2026."> <figcaption>Snapshots were introduced in January 2026, predominantly authored by agents. Not every PR includes snapshot changes — either because the change isn&#39;t UI-related or because coverage wasn&#39;t added.</figcaption> </figure>
-<h3 id="where-do-bugs-live">Where Do Bugs Live?</h3>
-<p>Not all bugs are visual. Snapshot tests helps with bugs that change rendered output. Counting all bug-fixes against snapshot coverage inflates the count.</p>
-<figure> <img src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes"> <figcaption>UI widgets &amp; screens is the largest category (38 bugs), but 27 bugs (35%) are entirely non-visual — CLI core, config/state, API/auth — where snapshots are structurally irrelevant.</figcaption> </figure>
-<figure> <img src="/img/snapshot-analysis/deep_17_severity_by_domain.png" alt="Severity breakdown for bug types"> <figcaption>Critical bugs skew non-visual (44% — crashes, auth failures, dependency issues). UX regressions are predominantly visual (75%), the natural domain for snapshot tests.</figcaption> </figure>
-<p>85% of bug-fix PRs ship without touching snapshots, but 35% of those bugs are in code that snapshots <em>can’t</em> cover (API auth, CLI argument parsing, dependency pinning). The relevant denominator is the 51 visual bug-fixes, where 12 (24%) have snapshot involvement. That’s still a coverage gap, but a different one than the headline number suggests.</p>
-<h3 id="whats-actually-covered">What’s Actually Covered?</h3>
-<p>Among the 51 visual (UI) bug-fixes, what fraction hit paths that snapshot tests guard?
-We analyzed this at three levels of precision.</p>
-<h4 id="level-1-did-the-bug-fix-pr-touch-snapshots">Level 1: Did the bug-fix PR touch snapshots?</h4>
-<figure> <img src="/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png" alt="PR-level coverage gap"> <figcaption>Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. Only 1 PR added new coverage.</figcaption> </figure>
-<p>Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage.</p>
-<h4 id="level-2-path-level-analysis">Level 2: Path-level analysis</h4>
-<p>Zooming into the 35 post-adoption UI bug-fixes, we checked whether the bug-fix PR touched
-the same code <em>paths</em> covered by snapshots (not just the same files).</p>
-<figure> <img src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown"> <figcaption>Most post-adoption UI bugs land on paths where snapshot files exist but the specific bug path is uncovered (orange).</figcaption> </figure>
-<h4 id="level-3-accounting-for-indirect-coverage">Level 3: Accounting for indirect coverage</h4>
-<p>Snapshot tests can be a proxy for application behavior. A test that renders a conversation after switching implicitly exercises persistence. We <a href="#indirect-coverage-analysis">read every snapshot test file</a> (20 test classes + conftest) and asked: <em>would the snapshot output actually change if this bug existed?</em></p>
-<p>Strict criteria for “indirectly covered”:</p>
-<ol>
-<li>A snapshot test exercises a flow through this code path</li>
-<li>The bug would produce <strong>visibly different</strong> output</li>
-<li>The test’s input data would trigger the bug</li>
-</ol>
-<figure> <img src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Reclassified path-level coverage"> <figcaption>After accounting for indirect coverage, 46% of UI bugs hit covered paths (up from 34%). 54% remain uncovered.</figcaption> </figure>
-<p>After accounting for indirect coverage: 46% of UI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered — a snapshot test exercises a flow through the bug’s code path but wasn’t originally counted because the PR didn’t modify snapshot files. 16 (46%) remain in adjacent-but-uncovered paths.</p>
-<p>So coverage is incomplete — but where it exists, does it actually help? The next section shifts from static coverage analysis to dynamic evidence: what happens at development time and in CI when snapshots are present.</p>
 <h2 id="where-coverage-exists-it-works">Where Coverage Exists, It Works</h2>
 <p>The evidence for snapshot value is strongest in areas that have coverage.</p>
 <h3 id="forcing-function-every-feature-must-acknowledge-visual-impact">Forcing function: every feature must acknowledge visual impact</h3>
 <figure> <img src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month."> <figcaption>Percentage of feature and bug-fix PRs that include snapshot changes, by month.</figcaption> </figure>
-<p>Feature PRs (green) climb to 100% — every UI feature now passes through a “did you mean to change how this looks?” gate. Bug-fix PRs (red) plateau at ~35–50%, reflecting the coverage gaps explored above: many bug fixes land on paths with no snapshots, so there’s no baseline to update.</p>
+<p>Feature PRs (green) climb to 100% — every UI feature now passes through a “did you mean to change how this looks?” gate. Bug-fix PRs (red) plateau at ~35–50%, a gap we’ll explore in the coverage analysis below.</p>
 <h3 id="snapshots-break-during-development--and-the-signal-is-acted-on">Snapshots break during development — and the signal is acted on</h3>
 <p>We looked at commit messages within multi-commit PRs for snapshot-related keywords (“update snap”, “regenerate”, “baseline”) that appear <em>after</em> the initial code changes — evidence that a developer wrote code, hit a snapshot failure, and iterated.</p>
 <p>Across 27 multi-commit snapshot PRs, <strong>18 (67%)</strong> show this pattern — 58 such commits total. Developers hit snapshot failures during development and iterate before pushing.</p>
@@ -94,7 +68,9 @@ the same code <em>paths</em> covered by snapshots (not just the same files).</p>
 <strong>1.7 hours</strong> for non-snapshot PRs, despite being 8× larger by file count.</p>
 <figure> <img src="/img/snapshot-analysis/deep_6_review_speed.png" alt="Review speed comparison"> <figcaption>Snapshot PRs get first review ~2× faster.</figcaption> </figure>
 <p><strong>Caveat:</strong> This is correlational, not causal. Snapshot PRs may be faster to review because SVG diffs provide instant visual understanding, or because they’re more routine, involve the same reviewers, or have different complexity profiles. The data doesn’t distinguish these explanations.</p>
-<h2 id="the-bug-rate-and-its-limits">The Bug Rate and Its Limits</h2>
+<h2 id="but-coverage-is-shallow">But Coverage Is Shallow</h2>
+<p>The evidence above comes from areas where snapshots exist. How much of the codebase do they actually cover?</p>
+<h3 id="the-bug-rate">The bug rate</h3>
 <p>Did snapshot tests reduce the bug rate? The raw timeline tells a complicated story.</p>
 <figure> <img src="/img/snapshot-analysis/5_bug_rate_timeline.png" alt="Critical vs UX regression bug rate over time"> <figcaption>Critical and UX regression bug rate over time</figcaption> </figure>
 <p>Critical bugs (red) drop to zero by March 2026. UX regressions (orange) spike in the adoption month, settle through Feb–Apr, then spike again in May. At face value, UX regressions got worse.</p>
@@ -104,7 +80,32 @@ low-PR month. The right normalization: UX bugs per cumulative UI feature shipped
 This controls for codebase growth and sample size.</p>
 <figure> <img src="/img/snapshot-analysis/deep_10_bug_rate_with_context.png" alt="Normalized UX regression rate"> <figcaption>Normalized UX regression rate</figcaption> </figure>
 <p>Normalized view: UX bugs per cumulative UI feature. Pre-adoption peaked at 0.45. The adoption month (Jan 2026) started at 0.44 — same level, coinciding with a huge feature push. The settled post-adoption rate (Feb–Apr) drops to 0.02–0.10, which is 4–20× lower. The May spike barely registers when normalized against the growing feature base.</p>
-<p>Still, the overall UI bug-to-feature ratio went from <strong>0.60 to 0.95</strong>. Essentially flat. Snapshot tests didn’t reduce the total bug count because 54% of visual bugs are on uncovered paths. You can’t prevent bugs in areas you don’t cover.</p>
+<p>Still, the overall UI bug-to-feature ratio went from <strong>0.60 to 0.95</strong>. Essentially flat. Snapshot tests didn’t reduce the total bug count because the majority of visual bugs are on uncovered paths. You can’t prevent bugs in areas you don’t cover.</p>
+<h3 id="where-do-bugs-live">Where do bugs live?</h3>
+<p>Not all bugs are visual. Snapshot tests help with bugs that change rendered output. Counting all bug-fixes against snapshot coverage inflates the count.</p>
+<figure> <img src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes"> <figcaption>UI widgets &amp; screens is the largest category (38 bugs), but 27 bugs (35%) are entirely non-visual — CLI core, config/state, API/auth — where snapshots are structurally irrelevant.</figcaption> </figure>
+<figure> <img src="/img/snapshot-analysis/deep_17_severity_by_domain.png" alt="Severity breakdown for bug types"> <figcaption>Critical bugs skew non-visual (44% — crashes, auth failures, dependency issues). UX regressions are predominantly visual (75%), the natural domain for snapshot tests.</figcaption> </figure>
+<p>85% of bug-fix PRs ship without touching snapshots, but 35% of those bugs are in code that snapshots <em>can’t</em> cover (API auth, CLI argument parsing, dependency pinning). The relevant denominator is the 51 visual bug-fixes, where 12 (24%) have snapshot involvement. That’s still a coverage gap, but a different one than the headline number suggests.</p>
+<h3 id="whats-actually-covered">What’s actually covered?</h3>
+<p>Among the 51 visual (UI) bug-fixes, what fraction hit paths that snapshot tests guard?
+We analyzed this at three levels of precision.</p>
+<h4 id="level-1-did-the-bug-fix-pr-touch-snapshots">Level 1: Did the bug-fix PR touch snapshots?</h4>
+<figure> <img src="/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png" alt="PR-level coverage gap"> <figcaption>Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. Only 1 PR added new coverage.</figcaption> </figure>
+<p>Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage.</p>
+<h4 id="level-2-path-level-analysis">Level 2: Path-level analysis</h4>
+<p>Zooming into the 35 post-adoption UI bug-fixes, we checked whether the bug-fix PR touched
+the same code <em>paths</em> covered by snapshots (not just the same files).</p>
+<figure> <img src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown"> <figcaption>Most post-adoption UI bugs land on paths where snapshot files exist but the specific bug path is uncovered (orange).</figcaption> </figure>
+<h4 id="level-3-accounting-for-indirect-coverage">Level 3: Accounting for indirect coverage</h4>
+<p>Snapshot tests can be a proxy for application behavior. A test that renders a conversation after switching implicitly exercises persistence. We <a href="#indirect-coverage-analysis">read every snapshot test file</a> (20 test classes + conftest) and asked: <em>would the snapshot output actually change if this bug existed?</em></p>
+<p>Strict criteria for “indirectly covered”:</p>
+<ol>
+<li>A snapshot test exercises a flow through this code path</li>
+<li>The bug would produce <strong>visibly different</strong> output</li>
+<li>The test’s input data would trigger the bug</li>
+</ol>
+<figure> <img src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Reclassified path-level coverage"> <figcaption>After accounting for indirect coverage, 46% of UI bugs hit covered paths (up from 34%). 54% remain uncovered.</figcaption> </figure>
+<p>After accounting for indirect coverage: 46% of UI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered — a snapshot test exercises a flow through the bug’s code path but wasn’t originally counted because the PR didn’t modify snapshot files. 16 (46%) remain in adjacent-but-uncovered paths.</p>
 <h2 id="investigating-testing-gaps-to-supplement-bug-rates">Investigating testing gaps to supplement bug rates</h2>
 <p>The data points to specific, fixable coverage gaps not a blanket “write more tests” recommendation.</p>
 <h3 id="1-settings-persistence-7-bugs-1-test-would-cover">1. Settings persistence (7 bugs, 1 test would cover)</h3>
