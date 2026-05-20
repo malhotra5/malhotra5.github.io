@@ -99,7 +99,7 @@ Originally on Substack ↗
 <p>But coverage remained shallow. More than half of visual bugs landed on code paths with no snapshot tests at all, and almost no bug-fix PRs added new coverage retroactively. A significant portion of all bugs are non-visual entirely, where snapshots are structurally irrelevant. </p>
 <p>Finally it is difficult to generalize this exact approach to every codebase. It’s no smoking gun when it comes to de-risking the use of code agents. </p>
 <h3 id="limitations">Limitations</h3>
-<p>This analysis primarily measures software quality, quantified in retrospect by the number of bugs patched. We don’t measure developer velocity or review effort directly.</p>
+<p>This analysis primarily measures software quality, quantified in retrospect by the number of bugs patched. This doesn’t account for open bugs which aren’t being fixed. We don’t measure developer velocity or review effort directly.</p>
 <p>For data collection the number of samples is quite low, and many CI logs had been deleted by GitHub before we could mine them. Snapshot adoption coincided with a period of active feature development and team process maturation. We can’t fully disentangle the effect of snapshots from other improvements happening in parallel.</p>
 <h2 id="methodology">Methodology</h2>
 <p>The full pipeline, data, and graphs are reproducible from <a href="https://github.com/malhotra5/snapshot-tests-analysis">snapshot-tests-analysis</a>.</p>
@@ -141,9 +141,11 @@ Originally on Substack ↗
 <li><strong>Component snapshots</strong>: capture standalone rendering of individual components, sometimes under different configurations.</li>
 <li><strong>Behavior snapshots</strong>: iteratively capture a sequence of snapshots over time during interactive flows, effectively emulating a short video.</li>
 </ol>
-<p>Once snapshots are committed to the repository, they become part of the system history. Future pull requests automatically check against them. If behavior changes, the snapshot test fails. The failure is visually obvious, showing exactly how the behavior differs from the expected output.</p>
-<p>They are cheap to maintain, and in this specific scenario are not flaky. Agents do well
-generating these tests.</p>
+<p>Once snapshots are committed to the repository, they become part of the system history. Future pull requests automatically check against them. If behavior changes, the snapshot test fails. The failure is visually obvious, showing exactly how the behavior differs from the expected output. Agents do well generating these tests.</p>
+<figure> <img src="/img/snapshot-analysis/before_vs_after_snapshot.png" alt="Before and after snapshots example">  </figure>
+<p>Here is the SVG after create a new conversation in the CLI. The left has the new snapshot and the right has the baseline. </p>
+<figure> <img src="/img/snapshot-analysis/snapshot_diff.png" alt="Snapshot diff view example">  </figure>
+<p>Image diff demonstrates the changes. In this specific case, the buggy behavior fixed is where a the token metrics for the conversation don’t reset when creating a new conversation. In the new snapshot, the token metrics reset properly to 0. This is also an example of indirect coverage for the input component.</p>
 <h3 id="example-snapshot-test">Example Snapshot Test</h3>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> pytest</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> textual.pilot </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Pilot</span></span>
