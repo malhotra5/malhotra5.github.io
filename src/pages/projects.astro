@@ -12,6 +12,7 @@ const projects = [
     image: '/img/flight2.gif',
     tags: ['Processing'],
     height: '450px',
+    url: 'https://github.com/malhotra5/Flight-Simulator',
   },
   {
     id: 'citypop',
@@ -52,6 +53,7 @@ const projects = [
     image: '/img/manim.gif',
     tags: ['Python'],
     height: '310px',
+    url: 'https://github.com/malhotra5/Manim-Tutorial',
   },
   {
     id: 'cart',
@@ -113,7 +115,7 @@ const projects = [
 
   <!-- Modals -->
   {projects.map((project) => (
-    <Modal id={`modal-${project.id}`} title={project.title} image={project.image} />
+    <Modal id={`modal-${project.id}`} title={project.title} image={project.image} url={project.url} />
   ))}
 </BaseLayout>
 
