@@ -35,10 +35,10 @@ Originally on Substack ↗
 <h2 id="verification-is-an-ambiguous-and-time-consuming-task">Verification is an ambiguous and time consuming task</h2>
 <p>I hypothesized there are two problems with respect to verification:</p>
 <ol>
-<li><strong>Determining intended behavior.</strong> We’re loosing a high quality source of truth as many tickets are wall of text, often slightly inaccurate, describing the desired behavior. Reviewers depend on the legitimacy of this, and also the agent itself for future iterations of work. </li>
+<li><strong>Determining intended behavior.</strong> We’re loosing a high quality source of truth as many tickets produced via agents are walls of text and often slightly inaccurate. Reviewers depend on the legitimacy of this, and also the agent itself for future iterations of work. </li>
 <li><strong>Verifying implemented behavior.</strong> Manual quality assurance (QA) reveals problems, and is time consuming. With rapid heaps of code being generated this process doesn’t scale well. </li>
 </ol>
-<p>I hypothesize that if application behavior is visually observable, and any change in existing behavior are obvious, we make it <strong>easier to verify changes and safer to use agents in future development efforts.</strong></p>
+<p>I hypothesize that if application behavior is visually observable, and any change in existing behavior are obvious, we make it <strong>easier to verify changes and safer to use agents in future development efforts.</strong> <a href="https://en.wikipedia.org/wiki/A_picture_is_worth_a_thousand_words">A picture is worth a thousand words</a>.</p>
 <h2 id="analyzing-whether-visualizing-application-behavior-improves-verification">Analyzing whether visualizing application behavior improves verification </h2>
 
 <p>To test this hypothesis, I <a href="#mining">mined</a> all 311 merged PRs from the <a href="https://github.com/OpenHands/openhands-cli">OpenHands-CLI</a> repository (Sep 2025 – May 2026), <a href="#classification">classified</a> each by type, authorship, and snapshot involvement, then analyzed commit-level history to understand <em>how</em> snapshot tests are actually used. Snapshot tests were adopted in January 2026. For the anatomy of a snapshot test, see the <a href="#appendix-snapshot-testing-in-openhands-cli">Appendix</a>.</p>
@@ -181,41 +181,14 @@ minimal effort.</p>
 <li><strong>Indirect coverage is subjective</strong> — different reviewers might classify 1-2 borderline cases differently, but the overall split (4 indirectly covered vs 16 uncovered) is robust.</li>
 <li><strong>Single repository</strong> — all findings are specific to <a href="https://github.com/OpenHands/openhands-cli">OpenHands-CLI</a>.</li>
 </ul>
-<h2 id="appendix-snapshot-testing-in-openhands-cli">Appendix: Snapshot Testing in OpenHands-CLI</h2>
-<p>I experimented with snapshot testing in the
-<a href="https://github.com/OpenHands/openhands-cli">OpenHands-CLI</a>
-codebase. The CLI is built using
-<a href="https://textual.textualize.io/">Textual</a>,
-a Python library for building terminal UIs. One advantage of Textual is that it provides
-excellent support for snapshot testing — rendering widgets to SVG and comparing them
-across runs.</p>
-<h3 id="two-kinds-of-snapshots">Two Kinds of Snapshots</h3>
-<p>Snapshots were used in two ways:</p>
-<h4 id="1-component-snapshots">1. Component Snapshots</h4>
-<p>We capture standalone renders of individual components. These snapshots allow us to
-verify that specific UI components render correctly in isolation. If a change alters
-the output, the snapshot test fails and shows the difference.</p>
-<h4 id="2-behavioral-snapshots">2. Behavioral Snapshots</h4>
-<p>We also capture a sequence of snapshots over time, effectively emulating a short video of
-the application’s behavior. This allows us to test interactive flows — for example:</p>
+<h2 id="appendix">Appendix</h2>
+<h3 id="anatomy-of-a-snapshot">Anatomy of a snapshot</h3>
+<p>The <a href="https://github.com/OpenHands/openhands-cli">OpenHands-CLI</a> is built using <a href="https://textual.textualize.io/">Textual</a>, a Python library for building terminal UIs. Textual has excellent support for snapshot testing, rendering widgets to SVG and comparing them across runs. The codebases uses two types of snapshots</p>
 <ol>
-<li>Start the CLI</li>
-<li>Send a message</li>
-<li>Observe the agent response</li>
-<li>Watch the UI update</li>
+<li><strong>Component snapshots</strong>: capture standalone rendering of individual components, sometimes under different configurations.</li>
+<li><strong>Behavior snapshots</strong>: iteratively capture a sequence of snapshots over time during interactive flows, effectively emulating a short video. </li>
 </ol>
-<p>The sequence of frames becomes a behavioral recording of the feature.</p>
-<h3 id="why-snapshots-help">Why Snapshots Help</h3>
-<p>A picture is worth a thousand words. Snapshots allow:</p>
-<ul>
-<li><strong>Authors</strong> to confirm that their change behaves correctly</li>
-<li><strong>Reviewers</strong> to understand the behavior quickly</li>
-<li><strong>Agents</strong> to validate whether their outputs changed the system</li>
-</ul>
-<p>Once snapshots are committed to the repository, they become part of the system history.
-Future pull requests automatically check against them. If behavior changes, the snapshot
-test fails. The failure is visually obvious, showing exactly how the behavior differs
-from the expected output.</p>
+<p>Once snapshots are committed to the repository, they become part of the system history. Future pull requests automatically check against them. If behavior changes, the snapshot test fails. The failure is visually obvious, showing exactly how the behavior differs from the expected output.</p>
 <p>They are cheap to maintain, and in this specific scenario are not flaky. Agents do well
 generating these tests.</p>
 <h3 id="example-snapshot-test">Example Snapshot Test</h3>
@@ -269,17 +242,8 @@ easily visualizable behavior, and not all frameworks support snapshot testing as
 as Textual. Snapshots can become expensive to run as more tests accumulate. They cannot
 capture animations, as those are hard to capture at precise moments and create flaky tests
 as a consequence. They work best when relying less on external services.</p>
-<h3 id="lessons-learned">Lessons Learned</h3>
-<p>The specific tooling may vary across projects, but the underlying principle seems broadly
-useful. To make codebases more compatible with autonomous agents, we likely need two properties:</p>
-<ol>
-<li><strong>Behavior should be easy to visualize</strong></li>
-<li><strong>Behavioral changes should fail in obvious and reliable ways</strong></li>
-</ol>
-<p>When these conditions are met, both humans and agents gain a much clearer signal about
-whether the system behaves as intended.</p>
 <hr/>
-<p><em>Disclosure: An AI agent (<a href="https://github.com/All-Hands-AI/OpenHands">OpenHands</a>) assisted with data mining, graph generation, and drafting portions of this post. All analysis decisions, interpretations, and editorial judgment are the author’s.</em></p>  </div> <!-- Citation --> <section class="citation-block mt-12 pt-8 border-t border-gray-200 dark:border-gray-700" data-astro-cid-kt4wdg4p> <div class="flex items-start justify-between" data-astro-cid-kt4wdg4p> <details class="citation-details flex-1" data-astro-cid-kt4wdg4p> <summary class="cursor-pointer select-none inline-flex items-center gap-1.5" data-astro-cid-kt4wdg4p> <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100" data-astro-cid-kt4wdg4p>Citation</h2> <svg class="citation-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-astro-cid-kt4wdg4p> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" data-astro-cid-kt4wdg4p></path> </svg> </summary> <div class="mt-3" data-astro-cid-kt4wdg4p> <pre class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs text-gray-700 dark:text-gray-300 overflow-x-auto font-mono leading-relaxed whitespace-pre" data-astro-cid-kt4wdg4p>@online{malhotrarohit2026blog,
+<p><em>Disclosure: An AI agent (<a href="https://github.com/All-Hands-AI/OpenHands">OpenHands</a>) assisted with data mining, graph generation, and drafting portions of this post.</em> </p>  </div> <!-- Citation --> <section class="citation-block mt-12 pt-8 border-t border-gray-200 dark:border-gray-700" data-astro-cid-kt4wdg4p> <div class="flex items-start justify-between" data-astro-cid-kt4wdg4p> <details class="citation-details flex-1" data-astro-cid-kt4wdg4p> <summary class="cursor-pointer select-none inline-flex items-center gap-1.5" data-astro-cid-kt4wdg4p> <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100" data-astro-cid-kt4wdg4p>Citation</h2> <svg class="citation-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-astro-cid-kt4wdg4p> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" data-astro-cid-kt4wdg4p></path> </svg> </summary> <div class="mt-3" data-astro-cid-kt4wdg4p> <pre class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs text-gray-700 dark:text-gray-300 overflow-x-auto font-mono leading-relaxed whitespace-pre" data-astro-cid-kt4wdg4p>@online{malhotrarohit2026blog,
   author = {Rohit Malhotra},
   title = {Do Snapshot Tests Help in Agent-Driven Development?},
   year = {2026},
