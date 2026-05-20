@@ -17,10 +17,6 @@ tags:
 ---
 Agents are now employed liberally in all parts of the software development cycle. They generate code and surrounding artifacts e.g. ticket descriptions, PR descriptions, documentation, Slack comments. Seemingly we're developing applications faster than ever. In reality, we see neither experience increased velocity or improved product quality (see references in Appendix). The time saved is spent reviewing and verifying code, as agents frequently break things. So I'm in pursuit of finding improved ways to verify code such that using agents is safe for everyone.
 
-<Comment note="Include image of time to merge not improving with use of agents; find reference to external blog post or paper" />
-
-<Comment note="REVIEW: This Comment tag and the one at line ~33 are still in the published source. They need to be resolved (find the reference/image) or removed before publishing." />
-
 ## Verification is an ambiguous and time consuming task
 
 I hypothesized there are two problems with respect to verification:
@@ -30,49 +26,23 @@ I hypothesized there are two problems with respect to verification:
 
 Snapshot tests address both problems with the same mechanism. A committed snapshot *is* the source of truth for current behavior — not prose, but a visual artifact that shows exactly what the application looks like. And when code changes, snapshot diffs verify whether behavior changed intentionally or broke silently. [A picture is worth a thousand words](https://en.wikipedia.org/wiki/A_picture_is_worth_a_thousand_words).
 
-## Analyzing whether visualizing application behavior improves verification&#x20;
+## The Dataset
 
-<Comment
-  note="There are two specific aspects that we seem to be discussing
+To test this hypothesis, I [mined](#mining) all 311 merged PRs from the [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) repository (Sep 2025 – May 2026), [classified](#classification) each by type, authorship, and snapshot involvement, then analyzed commit-level history to understand *how* snapshot tests are actually used. Snapshot tests were adopted in January 2026. For the anatomy of a snapshot test, see the [Appendix](#appendix).
 
-- speed at which we ship code
-- quality with which we ship code (less buggy, fewer regressions)
+<Figure src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Monthly PR volume by authorship (agent vs human), Sep 2025 – May 2026." caption="68% of PRs are agent-authored, with a relatively consistent ratio over time — giving a reasonable baseline for investigating effects of snapshot adoption." />
 
-
-So we need to address each during the results sections"
-/>
-
-To test this hypothesis, I [mined](#mining) all 311 merged PRs from the [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) repository (Sep 2025 – May 2026), [classified](#classification) each by type, authorship, and snapshot involvement, then analyzed commit-level history to understand *how* snapshot tests are actually used. Snapshot tests were adopted in January 2026. For the anatomy of a snapshot test, see the [Appendix](#appendix-snapshot-testing-in-openhands-cli).
-
-<Figure src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Monthly PR volume by authorship (agent vs human), Sep 2025 – May 2026." caption="Monthly PR volume by authorship (agent vs human), Sep 2025 – May 2026." />
-
-68% of all PRs are agent authored. Percentage of agent-authored PRs over time are relatively consistent (excluding the second month), giving a reasonable baseline for investigating effects of snapshot tests.&#x20;
-
-<Figure src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Monthly snapshot involvement across all PRs, Sep 2025 – May 2026." caption="Monthly snapshot involvement across all PRs, Sep 2025 – May 2026." />
-
-Snapshots were introduced in January 2026, which were predominantly authored by agents. Not every PR includes snapshot changes, which we'll explore is either due to behavioral changes that aren't related to the UI or because of a lack of adding disciplined coverage to UI.
-
-<Comment note="REVIEW: Section ordering — the post spends lines 57–99 on where bugs live, coverage gaps, and what's NOT covered before ever showing that snapshots work. A reader hitting three sections about limitations before seeing any evidence of value may check out. Consider leading with 'Where Coverage Exists, It Works' (the payoff) first, then showing the coverage limitations." />
-
-<Comment note="REVIEW: No transition between the setup (agent PRs over time, snapshot adoption) and the bug analysis. The two figures above are floating without a subsection header — consider a 'Dataset overview' or 'Context' subsection to anchor them." />
+<Figure src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Monthly snapshot involvement across all PRs, Sep 2025 – May 2026." caption="Snapshots were introduced in January 2026, predominantly authored by agents. Not every PR includes snapshot changes — either because the change isn't UI-related or because coverage wasn't added." />
 
 ### Where Do Bugs Live?
 
 Not all bugs are visual. Snapshot tests helps with bugs that change rendered output. Counting all bug-fixes against snapshot coverage inflates the count.
 
-<Comment note="REVIEW: Several figure captions just restate the chart title and add no interpretation. Per the 'caption = what am I looking at; body = what does it mean' principle, these should tell the reader the takeaway. Applies to: deep_16 (below), deep_17, deep_13, deep_15, deep_18." />
+<Figure src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes" caption="UI widgets & screens is the largest category (38 bugs), but 27 bugs (35%) are entirely non-visual — CLI core, config/state, API/auth — where snapshots are structurally irrelevant." />
 
-<Figure src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes" caption="Bug-fix PRs categorized for visual vs non-visual fixes" />
+<Figure src="/img/snapshot-analysis/deep_17_severity_by_domain.png" alt="Severity breakdown for bug types" caption="Critical bugs skew non-visual (44% — crashes, auth failures, dependency issues). UX regressions are predominantly visual (75%), the natural domain for snapshot tests." />
 
-The largest category is UI widgets & screens (38), where 12 PRs involved snapshot changes (green). But 27 bugs (35%) are entirely non-visual: CLI core, config/state, API/auth. Snapshot tests are structurally irrelevant for these.
-
-<Figure src="/img/snapshot-analysis/deep_17_severity_by_domain.png" alt="Severity breakdown for bug types" caption="Severity breakdown for bug types" />
-
-Critical bugs skew non-visual (44%, crashes, auth failures, dependency issues). UX regressions are predominantly visual (75%), the natural domain for snapshot tests.
-
-<Comment note="REVIEW: This blockquote is defensively framed — it reads like arguing with an imagined critic. The point (honest denominator is 51 visual bugs, not 78 total) is important and correct, but consider making it directly instead of the adversarial 'sounds damning, but...' framing." />
-
-> **"85% of bug-fix PRs ship without touching snapshots"** sounds damning, but 35% of those bugs are in code that snapshots *can't* cover (API auth, CLI argument parsing, dependency pinning). The honest denominator is the 51 visual bug-fixes, where 12 (24%) have snapshot involvement. It's still a big coverage gap, but it's a different conversation than "85%."
+85% of bug-fix PRs ship without touching snapshots, but 35% of those bugs are in code that snapshots *can't* cover (API auth, CLI argument parsing, dependency pinning). The relevant denominator is the 51 visual bug-fixes, where 12 (24%) have snapshot involvement. That's still a coverage gap, but a different one than the headline number suggests.
 
 ### What's Actually Covered?
 
@@ -81,7 +51,7 @@ We analyzed this at three levels of precision.
 
 #### Level 1: Did the bug-fix PR touch snapshots?
 
-<Figure src="/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png" alt="PR-level coverage gap" caption="PR-level coverage gap" />
+<Figure src="/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png" alt="PR-level coverage gap" caption="Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. Only 1 PR added new coverage." />
 
 Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage.
 
@@ -90,11 +60,9 @@ Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified
 Zooming into the 35 post-adoption UI bug-fixes, we checked whether the bug-fix PR touched
 the same code *paths* covered by snapshots (not just the same files).
 
-<Figure src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown" caption="Path-level coverage breakdown" />
+<Figure src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown" caption="Most post-adoption UI bugs land on paths where snapshot files exist but the specific bug path is uncovered (orange)." />
 
 #### Level 3: Accounting for indirect coverage
-
-<Comment note="REVIEW: Broken anchor link — '#step-4-indirect-coverage-analysis-manual--scripted' points to old step-numbered heading. Methodology now uses 'Indirect coverage analysis' as the heading." />
 
 Snapshot tests can be a proxy for application behavior. A test that renders a conversation after switching implicitly exercises persistence. We [read every snapshot test file](#indirect-coverage-analysis) (20 test classes + conftest) and asked: *would the snapshot output actually change if this bug existed?*
 
@@ -104,34 +72,27 @@ Strict criteria for "indirectly covered":
 2. The bug would produce **visibly different** output
 3. The test's input data would trigger the bug
 
-<Figure src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Reclassified path-level coverage" caption="Reclassified path-level coverage" />
+<Figure src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Reclassified path-level coverage" caption="After accounting for indirect coverage, 46% of UI bugs hit covered paths (up from 34%). 54% remain uncovered." />
 
-<Comment note="REVIEW: Last sentence ('Revised: 46% covered, 54% uncovered') is redundant — it just restates the preceding sentence." />
+After accounting for indirect coverage: 46% of UI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered — a snapshot test exercises a flow through the bug's code path but wasn't originally counted because the PR didn't modify snapshot files. 16 (46%) remain in adjacent-but-uncovered paths.
 
-After accounting for indirect coverage: 46% of UI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered. 16 (46%) remain in adjacent-but-uncovered paths. Revised: 46% covered, 54% uncovered.
-
-<Comment note="REVIEW: No transition between static coverage analysis ('What's Actually Covered?') and dynamic CI evidence ('Where Coverage Exists, It Works'). The reader needs a bridge sentence explaining the shift from 'how much is covered' to 'when covered, does it actually help?'" />
+So coverage is incomplete — but where it exists, does it actually help? The next section shifts from static coverage analysis to dynamic evidence: what happens at development time and in CI when snapshots are present.
 
 ## Where Coverage Exists, It Works
 
 The evidence for snapshot value is strongest in areas that have coverage.
-<Comment note="REVIEW: 'Four independent signals' overstates the strength. Two of them (deep_14: snapshots break during development, deep_19: how failures resolve) are really the same story at different zoom levels — development-time vs CI-time. And review speed (signal 4) is acknowledged as correlational. Consider 'several signals' or be precise about which are truly independent." />
-
-Four independent signals confirm this.
 
 ### Forcing function: every feature must acknowledge visual impact
 
 <Figure src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month." caption="Percentage of feature and bug-fix PRs that include snapshot changes, by month." />
 
-<Comment note="REVIEW: This paragraph mixes the 'forcing function' story with coverage-gap math (34 bug-fixes, 12 on covered paths, 22 not). The coverage-gap details belong in the coverage section above. Here the focus should be on the forcing function insight — features can't ship without acknowledging visual impact." />
-
-Feature PRs (green) climb to 100% — every UI feature now passes through a "did you mean to change how this looks?" gate. Bug-fix PRs (red) plateau at \~35–50%. Since this graph is already filtered to UI (visual) bugs, the gap isn't about non-visual code — it's about coverage depth. Of the 34 post-adoption UI bug-fixes, 12 land on snapshot-covered paths and update the baseline to reflect the corrected behavior. The other 22 fix bugs on paths that have no snapshot tests at all (settings persistence, notifications, dropdown ordering), so there's no baseline to update.
+Feature PRs (green) climb to 100% — every UI feature now passes through a "did you mean to change how this looks?" gate. Bug-fix PRs (red) plateau at ~35–50%, reflecting the coverage gaps explored above: many bug fixes land on paths with no snapshots, so there's no baseline to update.
 
 ### Snapshots break during development — and the signal is acted on
 
-<Comment note="REVIEW: 'Snapshot-fix commit' is used without definition. The reader hasn't been told what this means — commits whose messages contain snapshot keywords (e.g. 'update snap', 'regenerate', 'baseline') appearing later in a PR's commit history. The setup is too thin for the concept it introduces." />
+We looked at commit messages within multi-commit PRs for snapshot-related keywords ("update snap", "regenerate", "baseline") that appear *after* the initial code changes — evidence that a developer wrote code, hit a snapshot failure, and iterated.
 
-Across 27 multi-commit snapshot PRs, **18 (67%)** show a pattern: code written first, then a later commit addressing broken snapshots — 58 snapshot-fix commits total. Developers hit snapshot failures during development and iterate before pushing.
+Across 27 multi-commit snapshot PRs, **18 (67%)** show this pattern — 58 such commits total. Developers hit snapshot failures during development and iterate before pushing.
 
 <Figure src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot-fix commits by PR type. Feature PRs: 24 commits across 9 PRs. Bug fix: 12 across 6. Refactor: 11 across 2. Test: 11 across 3." caption="Snapshot-fix commits that appear later in a PR, by PR type. Evidence that developers iterate on snapshot failures during development, not just at CI." />
 
@@ -139,11 +100,7 @@ Feature PRs generated the most (24 snapshot-fix commits across 9 PRs). Refactors
 
 ### How do snapshot failures ultimately resolve?
 
-Of the 128 PRs with snapshot CI data (late Jan–mid May 2026), **29 (23%)** triggered at least one snapshot failure. When a snapshot fails, the developer has two choices: update the baseline (acknowledging an intentional visual change) or fix their code (reverting an unintended regression).
-
-<Comment note="REVIEW: This paragraph explains CI log parsing and the heuristic fallback — methodology details that duplicate what's already in the Methodology section. The results section should tell the story; consider moving this to a footnote or just referencing the methodology section." />
-
-To classify each of these 29 PRs, we checked whether the failing test's snapshot file was updated in the final merged PR (baseline update) or left unchanged (code fix). GitHub retains CI logs for \~90 days, so we could only verify the specific failing test names for the **9 most recent PRs** (March–May 2026). For the remaining 20, we fall back to a coarser heuristic: whether the merged PR contains any snapshot file changes at all.
+Of the 128 PRs with snapshot CI data (late Jan–mid May 2026), **29 (23%)** triggered at least one snapshot failure. When a snapshot fails, the developer has two choices: update the baseline (acknowledging an intentional visual change) or fix their code (reverting an unintended regression). We classified each PR's resolution using CI logs where available and file-change heuristics for the rest (see [Methodology](#mining) for details).
 
 <Figure src="/img/snapshot-analysis/deep_19_ci_outcomes.png" alt="Stacked bar chart showing how 29 PRs with snapshot failures resolved, by type. Features: 4 baseline, 4 code fix. CI/Docs: 5 code fix. Bug fix: 3 baseline, 1 merged. Dep bump: 1 baseline, 2 code fix. Refactor: 2 baseline, 1 merged. Version bump: 3 baseline. Test: 2 baseline, 1 merged." caption="How 29 PRs with snapshot failures resolved, broken down by PR type. Green = updated baseline (intentional change). Blue = fixed code (regression caught). Red = merged with CI still failing." />
 
@@ -184,7 +141,7 @@ Normalized view: UX bugs per cumulative UI feature. Pre-adoption peaked at 0.45.
 
 Still, the overall UI bug-to-feature ratio went from **0.60 to 0.95**. Essentially flat. Snapshot tests didn't reduce the total bug count because 54% of visual bugs are on uncovered paths. You can't prevent bugs in areas you don't cover.
 
-## Investigating testing gaps to supplement bug rates&#x20;
+## Investigating testing gaps to supplement bug rates
 
 The data points to specific, fixable coverage gaps not a blanket "write more tests" recommendation.
 
@@ -287,7 +244,7 @@ We read all 20 snapshot test files (\~2,500 lines) to build a coverage map of wh
 The [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) is built using [Textual](https://textual.textualize.io/), a Python library for building terminal UIs. Textual has excellent support for snapshot testing, rendering widgets to SVG and comparing them across runs. The codebases uses two types of snapshots
 
 1. **Component snapshots**: capture standalone rendering of individual components, sometimes under different configurations.
-2. **Behavior snapshots**: iteratively capture a sequence of snapshots over time during interactive flows, effectively emulating a short video.&#x20;
+2. **Behavior snapshots**: iteratively capture a sequence of snapshots over time during interactive flows, effectively emulating a short video.
 
 
 
@@ -355,4 +312,4 @@ as a consequence. They work best when relying less on external services.
 
 ---
 
-*Disclosure: An AI agent ([OpenHands](https://github.com/All-Hands-AI/OpenHands)) assisted with data mining, graph generation, and drafting portions of this post.*&#x20;
+*Disclosure: An AI agent ([OpenHands](https://github.com/All-Hands-AI/OpenHands)) assisted with data mining, graph generation, and drafting portions of this post.*
