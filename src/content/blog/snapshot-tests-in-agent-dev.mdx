@@ -105,31 +105,17 @@ Not all bugs are visual. Snapshot tests help with bugs that change rendered outp
 
 ### Snapshot tests can provider coverage for UI and ..
 
-Among the 51 visual (UI) bug-fixes, what fraction hit paths that snapshot tests guard? This is analyzed at three levels of precision.
+Narrowing to the 35 post-adoption UI bug-fixes, we checked whether each bug lives on a code path that snapshot tests actually guard. A bug's file might have snapshot coverage for *other* behaviors, but if no test exercises the specific behavior that broke, it's not really covered.
 
-#### Level 1: Did the bug-fix PR touch snapshots?
-
-<Figure src="/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png" alt="PR-level coverage gap" caption="Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. Only 1 PR added new coverage." />
-
-Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage.
-
-#### Level 2: Path-level analysis
-
-<Figure src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown" caption="Most post-adoption UI bugs land on paths where snapshot files exist but the specific bug path is uncovered (orange)." />
-
-#### Level 3: Accounting for indirect coverage
-
-Snapshot tests can be a proxy for application behavior. A test that renders a conversation after switching implicitly exercises persistence. We [read every snapshot test file](#indirect-coverage-analysis) (20 test classes + conftest) and asked: *would the snapshot output actually change if this bug existed?*
-
-Strict criteria for "indirectly covered":
+We [read every snapshot test file](#indirect-coverage-analysis) (20 test classes + conftest) and classified each bug by whether a snapshot test would produce visibly different output if the bug existed. Strict criteria for coverage:
 
 1. A snapshot test exercises a flow through this code path
 2. The bug would produce **visibly different** output
 3. The test's input data would trigger the bug
 
-<Figure src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Reclassified path-level coverage" caption="After accounting for indirect coverage, 46% of UI bugs hit covered paths (up from 34%). 54% remain uncovered." />
+<Figure src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Coverage breakdown of post-adoption UI bugs" caption="Of 35 post-adoption UI bug-fixes: 12 (34%) hit directly covered paths, 4 (11%) are indirectly covered by tests that exercise the same flow, 16 (46%) are in modules with snapshot coverage for other behaviors but not the bug's path, and 3 (9%) are in fully uncovered areas." />
 
-After accounting for indirect coverage: 46% of UI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered — a snapshot test exercises a flow through the bug's code path but wasn't originally counted because the PR didn't modify snapshot files. 16 (46%) remain in adjacent-but-uncovered paths.
+12 bugs (34%) are directly covered — the bug-fix PR updated snapshot baselines. 4 more (11%) are indirectly covered — a snapshot test exercises a flow through the bug's code path but the PR didn't modify snapshot files (e.g., a conversation-switching test implicitly exercises persistence logic). The remaining 19 (54%) are uncovered: 16 in "adjacent" paths where the module has snapshot tests for other behaviors but not the one that broke, and 3 in areas with no snapshot coverage at all.
 
 ## Investigating testing gaps to supplement bug rates
 
