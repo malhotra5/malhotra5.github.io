@@ -127,8 +127,6 @@ On the [verification problem](#verification-is-an-ambiguous-and-time-consuming-t
 
 But coverage remained shallow. More than half of visual bugs landed on code paths with no snapshot tests at all, and almost no bug-fix PRs added new coverage retroactively. A significant portion of all bugs are non-visual entirely, where snapshots are structurally irrelevant.&#x20;
 
-
-
 Finally it is difficult to generalize this exact approach to every codebase. It's no smoking gun when it comes to de-risking the use of code agents.&#x20;
 
 ### Limitations
@@ -246,14 +244,6 @@ class TestEchoHelloWorld:
             run_before=run_conversation,
         )
 ```
-
-### Limitations of Snapshot Testing
-
-It is difficult to generalize this exact approach to every codebase. Not all systems have
-easily visualizable behavior, and not all frameworks support snapshot testing as naturally
-as Textual. Snapshots can become expensive to run as more tests accumulate. They cannot
-capture animations, as those are hard to capture at precise moments and create flaky tests
-as a consequence. They work best when relying less on external services.
 
 ---
 
