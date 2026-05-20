@@ -15,7 +15,7 @@ tags:
   - Snapshot Tests
   - Empirical Analysis
 ---
-Agents are now employed liberally in all parts of the software development cycle. They generate code and surrounding artifacts e.g. ticket descriptions, PR descriptions, documentation, Slack comments. Seemingly we're developing applications faster than ever. In reality, we see neither experience increased velocity or improved product quality. The time saved is spent reviewing and verifying code, as agents frequently break things. Thus, I'm in a pursuit of finding improved ways to verify code that makes agents safe to use for everyone.
+Agents are now employed liberally in all parts of the software development cycle. They generate code and surrounding artifacts e.g. ticket descriptions, PR descriptions, documentation, Slack comments. Seemingly we're developing applications faster than ever. In reality, we see neither experience increased velocity or improved product quality (see references in Appendix). The time saved is spent reviewing and verifying code, as agents frequently break things. So I'm in pursuit of finding improved ways to verify code such that using agents is safe for everyone.
 
 <Comment note="Include image of time to merge not improving with use of agents; find reference to external blog post or paper" />
 
@@ -23,8 +23,8 @@ Agents are now employed liberally in all parts of the software development cycle
 
 I hypothesized there are two problems with respect to verification:
 
-1. **Determining intended behavior.** Where is the source of truth for how the product should behave? If an agent details application behavior in a ticket description, is it accurate? The agent user needs to spend time determining whether the task was captured properly. Are the contributor and reviewer actually aligned on the intended behavior? Reviewers depend on the legitimacy of this, and so does the agent itself during future iterations of work.&#x20;
-2. **Verifying implemented behavior.** Once the code has been implemented, how can we easily verify that the application implements the intended behavior? Manually running and validating the application reveals new problems. It's time-consuming and doesn't scale well when agents are producing large volumes of code.
+1. **Determining intended behavior.** We're loosing a high quality source of truth as many tickets are wall of text, often slightly inaccurate, describing the desired behavior. Reviewers depend on the legitimacy of this, and also the agent itself for future iterations of work.&#x20;
+2. **Verifying implemented behavior.** Manual quality assurance (QA) reveals problems, and is time consuming. With rapid heaps of code being generated this process doesn't scale well.&#x20;
 
 I hypothesize that if application behavior is visually observable, and any change in existing behavior are obvious, we make it **easier to verify changes and safer to use agents in future development efforts.**
 
@@ -105,7 +105,7 @@ Four independent signals confirm this.
 
 <Figure src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month." caption="Percentage of feature and bug-fix PRs that include snapshot changes, by month." />
 
-Feature PRs (green) climb to 100% — every TUI feature now passes through a "did you mean to change how this looks?" gate. Bug-fix PRs (red) plateau at ~35–50%. Since this graph is already filtered to TUI (visual) bugs, the gap isn't about non-visual code — it's about coverage depth. Of the 34 post-adoption TUI bug-fixes, 12 land on snapshot-covered paths and update the baseline to reflect the corrected behavior. The other 22 fix bugs on paths that have no snapshot tests at all (settings persistence, notifications, dropdown ordering), so there's no baseline to update.
+Feature PRs (green) climb to 100% — every TUI feature now passes through a "did you mean to change how this looks?" gate. Bug-fix PRs (red) plateau at \~35–50%. Since this graph is already filtered to TUI (visual) bugs, the gap isn't about non-visual code — it's about coverage depth. Of the 34 post-adoption TUI bug-fixes, 12 land on snapshot-covered paths and update the baseline to reflect the corrected behavior. The other 22 fix bugs on paths that have no snapshot tests at all (settings persistence, notifications, dropdown ordering), so there's no baseline to update.
 
 ### Snapshots break during development — and the signal is acted on
 
@@ -119,16 +119,16 @@ Feature PRs generated the most (24 snapshot-fix commits across 9 PRs). Refactors
 
 Of the 128 PRs with snapshot CI data (late Jan–mid May 2026), **29 (23%)** triggered at least one snapshot failure. When a snapshot fails, the developer has two choices: update the baseline (acknowledging an intentional visual change) or fix their code (reverting an unintended regression).
 
-To classify each of these 29 PRs, we checked whether the failing test's snapshot file was updated in the final merged PR (baseline update) or left unchanged (code fix). GitHub retains CI logs for ~90 days, so we could only verify the specific failing test names for the **9 most recent PRs** (March–May 2026). For the remaining 20, we fall back to a coarser heuristic: whether the merged PR contains any snapshot file changes at all.
+To classify each of these 29 PRs, we checked whether the failing test's snapshot file was updated in the final merged PR (baseline update) or left unchanged (code fix). GitHub retains CI logs for \~90 days, so we could only verify the specific failing test names for the **9 most recent PRs** (March–May 2026). For the remaining 20, we fall back to a coarser heuristic: whether the merged PR contains any snapshot file changes at all.
 
 <Figure src="/img/snapshot-analysis/deep_19_ci_outcomes.png" alt="Stacked bar chart showing how 29 PRs with snapshot failures resolved, by type. Features: 4 baseline, 4 code fix. CI/Docs: 5 code fix. Bug fix: 3 baseline, 1 merged. Dep bump: 1 baseline, 2 code fix. Refactor: 2 baseline, 1 merged. Version bump: 3 baseline. Test: 2 baseline, 1 merged." caption="How 29 PRs with snapshot failures resolved, broken down by PR type. Green = updated baseline (intentional change). Blue = fixed code (regression caught). Red = merged with CI still failing." />
 
 The breakdown by type makes the pattern intuitive:
 
-- **CI and docs PRs** are entirely blue — these PRs shouldn't change visual output, so every failure was a regression caught.
-- **Dependency bumps** are mostly blue — an upstream change broke the UI, and snapshots caught it.
-- **Features** split 50/50 — half intentionally changed the UI (baseline updated), half accidentally broke something else (code fixed).
-- **Version bumps and bug fixes** are entirely green — version strings and bug-fix behavior changes are expected visual updates.
+* **CI and docs PRs** are entirely blue — these PRs shouldn't change visual output, so every failure was a regression caught.
+* **Dependency bumps** are mostly blue — an upstream change broke the UI, and snapshots caught it.
+* **Features** split 50/50 — half intentionally changed the UI (baseline updated), half accidentally broke something else (code fixed).
+* **Version bumps and bug fixes** are entirely green — version strings and bug-fix behavior changes are expected visual updates.
 
 Overall, **11 of 29 PRs (38%)** fixed their code rather than updating baselines — concrete regressions prevented from shipping. Snapshot tests were advisory (not a required check) during part of this period, and 3 PRs merged with failures still present.
 
