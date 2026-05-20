@@ -191,18 +191,15 @@ The [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) is built using [
 1. **Component snapshots**: capture standalone rendering of individual components, sometimes under different configurations.
 2. **Behavior snapshots**: iteratively capture a sequence of snapshots over time during interactive flows, effectively emulating a short video.
 
-Once snapshots are committed to the repository, they become part of the system history. Future pull requests automatically check against them. If behavior changes, the snapshot test fails. The failure is visually obvious, showing exactly how the behavior differs from the expected output.
+Once snapshots are committed to the repository, they become part of the system history. Future pull requests automatically check against them. If behavior changes, the snapshot test fails. The failure is visually obvious, showing exactly how the behavior differs from the expected output. Agents do well generating these tests.
 
-They are cheap to maintain, and in this specific scenario are not flaky. Agents do well
-generating these tests.
+<Figure src="/img/snapshot-analysis/before_vs_after_snapshot.png" alt="Before and after snapshots example" />
 
-![](/img/snapshot-tests-in-agent-dev/before_vs_after_snapshot.png)
+Here is the SVG after create a new conversation in the CLI. The left has the new snapshot and the right has the baseline.&#x20;
 
+<Figure src="/img/snapshot-analysis/snapshot_diff.png" alt="Snapshot diff view example" />
 
-
-![](/img/snapshot-tests-in-agent-dev/snapshot_diff.png)
-
-
+Image diff demonstrates the changes. In this specific case, the buggy behavior fixed is where a the token metrics for the conversation don't reset when creating a new conversation. In the new snapshot, the token metrics reset properly to 0. This is also an example of indirect coverage for the input component.
 
 ### Example Snapshot Test
 
