@@ -23,10 +23,10 @@ Agents are now employed liberally in all parts of the software development cycle
 
 I hypothesized there are two problems with respect to verification:
 
-1. **Determining intended behavior.** We're loosing a high quality source of truth as many tickets are wall of text, often slightly inaccurate, describing the desired behavior. Reviewers depend on the legitimacy of this, and also the agent itself for future iterations of work.&#x20;
+1. **Determining intended behavior.** We're loosing a high quality source of truth as many tickets produced via agents are walls of text and often slightly inaccurate. Reviewers depend on the legitimacy of this, and also the agent itself for future iterations of work.&#x20;
 2. **Verifying implemented behavior.** Manual quality assurance (QA) reveals problems, and is time consuming. With rapid heaps of code being generated this process doesn't scale well.&#x20;
 
-I hypothesize that if application behavior is visually observable, and any change in existing behavior are obvious, we make it **easier to verify changes and safer to use agents in future development efforts.**
+I hypothesize that if application behavior is visually observable, and any change in existing behavior are obvious, we make it **easier to verify changes and safer to use agents in future development efforts.** [A picture is worth a thousand words](https://en.wikipedia.org/wiki/A_picture_is_worth_a_thousand_words).
 
 ## Analyzing whether visualizing application behavior improves verification&#x20;
 
@@ -219,7 +219,7 @@ The full pipeline, data, and graphs are reproducible from [snapshot-tests-analys
 
 We pulled every merged PR from [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) via the GitHub REST API: PR metadata, file-level diffs, full commit history, review data, linked issues, and authorship signals (co-author tags, bot usernames). This produced 311 PRs with 42 fields each. No LLM involved.
 
-For CI analysis, we queried the Check Runs API for every commit in every post-adoption PR to extract the "Run snapshot tests" result. For the 29 PRs that triggered failures, we downloaded CI job logs (where still available — GitHub retains these ~90 days), parsed out specific failing test names, and cross-referenced each against the files changed in the final merged PR to determine whether resolution was a code fix or baseline update.
+For CI analysis, we queried the Check Runs API for every commit in every post-adoption PR to extract the "Run snapshot tests" result. For the 29 PRs that triggered failures, we downloaded CI job logs (where still available — GitHub retains these \~90 days), parsed out specific failing test names, and cross-referenced each against the files changed in the final merged PR to determine whether resolution was a code fix or baseline update.
 
 ### Classification
 
@@ -244,7 +244,7 @@ We did not formally validate LLM accuracy against human labels for this study. C
 
 ### Indirect coverage analysis
 
-We read all 20 snapshot test files (~2,500 lines) to build a coverage map of which test suites exercise which functional behaviors. For each of the 20 "file covered, path uncovered" bugs, we assessed whether a snapshot test would *actually produce different output* if the bug existed.
+We read all 20 snapshot test files (\~2,500 lines) to build a coverage map of which test suites exercise which functional behaviors. For each of the 20 "file covered, path uncovered" bugs, we assessed whether a snapshot test would *actually produce different output* if the bug existed.
 
 ### Limitations
 
@@ -253,50 +253,18 @@ We read all 20 snapshot test files (~2,500 lines) to build a coverage map of whi
 * **Indirect coverage is subjective** — different reviewers might classify 1-2 borderline cases differently, but the overall split (4 indirectly covered vs 16 uncovered) is robust.
 * **Single repository** — all findings are specific to [OpenHands-CLI](https://github.com/OpenHands/openhands-cli).
 
-## Appendix: Snapshot Testing in OpenHands-CLI
+## Appendix
 
-I experimented with snapshot testing in the
-[OpenHands-CLI](https://github.com/OpenHands/openhands-cli)
-codebase. The CLI is built using
-[Textual](https://textual.textualize.io/),
-a Python library for building terminal UIs. One advantage of Textual is that it provides
-excellent support for snapshot testing — rendering widgets to SVG and comparing them
-across runs.
+### Anatomy of a snapshot
 
-### Two Kinds of Snapshots
+The [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) is built using [Textual](https://textual.textualize.io/), a Python library for building terminal UIs. Textual has excellent support for snapshot testing, rendering widgets to SVG and comparing them across runs. The codebases uses two types of snapshots
 
-Snapshots were used in two ways:
+1. **Component snapshots**: capture standalone rendering of individual components, sometimes under different configurations.
+2. **Behavior snapshots**: iteratively capture a sequence of snapshots over time during interactive flows, effectively emulating a short video.&#x20;
 
-#### 1. Component Snapshots
 
-We capture standalone renders of individual components. These snapshots allow us to
-verify that specific UI components render correctly in isolation. If a change alters
-the output, the snapshot test fails and shows the difference.
 
-#### 2. Behavioral Snapshots
-
-We also capture a sequence of snapshots over time, effectively emulating a short video of
-the application's behavior. This allows us to test interactive flows — for example:
-
-1. Start the CLI
-2. Send a message
-3. Observe the agent response
-4. Watch the UI update
-
-The sequence of frames becomes a behavioral recording of the feature.
-
-### Why Snapshots Help
-
-A picture is worth a thousand words. Snapshots allow:
-
-* **Authors** to confirm that their change behaves correctly
-* **Reviewers** to understand the behavior quickly
-* **Agents** to validate whether their outputs changed the system
-
-Once snapshots are committed to the repository, they become part of the system history.
-Future pull requests automatically check against them. If behavior changes, the snapshot
-test fails. The failure is visually obvious, showing exactly how the behavior differs
-from the expected output.
+Once snapshots are committed to the repository, they become part of the system history. Future pull requests automatically check against them. If behavior changes, the snapshot test fails. The failure is visually obvious, showing exactly how the behavior differs from the expected output.
 
 They are cheap to maintain, and in this specific scenario are not flaky. Agents do well
 generating these tests.
@@ -358,17 +326,6 @@ as Textual. Snapshots can become expensive to run as more tests accumulate. They
 capture animations, as those are hard to capture at precise moments and create flaky tests
 as a consequence. They work best when relying less on external services.
 
-### Lessons Learned
-
-The specific tooling may vary across projects, but the underlying principle seems broadly
-useful. To make codebases more compatible with autonomous agents, we likely need two properties:
-
-1. **Behavior should be easy to visualize**
-2. **Behavioral changes should fail in obvious and reliable ways**
-
-When these conditions are met, both humans and agents gain a much clearer signal about
-whether the system behaves as intended.
-
 ---
 
-*Disclosure: An AI agent ([OpenHands](https://github.com/All-Hands-AI/OpenHands)) assisted with data mining, graph generation, and drafting portions of this post. All analysis decisions, interpretations, and editorial judgment are the author's.*
+*Disclosure: An AI agent ([OpenHands](https://github.com/All-Hands-AI/OpenHands)) assisted with data mining, graph generation, and drafting portions of this post.*&#x20;
