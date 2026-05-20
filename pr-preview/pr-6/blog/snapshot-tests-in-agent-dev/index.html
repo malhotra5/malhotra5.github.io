@@ -152,85 +152,34 @@ would prevent the exact recurrence — the highest-value coverage extension poss
 trajectories, notification capture) would close the majority of the coverage gap with
 minimal effort.</p>
 <h2 id="methodology">Methodology</h2>
-<p>Everything in this analysis is reproducible from two scripts and a GitHub token.
-The full pipeline, data, and graphs are at
-<a href="https://github.com/malhotra5/snapshot-tests-analysis">snapshot-tests-analysis</a>.</p>
-<h3 id="step-1-mining-github-api--json">Step 1: Mining (GitHub API → JSON)</h3>
-<p><code>scripts/mine_github.py</code> pulls every merged PR from
-<a href="https://github.com/OpenHands/openhands-cli">openhands-cli</a>
-via the GitHub REST API and <code>gh</code> CLI. For each PR it collects:</p>
-<ul>
-<li><strong>PR metadata</strong> — title, body, author, labels, branch names, created/merged timestamps, additions/deletions, changed file count</li>
-<li><strong>File-level diffs</strong> — every file changed with its status (added/modified/removed) and line counts</li>
-<li><strong>Commit history</strong> — full commit messages per PR, which enabled the “code first, fix snapshots later” analysis</li>
-<li><strong>Review data</strong> — reviewer logins, review decision, time-to-first-review</li>
-<li><strong>Linked issues</strong> — cross-referenced issue titles, bodies, and authors</li>
-<li><strong>Release mapping</strong> — which release tag (if any) includes each PR</li>
-<li><strong>Authorship detection</strong> — heuristic markers for agent-authored PRs (co-authored-by tags, conversation links, bot authors)</li>
-</ul>
-<p>Output: a single <code>mined_prs.json</code> file with 42 fields per PR across all 311 merged PRs.
-No LLM is involved in this step — it’s pure API data.</p>
-<h3 id="step-2-classification-llm--heuristics--csv">Step 2: Classification (LLM + heuristics → CSV)</h3>
-<p><code>scripts/categorize_prs.py</code> classifies each PR along four dimensions.
-It runs two classifiers in parallel and keeps both outputs:</p>
-<p><strong>Heuristic classifier</strong> (keyword-based, no LLM):</p>
-<ul>
-<li>PR type — title keyword matching (“fix” → bug-fix, “feat” → feature, “bump” → version-bump, etc.)</li>
-<li>Bug severity — title keyword matching (“crash” → critical, “display” → ux-regression, “typo” → polish)</li>
-<li>Snapshot involvement — file path matching (<code>*.svg</code> in <code>snapshot</code> directories)</li>
-<li>Agent authorship — co-author tags and bot usernames</li>
-</ul>
-<p><strong>LLM classifier</strong> (gpt-4o-mini via <a href="https://docs.openhands.dev/sdk">OpenHands SDK</a>):</p>
-<ul>
-<li>PR type — same categories but with full context (title, description, file list, linked issues)</li>
-<li>Bug severity — critical / ux-regression / polish, with definitions in the system prompt</li>
-<li>Whether the PR touches TUI code — the LLM sees the actual file paths and description, catching cases keywords miss</li>
-<li>Rationale — a 1-2 sentence explanation stored alongside each classification for auditability</li>
-</ul>
-<p>The report uses the LLM classifications (<code>llm_pr_type</code>, <code>llm_bug_severity</code>,
-<code>llm_touches_tui</code>) as the primary labels, falling back to heuristics when the LLM
-call fails. The heuristic labels are retained in the CSV for comparison.</p>
-<h3 id="step-3-snapshot-specific-analysis-heuristic">Step 3: Snapshot-specific analysis (heuristic)</h3>
-<p>Several analyses required no LLM — just reading file paths, commit messages, and timestamps:</p>
-<ul>
-<li><strong>Commit-level pattern detection</strong> — for each multi-commit PR, check if snapshot-related keywords (“snapshot”, “update snap”, “regenerate”, “baseline”) appear only in later commits, indicating the “code first, fix snapshots later” pattern</li>
-<li><strong>Bug-fix coverage gap</strong> — for each bug-fix PR, classify as “no snapshots touched” / “modified existing” / “added new” based on the Git status of snapshot SVG files</li>
-<li><strong>Suite reuse</strong> — extract test suite names from snapshot file paths and count unique PRs per suite</li>
-<li><strong>Review speed</strong> — compare <code>hours_to_first_review</code> between snapshot and non-snapshot PRs</li>
-</ul>
-<h3 id="step-4-ci-failure-mining-and-test-level-cross-reference">Step 4: CI failure mining and test-level cross-reference</h3>
-<p><code>scripts/mine_snapshot_ci.py</code> queries the GitHub Check Runs API for every commit in every post-adoption PR, extracting the “Run snapshot tests” result (success/failure/skipped). This produces the 128 PRs with snapshot CI data and the 29 that triggered at least one failure.</p>
-<p><code>scripts/mine_test_level_failures.py</code> goes deeper for PRs where CI logs are still available (~90 day retention). For each failing commit, it downloads the job log, extracts specific failing test names via pytest <code>FAILED</code> line parsing, maps each test to its snapshot directory, and checks whether that directory was modified in the final merged PR. This determines at the individual test level whether the resolution was a code fix (snapshot unchanged — regression caught) or a baseline update (snapshot updated — intentional change).</p>
-<p>Outputs are persisted as CSVs:</p>
-<ul>
-<li><code>data/snapshot_ci_results_v2.csv</code> — per-PR CI sequence and classification</li>
-<li><code>data/test_level_failures.csv</code> — per-test detail (PR, commit, failing test, resolution)</li>
-<li><code>data/test_level_summary.csv</code> — per-PR summary with refined classification</li>
-<li><code>data/pr_changed_snapshot_files.csv</code> — all snapshot files changed in each PR’s merge diff</li>
-</ul>
-<h3 id="step-5-indirect-coverage-analysis-manual--scripted">Step 5: Indirect coverage analysis (manual + scripted)</h3>
-<p>This was the most labor-intensive step. We cloned openhands-cli and read all 20 snapshot test
-files (~2,500 lines of test code), including <code>conftest.py</code> fixtures and trajectory
-replay helpers. From this, <code>scripts/analyze_indirect_coverage.py</code> builds:</p>
-<ul>
-<li>A <strong>coverage map</strong> — which test suite exercises which functional behaviors (e.g., <code>TestConfirmationMode</code> exercises scrolling, confirmation panel, agent execution)</li>
-<li>A <strong>per-bug classification</strong> — for each of the 20 “file covered, path uncovered” bugs, whether a snapshot test would <em>actually produce different output</em> if the bug existed. Each classification includes a written rationale.</li>
-</ul>
-<h3 id="step-6-visualization">Step 6: Visualization</h3>
-<p>Graph scripts live alongside the analysis code:</p>
-<ul>
-<li><code>scripts/generate_deep_analysis_graphs.py</code> — coverage, bug domain, review speed, adoption timeline, and commit-level pattern graphs</li>
-<li><code>scripts/generate_ci_outcome_graph.py</code> — snapshot CI failure resolution by PR type</li>
-<li><code>scripts/generate_report.py</code> — self-contained HTML report with base64-embedded images</li>
-</ul>
-<p>All are runnable with <code>uv run</code>.</p>
+<p>The full pipeline, data, and graphs are reproducible from <a href="https://github.com/malhotra5/snapshot-tests-analysis">snapshot-tests-analysis</a>.</p>
+<h3 id="mining">Mining</h3>
+<p>We pulled every merged PR from <a href="https://github.com/OpenHands/openhands-cli">openhands-cli</a> via the GitHub REST API: PR metadata, file-level diffs, full commit history, review data, linked issues, and authorship signals (co-author tags, bot usernames). This produced 311 PRs with 42 fields each. No LLM involved.</p>
+<p>For CI analysis, we queried the Check Runs API for every commit in every post-adoption PR to extract the “Run snapshot tests” result. For the 29 PRs that triggered failures, we downloaded CI job logs (where still available — GitHub retains these ~90 days), parsed out specific failing test names, and cross-referenced each against the files changed in the final merged PR to determine whether resolution was a code fix or baseline update.</p>
+<h3 id="classification">Classification</h3>
+<p>Each PR was classified by type, bug severity, snapshot involvement, and whether it touches TUI code. We ran two classifiers in parallel:</p>
+<ol>
+<li><strong>Keyword heuristics</strong> — title pattern matching (“fix” → bug-fix, “feat” → feature, etc.) and file path matching for snapshot involvement.</li>
+<li><strong>LLM</strong> (gpt-4o-mini) — given the PR title, description, file list, and linked issues, outputs a JSON classification with rationale. The prompt:</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code><span class="line"><span>Given a PR&#39;s title, description, file list, and linked issues,</span></span>
+<span class="line"><span>output a JSON object with:</span></span>
+<span class="line"><span>{</span></span>
+<span class="line"><span>  &quot;pr_type&quot;: one of &quot;bug-fix&quot;, &quot;feature&quot;, &quot;refactor&quot;, &quot;test&quot;,</span></span>
+<span class="line"><span>             &quot;ci&quot;, &quot;docs&quot;, &quot;dependency-bump&quot;, &quot;version-bump&quot;, &quot;other&quot;,</span></span>
+<span class="line"><span>  &quot;bug_severity&quot;: one of &quot;critical&quot;, &quot;ux-regression&quot;, &quot;polish&quot;,</span></span>
+<span class="line"><span>  &quot;touches_tui&quot;: true/false,</span></span>
+<span class="line"><span>  &quot;rationale&quot;: &quot;1-2 sentence explanation&quot;</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>We did not formally validate LLM accuracy against human labels for this study. Classification of PR types from structured metadata is a well-characterized task for modern LLMs, and prior work shows strong agreement with human judgment on similar labeling problems. Keyword heuristics are retained alongside LLM labels for comparison.</p>
+<h3 id="indirect-coverage-analysis">Indirect coverage analysis</h3>
+<p>We read all 20 snapshot test files (~2,500 lines) to build a coverage map of which test suites exercise which functional behaviors. For each of the 20 “file covered, path uncovered” bugs, we assessed whether a snapshot test would <em>actually produce different output</em> if the bug existed.</p>
 <h3 id="limitations">Limitations</h3>
 <ul>
-<li><strong>LLM classification accuracy</strong> — gpt-4o-mini misclassifies some edge cases (e.g., a PR titled “fix: add feature X” gets classified as bug-fix). We spot-checked ~30 PRs and found ~90% agreement with human judgment. The heuristic labels provide a second opinion.</li>
-<li><strong>Agent authorship detection</strong> — relies on co-author tags and known bot usernames. PRs where a human manually committed agent-generated code would be counted as human-authored.</li>
-<li><strong>CI log expiry</strong> — GitHub retains job logs for ~90 days. Only 9 of 29 failing PRs had logs available for test-level verification (March–May 2026). The remaining 20 use a coarser PR-level heuristic (whether the merged PR contains any snapshot file changes), which cannot distinguish between updating the <em>failing</em> test’s baseline vs. updating a different test’s baseline.</li>
-<li><strong>Indirect coverage is subjective</strong> — our B1 (indirectly covered) classifications are judgment calls about whether a snapshot would visibly change. Different reviewers might classify 1-2 borderline cases differently, but the overall split (4 B1 vs 16 B2) is robust.</li>
-<li><strong>Single repository</strong> — all findings are specific to openhands-cli. Generalizing to other agent-driven projects requires similar analysis in those codebases.</li>
+<li><strong>Agent authorship detection</strong> — relies on co-author tags and bot usernames. PRs where a human manually committed agent-generated code would be counted as human-authored.</li>
+<li><strong>CI log expiry</strong> — only 9 of 29 failing PRs had logs available for test-level verification. The remaining 20 use a coarser heuristic (whether the merged PR contains any snapshot file changes), which can’t distinguish updating the <em>failing</em> test’s baseline from updating a different test’s baseline.</li>
+<li><strong>Indirect coverage is subjective</strong> — different reviewers might classify 1-2 borderline cases differently, but the overall split (4 indirectly covered vs 16 uncovered) is robust.</li>
+<li><strong>Single repository</strong> — all findings are specific to openhands-cli.</li>
 </ul>
 <h2 id="appendix-snapshot-testing-in-the-openhands-cli">Appendix: Snapshot Testing in the OpenHands CLI</h2>
 <p>I experimented with snapshot testing in the
