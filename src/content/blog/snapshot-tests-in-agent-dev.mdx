@@ -38,37 +38,39 @@ To test this hypothesis, I [mined](#mining) all 311 merged PRs from the [OpenHan
 
 ### Snapshots break during development, indicating changes in behavior
 
-Out of 311 PRs, we have 128 post snapshot adoption PRs with CI data. **29 (15%)** triggered at least one snapshot failure.
+Out of 311 PRs, we have 128 post snapshot adoption PRs with CI data. **29 out of 128 (23%)** triggered at least one snapshot failure.
 
 <Figure src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot CI failures resolved during development, by PR type. Bug-fix: 11 failures across 3 PRs. Feature: 10 across 8. Dependency bump: 9 across 3. Refactor: 6 across 2." caption="CI snapshot failure events in PRs that eventually passed, by PR type. Each bar counts commits where the snapshot check failed before the developer resolved the issue." />
 
-Bug-fix and feature PRs generated the most failure events (11 and 10 respectively). We're most interested in features, refactors, and bug fixes. The other categorizes are more routine changes.&#x20;
+Bug-fix and feature PRs generated the most failure events. Even routine changes, like dependency bumps can cause failing CI checks. &#x20;
 
 ### How do snapshot failures ultimately resolve?
 
-Of the 128 post-adoption PRs where the snapshot CI job ran (Jan–mid May 2026), **29 (23%)** triggered at least one snapshot failure. When a snapshot fails, a developer can update the baseline (acknowledging an intentional visual change), fix their code (reverting an unintended regression), or both. We classified each PR's resolution using CI logs where available (9 PRs) and file-level heuristics for the rest (see [Methodology](#mining) for details).
+When a snapshot fails, a developer can update the baseline (acknowledging an intentional visual change), fix their code (reverting an unintended regression), or both. We classified each PR's resolution using CI logs where available (9 PRs) and file-level heuristics for the rest (see [Methodology](#mining) for details).
 
 <Figure src="/img/snapshot-analysis/deep_19_ci_outcomes.png" alt="Stacked bar chart showing how 29 PRs with snapshot failures resolved, by type. Features: 1 baseline, 3 both, 4 code fix. CI/Docs: 5 code fix. Bug fix: 3 both, 1 merged. Refactor: 2 both, 1 merged. Dep bump: 2 both, 1 code fix. Version bump: 3 baseline. Test: 2 both, 1 merged." caption="How 29 PRs with snapshot failures resolved. Green = baseline only. Purple = both baseline + code change. Blue = code fix only. Red = merged with CI still failing." />
 
 The breakdown by type makes the pattern intuitive:
 
-* **Features** (8 PRs) show the full spectrum — some updated baselines for intentional UI changes, some fixed code regressions, and many did both.
-* **CI / Docs** (5 PRs) are entirely code-fix — these PRs shouldn't change visual output, so every failure was a regression caught.
-* **Bug fixes** (4 PRs) are predominantly "both" — fixing a bug changes behavior, so the baseline needs updating to reflect the corrected state.
-* **Refactors** (3 PRs) — code restructuring that wasn't intended to change visual output was caught doing exactly that. Two resolved by updating baselines and code; one merged with failure still present.
-* **Dependency bumps** (3 PRs) — an upstream change broke the UI and snapshots caught it. Some required legitimate baseline updates alongside the fix.
-* **Version bumps** (3 PRs) are entirely baseline-only — the app renders its version in the UI, so these are expected visual changes with no code logic involved.
-* **Test** (3 PRs) — test infrastructure changes that unexpectedly affected snapshot output. Two resolved with both baseline and code updates; one merged with failure.
+* **Features**: show the full spectrum. Some updated baselines for intentional UI changes, some fixed code regressions, and many did both.
+* **CI / Docs**: are entirely code-fix. These PRs shouldn't change visual output.
+* **Bug fixes**: are predominantly "both". Fixing a bug changes behavior, so the baseline needs updating to reflect the corrected state.
+* **Refactors**: typically means changing the underlying application code without any behavioral changes. The refactors here also introduced  new baselines as well.&#x20;
+* **Dependency bumps**: every upstream change caused a regression. Some required legitimate baseline updates alongside a fix.
+* **Version bumps**: the app renders its version in the UI, so these are expected visual changes.
+* **Test**: test infrastructure changes that unexpectedly affected snapshot output. Two resolved with both baseline and code updates; one merged with failure.
 
-Overall, **12 of 29 PRs (41%)** did both: they changed code and updated baselines in the same PR. Another **10 (34%)** fixed code without touching baselines — concrete regressions prevented from shipping. Snapshot tests were advisory (not a required check) during part of this period, and 3 PRs merged with failures still present.
+Some PRs were merged with failures, as snapshot tests weren't a required CI check at the time.&#x20;
 
-
+Overall 10% fixed code to prevent a regression, and 41% prevented regressions in existing baselines and updated other or added new baselines.&#x20;
 
 ### Snapshot force explicit acknowledgment for visual changes
 
+These snapshot updates to PRs have changed over time. We'll take new UI related PRs and bug-fixes for example.
+
 <Figure src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month." caption="Percentage of feature and bug-fix PRs that include snapshot changes and/or add new snapshots, by month." />
 
-New feature PRs (green) climb to 100%. Every UI feature passed through a "did you mean to change how this looks?" gate. Bug fix PRs (red) plateau at \~35–50%, which we'll explore via coverage analysis later. A snapshot update
+New feature PRs (green) climb to 100%. Eventually every UI feature passed through a "did you mean to change how this looks?" gate. Bug fix PRs (red) plateau at \~35–50%. We'd expect every bug fix to update existing behavior at the very least, or add missing coverage. The discrepancy is explained in coverage analysis section.&#x20;
 
 ### Review speed: 2× faster first review
 
