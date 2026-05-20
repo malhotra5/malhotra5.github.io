@@ -52,16 +52,15 @@ Of the 128 post-adoption PRs where the snapshot CI job ran (Jan–mid May 2026),
 
 The breakdown by type makes the pattern intuitive:
 
-* **CI and docs PRs**: these PRs shouldn't change visual output, so every failure was a regression caught.
-* **Dependency bumps**: an upstream change broke the UI, and snapshots caught it. Some required legitimate baseline updates though.
-* **Features**: Half intentionally changed the UI, half accidentally broke something else.
-* **Version bumps:** the application renders its version in the UI, so these require updating baselines.
-* **Bugs:** By nature of a bug fix, the baseline needs to be updated to accurately a fixed behavior.
-* **Refactor**: Typically would want to have the&#x20;
+* **Features** (8 PRs) show the full spectrum — some updated baselines for intentional UI changes, some fixed code regressions, and many did both.
+* **CI / Docs** (5 PRs) are entirely code-fix — these PRs shouldn't change visual output, so every failure was a regression caught.
+* **Bug fixes** (4 PRs) are predominantly "both" — fixing a bug changes behavior, so the baseline needs updating to reflect the corrected state.
+* **Refactors** (3 PRs) — code restructuring that wasn't intended to change visual output was caught doing exactly that. Two resolved by updating baselines and code; one merged with failure still present.
+* **Dependency bumps** (3 PRs) — an upstream change broke the UI and snapshots caught it. Some required legitimate baseline updates alongside the fix.
+* **Version bumps** (3 PRs) are entirely baseline-only — the app renders its version in the UI, so these are expected visual changes with no code logic involved.
+* **Test** (3 PRs) — test infrastructure changes that unexpectedly affected snapshot output. Two resolved with both baseline and code updates; one merged with failure.
 
-
-
-Overall, **11 of 29 PRs (38%)** fixed their code, due to a regression, rather than updating baselines. For the PRs which merged with failing CI, snapshot tests were advisory (not a required check) during part of this period.
+Overall, **12 of 29 PRs (41%)** did both: they changed code and updated baselines in the same PR. Another **10 (34%)** fixed code without touching baselines — concrete regressions prevented from shipping. Snapshot tests were advisory (not a required check) during part of this period, and 3 PRs merged with failures still present.
 
 
 
