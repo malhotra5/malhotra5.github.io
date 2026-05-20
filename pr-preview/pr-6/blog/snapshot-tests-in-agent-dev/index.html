@@ -49,20 +49,20 @@ Originally on Substack ↗
 <h3 id="where-do-bugs-live">Where Do Bugs Live?</h3>
 <p>Not all bugs are visual. Snapshot tests helps with bugs that change rendered output. Counting all bug-fixes against snapshot coverage inflates the count.</p>
 <figure> <img src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes"> <figcaption>Bug-fix PRs categorized for visual vs non-visual fixes</figcaption> </figure>
-<p>The largest category is TUI widgets &amp; screens (38), where 12 PRs involved snapshot changes (green). But 27 bugs (35%) are entirely non-visual: CLI core, config/state, API/auth. Snapshot tests are structurally irrelevant for these.</p>
+<p>The largest category is UI widgets &amp; screens (38), where 12 PRs involved snapshot changes (green). But 27 bugs (35%) are entirely non-visual: CLI core, config/state, API/auth. Snapshot tests are structurally irrelevant for these.</p>
 <figure> <img src="/img/snapshot-analysis/deep_17_severity_by_domain.png" alt="Severity breakdown for bug types"> <figcaption>Severity breakdown for bug types</figcaption> </figure>
 <p>Critical bugs skew non-visual (44%, crashes, auth failures, dependency issues). UX regressions are predominantly visual (75%), the natural domain for snapshot tests.</p>
 <blockquote>
 <p><strong>“85% of bug-fix PRs ship without touching snapshots”</strong> sounds damning, but 35% of those bugs are in code that snapshots <em>can’t</em> cover (API auth, CLI argument parsing, dependency pinning). The honest denominator is the 51 visual bug-fixes, where 12 (24%) have snapshot involvement. It’s still a big coverage gap, but it’s a different conversation than “85%.”</p>
 </blockquote>
 <h3 id="whats-actually-covered">What’s Actually Covered?</h3>
-<p>Among the 51 visual (TUI) bug-fixes, what fraction hit paths that snapshot tests guard?
+<p>Among the 51 visual (UI) bug-fixes, what fraction hit paths that snapshot tests guard?
 We analyzed this at three levels of precision.</p>
 <h4 id="level-1-did-the-bug-fix-pr-touch-snapshots">Level 1: Did the bug-fix PR touch snapshots?</h4>
 <figure> <img src="/img/snapshot-analysis/deep_13_bugfix_coverage_gap.png" alt="PR-level coverage gap"> <figcaption>PR-level coverage gap</figcaption> </figure>
 <p>Of all 78 bug-fixes, 66 (85%) ship without touching snapshots. 11 (14%) modified existing baselines. Only 1 (1%) added new coverage.</p>
 <h4 id="level-2-path-level-analysis">Level 2: Path-level analysis</h4>
-<p>Zooming into the 35 post-adoption TUI bug-fixes, we checked whether the bug-fix PR touched
+<p>Zooming into the 35 post-adoption UI bug-fixes, we checked whether the bug-fix PR touched
 the same code <em>paths</em> covered by snapshots (not just the same files).</p>
 <figure> <img src="/img/snapshot-analysis/deep_15_covered_vs_uncovered.png" alt="Path-level coverage breakdown"> <figcaption>Path-level coverage breakdown</figcaption> </figure>
 <h4 id="level-3-accounting-for-indirect-coverage">Level 3: Accounting for indirect coverage</h4>
@@ -74,13 +74,13 @@ the same code <em>paths</em> covered by snapshots (not just the same files).</p>
 <li>The test’s input data would trigger the bug</li>
 </ol>
 <figure> <img src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Reclassified path-level coverage"> <figcaption>Reclassified path-level coverage</figcaption> </figure>
-<p>After accounting for indirect coverage: 46% of TUI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered. 16 (46%) remain in adjacent-but-uncovered paths. Revised: 46% covered, 54% uncovered.</p>
+<p>After accounting for indirect coverage: 46% of UI bugs hit covered paths (up from 34%). 4 bugs are indirectly covered. 16 (46%) remain in adjacent-but-uncovered paths. Revised: 46% covered, 54% uncovered.</p>
 <h2 id="where-coverage-exists-it-works">Where Coverage Exists, It Works</h2>
 <p>The evidence for snapshot value is strongest in areas that have coverage.
 Four independent signals confirm this.</p>
 <h3 id="forcing-function-every-feature-must-acknowledge-visual-impact">Forcing function: every feature must acknowledge visual impact</h3>
 <figure> <img src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month."> <figcaption>Percentage of feature and bug-fix PRs that include snapshot changes, by month.</figcaption> </figure>
-<p>Feature PRs (green) climb to 100% — every TUI feature now passes through a “did you mean to change how this looks?” gate. Bug-fix PRs (red) plateau at ~35–50%. Since this graph is already filtered to TUI (visual) bugs, the gap isn’t about non-visual code — it’s about coverage depth. Of the 34 post-adoption TUI bug-fixes, 12 land on snapshot-covered paths and update the baseline to reflect the corrected behavior. The other 22 fix bugs on paths that have no snapshot tests at all (settings persistence, notifications, dropdown ordering), so there’s no baseline to update.</p>
+<p>Feature PRs (green) climb to 100% — every UI feature now passes through a “did you mean to change how this looks?” gate. Bug-fix PRs (red) plateau at ~35–50%. Since this graph is already filtered to UI (visual) bugs, the gap isn’t about non-visual code — it’s about coverage depth. Of the 34 post-adoption UI bug-fixes, 12 land on snapshot-covered paths and update the baseline to reflect the corrected behavior. The other 22 fix bugs on paths that have no snapshot tests at all (settings persistence, notifications, dropdown ordering), so there’s no baseline to update.</p>
 <h3 id="snapshots-break-during-development--and-the-signal-is-acted-on">Snapshots break during development — and the signal is acted on</h3>
 <p>Across 27 multi-commit snapshot PRs, <strong>18 (67%)</strong> show a pattern: code written first, then a later commit addressing broken snapshots — 58 snapshot-fix commits total. Developers hit snapshot failures during development and iterate before pushing.</p>
 <figure> <img src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot-fix commits by PR type. Feature PRs: 24 commits across 9 PRs. Bug fix: 12 across 6. Refactor: 11 across 2. Test: 11 across 3."> <figcaption>Snapshot-fix commits that appear later in a PR, by PR type. Evidence that developers iterate on snapshot failures during development, not just at CI.</figcaption> </figure>
@@ -108,11 +108,11 @@ Four independent signals confirm this.</p>
 <p>Critical bugs (red) drop to zero by March 2026. UX regressions (orange) spike in the adoption month, settle through Feb–Apr, then spike again in May. At face value, UX regressions got worse.</p>
 <p>But the raw per-month rate (% of agent PRs that are UX bugs) is misleading — monthly
 sample sizes range from 5 to 63, and the May spike comes from just 3 bugs in a
-low-PR month. The right normalization: UX bugs per cumulative TUI feature shipped.
+low-PR month. The right normalization: UX bugs per cumulative UI feature shipped.
 This controls for codebase growth and sample size.</p>
 <figure> <img src="/img/snapshot-analysis/deep_10_bug_rate_with_context.png" alt="Normalized UX regression rate"> <figcaption>Normalized UX regression rate</figcaption> </figure>
-<p>Normalized view: UX bugs per cumulative TUI feature. Pre-adoption peaked at 0.45. The adoption month (Jan 2026) started at 0.44 — same level, coinciding with a huge feature push. The settled post-adoption rate (Feb–Apr) drops to 0.02–0.10, which is 4–20× lower. The May spike barely registers when normalized against the growing feature base.</p>
-<p>Still, the overall TUI bug-to-feature ratio went from <strong>0.60 to 0.95</strong>. Essentially flat. Snapshot tests didn’t reduce the total bug count because 54% of visual bugs are on uncovered paths. You can’t prevent bugs in areas you don’t cover.</p>
+<p>Normalized view: UX bugs per cumulative UI feature. Pre-adoption peaked at 0.45. The adoption month (Jan 2026) started at 0.44 — same level, coinciding with a huge feature push. The settled post-adoption rate (Feb–Apr) drops to 0.02–0.10, which is 4–20× lower. The May spike barely registers when normalized against the growing feature base.</p>
+<p>Still, the overall UI bug-to-feature ratio went from <strong>0.60 to 0.95</strong>. Essentially flat. Snapshot tests didn’t reduce the total bug count because 54% of visual bugs are on uncovered paths. You can’t prevent bugs in areas you don’t cover.</p>
 <h2 id="investigating-testing-gaps-to-supplement-bug-rates">Investigating testing gaps to supplement bug rates </h2>
 <p>The data points to specific, fixable coverage gaps not a blanket “write more tests” recommendation.</p>
 <h3 id="1-settings-persistence-7-bugs-1-test-would-cover">1. Settings persistence (7 bugs, 1 test would cover)</h3>
@@ -144,7 +144,7 @@ would prevent the exact recurrence — the highest-value coverage extension poss
 </ul>
 <p>But coverage is shallow:</p>
 <ul>
-<li><strong>54% of TUI bugs</strong> (after accounting for indirect coverage) are on uncovered code paths — mostly settings persistence and untested event types.</li>
+<li><strong>54% of UI bugs</strong> (after accounting for indirect coverage) are on uncovered code paths — mostly settings persistence and untested event types.</li>
 <li><strong>Only 1 of 78 bug-fix PRs</strong> added new snapshot coverage retroactively.</li>
 <li><strong>35% of all bugs are non-visual</strong> — snapshots are structurally irrelevant for API crashes, auth failures, and dependency issues.</li>
 </ul>
@@ -157,7 +157,7 @@ minimal effort.</p>
 <p>We pulled every merged PR from <a href="https://github.com/OpenHands/openhands-cli">openhands-cli</a> via the GitHub REST API: PR metadata, file-level diffs, full commit history, review data, linked issues, and authorship signals (co-author tags, bot usernames). This produced 311 PRs with 42 fields each. No LLM involved.</p>
 <p>For CI analysis, we queried the Check Runs API for every commit in every post-adoption PR to extract the “Run snapshot tests” result. For the 29 PRs that triggered failures, we downloaded CI job logs (where still available — GitHub retains these ~90 days), parsed out specific failing test names, and cross-referenced each against the files changed in the final merged PR to determine whether resolution was a code fix or baseline update.</p>
 <h3 id="classification">Classification</h3>
-<p>Each PR was classified by type, bug severity, snapshot involvement, and whether it touches TUI code. We ran two classifiers in parallel:</p>
+<p>Each PR was classified by type, bug severity, snapshot involvement, and whether it touches UI code. We ran two classifiers in parallel:</p>
 <ol>
 <li><strong>Keyword heuristics</strong> — title pattern matching (“fix” → bug-fix, “feat” → feature, etc.) and file path matching for snapshot involvement.</li>
 <li><strong>LLM</strong> (gpt-4o-mini) — given the PR title, description, file list, and linked issues, outputs a JSON classification with rationale. The prompt:</li>
@@ -168,7 +168,7 @@ minimal effort.</p>
 <span class="line"><span>  &quot;pr_type&quot;: one of &quot;bug-fix&quot;, &quot;feature&quot;, &quot;refactor&quot;, &quot;test&quot;,</span></span>
 <span class="line"><span>             &quot;ci&quot;, &quot;docs&quot;, &quot;dependency-bump&quot;, &quot;version-bump&quot;, &quot;other&quot;,</span></span>
 <span class="line"><span>  &quot;bug_severity&quot;: one of &quot;critical&quot;, &quot;ux-regression&quot;, &quot;polish&quot;,</span></span>
-<span class="line"><span>  &quot;touches_tui&quot;: true/false,</span></span>
+<span class="line"><span>  &quot;touches_ui&quot;: true/false,</span></span>
 <span class="line"><span>  &quot;rationale&quot;: &quot;1-2 sentence explanation&quot;</span></span>
 <span class="line"><span>}</span></span></code></pre>
 <p>We did not formally validate LLM accuracy against human labels for this study. Classification of PR types from structured metadata is a well-characterized task for modern LLMs, and prior work shows strong agreement with human judgment on similar labeling problems. Keyword heuristics are retained alongside LLM labels for comparison.</p>
