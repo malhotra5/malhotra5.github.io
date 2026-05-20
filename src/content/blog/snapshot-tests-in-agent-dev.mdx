@@ -131,7 +131,7 @@ Finally it is difficult to generalize this exact approach to every codebase. It'
 
 ### Limitations
 
-This analysis primarily measures software quality, quantified in retrospect by the number of bugs patched. We don't measure developer velocity or review effort directly.
+This analysis primarily measures software quality, quantified in retrospect by the number of bugs patched. This doesn't account for open bugs which aren't being fixed. We don't measure developer velocity or review effort directly.
 
 For data collection the number of samples is quite low, and many CI logs had been deleted by GitHub before we could mine them. Snapshot adoption coincided with a period of active feature development and team process maturation. We can't fully disentangle the effect of snapshots from other improvements happening in parallel.
 
@@ -195,6 +195,14 @@ Once snapshots are committed to the repository, they become part of the system h
 
 They are cheap to maintain, and in this specific scenario are not flaky. Agents do well
 generating these tests.
+
+![](/img/snapshot-tests-in-agent-dev/before_vs_after_snapshot.png)
+
+
+
+![](/img/snapshot-tests-in-agent-dev/snapshot_diff.png)
+
+
 
 ### Example Snapshot Test
 
