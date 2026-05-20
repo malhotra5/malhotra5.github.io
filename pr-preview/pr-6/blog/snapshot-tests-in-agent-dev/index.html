@@ -81,9 +81,9 @@ Originally on Substack ↗
 <h2 id="snapshot-coverage-has-a-level-of-indirection">Snapshot coverage has a level of indirection</h2>
 <p>Not all bugs are visual. Snapshot tests help with bugs that change rendered output. Counting all bug-fixes against snapshot coverage inflates the count.</p>
 <figure> <img src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes"> <figcaption>UI widgets &amp; screens is the largest category (38 bugs), but 27 bugs (35%) are entirely non-visual — CLI core, config/state, API/auth — where snapshots are structurally irrelevant.</figcaption> </figure>
-<p>85% of bug-fix PRs ship without touching snapshots, but 35% of those bugs are in code that snapshots <em>can’t</em> cover (API auth, CLI argument parsing, dependency pinning). The relevant denominator is the 51 visual bug-fixes, where 12 (24%) have snapshot involvement. That’s still a coverage gap, but a different one than the headline number suggests.</p>
+<p>85% of bug-fix PRs ship without touching snapshots, but 35% of those bugs are in code that snapshots <em>can’t</em> cover (API auth, CLI argument parsing). The relevant denominator is the 51 visual bug-fixes, where 12 (24%) have snapshot involvement. That’s still a coverage gap, but a different one than the headline number suggests.</p>
 <h3 id="snapshot-tests-can-provider-coverage-for-ui-and">Snapshot tests can provider coverage for UI and ..</h3>
-<p>Narrowing to the 35 post-adoption UI bug-fixes, we checked whether each bug lives on a code path that snapshot tests actually guard. A bug’s file might have snapshot coverage for <em>other</em> behaviors, but if no test exercises the specific behavior that broke, it’s not really covered.</p>
+<p>Narrowing to the 35 post snapshot adoption UI bug-fixes, we checked whether each bug lives on a code path that snapshot tests actually guard. A bug’s file might have snapshot coverage for <em>other</em> behaviors, but if no test exercises the specific behavior that broke, it’s not really covered.</p>
 <p>We <a href="#indirect-coverage-analysis">read every snapshot test file</a> (20 test classes + conftest) and classified each bug by whether a snapshot test would produce visibly different output if the bug existed. Strict criteria for coverage:</p>
 <ol>
 <li>A snapshot test exercises a flow through this code path</li>
@@ -91,37 +91,14 @@ Originally on Substack ↗
 <li>The test’s input data would trigger the bug</li>
 </ol>
 <figure> <img src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Coverage breakdown of post-adoption UI bugs"> <figcaption>Of 35 post-adoption UI bug-fixes: 12 (34%) hit directly covered paths, 4 (11%) are indirectly covered by tests that exercise the same flow, 16 (46%) are in modules with snapshot coverage for other behaviors but not the bug&#39;s path, and 3 (9%) are in fully uncovered areas.</figcaption> </figure>
-<p>12 bugs (34%) are directly covered — the bug-fix PR updated snapshot baselines. 4 more (11%) are indirectly covered — a snapshot test exercises a flow through the bug’s code path but the PR didn’t modify snapshot files (e.g., a conversation-switching test implicitly exercises persistence logic). The remaining 19 (54%) are uncovered: 16 in “adjacent” paths where the module has snapshot tests for other behaviors but not the one that broke, and 3 in areas with no snapshot coverage at all.</p>
-<h2 id="investigating-testing-gaps-to-supplement-bug-rates">Investigating testing gaps to supplement bug rates</h2>
-<p>The data points to specific, fixable coverage gaps not a blanket “write more tests” recommendation.</p>
-<h3 id="1-settings-persistence-7-bugs-1-test-would-cover">1. Settings persistence (7 bugs, 1 test would cover)</h3>
-<p>7 of 16 adjacent-but-uncovered bugs are in <code>settings_screen.py</code> and related modules.
-The repo tests the <em>first-time setup flow</em> (no saved config) and the
-<em>critic settings tab</em>, but no test saves settings, closes the modal, and reopens to
-verify persistence. A single “save → reload → snapshot” test would indirectly cover model
-name persistence, condensation defaults, dropdown ordering, and clear behavior.</p>
-<h3 id="2-missing-event-types-in-test-trajectories-4-bugs">2. Missing event types in test trajectories (4 bugs)</h3>
-<p>The e2e snapshot tests use recorded LLM trajectories for deterministic replay. But the current
-trajectories don’t include <code>ConversationErrorEvent</code>, messages with markup
-characters, or critic-enabled <code>MessageEvent</code>. Adding 2–3 trajectories with these
-event types would extend coverage to code paths already exercised by the test framework but
-never triggered by the test data.</p>
-<h3 id="3-notification-rendering-2-bugs">3. Notification rendering (2 bugs)</h3>
-<p>No snapshot test captures notification display (toast-style overlays). Settings change
-notifications and conversation notifications both had bugs that went uncaught.</p>
-<h3 id="4-bug-fix-coverage-discipline">4. Bug-fix coverage discipline</h3>
-<p>Only 1 of 78 bug-fix PRs added new snapshot coverage retroactively.
-When a visual bug is fixed, adding a snapshot that captures the corrected rendering
-would prevent the exact recurrence — the highest-value coverage extension possible.</p>
+<p>12 bugs (34%) are directly covered, the bug-fix PR updated snapshot baselines. 4 more (11%) are indirectly covered, a snapshot test exercises a flow through the bug’s code path but the PR didn’t modify snapshot files (e.g., a conversation-switching test implicitly exercises persistence logic). The remaining 19 (54%) are uncovered: 16 in “adjacent” paths where the module has snapshot tests for other behaviors but not the one that broke, and 3 in areas with no snapshot coverage at all.</p>
 <h2 id="verdict">Verdict</h2>
-<p>Snapshot test seem to be correlated with better bug outcomes. At the very least, a visualization of behavior tends to have quicker response times from reviewers. However, its clear that I may have over-estimated the impact of snapshot tests alone.</p>
-<p><strong>Snapshot tests work where they exist — but coverage is shallow.</strong></p>
-<p>On the <a href="#verification-is-an-ambiguous-and-time-consuming-task">source of truth problem</a>: where snapshots existed, committed baselines replaced prose as the definition of “what the application does.” Feature PRs couldn’t ship without explicitly showing their visual impact — the snapshot diff <em>is</em> the specification, not a ticket description. This made behavior concrete and reviewable at a glance.</p>
-<p>On the <a href="#verification-is-an-ambiguous-and-time-consuming-task">verification problem</a>: snapshots automated the question “did the code break anything?” Developers iterated on broken snapshots during development, CI caught regressions, and the UX regression rate dropped meaningfully in the post-adoption period. The verification loop became visual and immediate rather than manual and ambiguous.</p>
-<p>But coverage remained shallow. More than half of visual bugs landed on code paths with no snapshot tests at all, and almost no bug-fix PRs added new coverage retroactively. A significant portion of all bugs are non-visual entirely — API crashes, auth failures, dependency issues — where snapshots are structurally irrelevant.</p>
-<p>A handful of targeted tests (settings save→reload, new event type trajectories, notification capture) would close the majority of the visual coverage gap.</p>
+<p>Where snapshot test are correlated with better outcomes for the areas they cover. However, in the coverage is shallow, and the overall PR data available is sparse. Personally, my perception of snapshot tests made it seem as though the positive outcomes were better than found.</p>
+<p>Snapshot diffs on PRs make behavior concrete and reviewable at a glance. They are intentionally updated by the PR author and acknowledged by the reviewer, thereby partially address the <a href="#verification-is-an-ambiguous-and-time-consuming-task">source of truth problem</a>.</p>
+<p>On the <a href="#verification-is-an-ambiguous-and-time-consuming-task">verification problem</a>: snapshots automated the question “did the code break anything?” Developers iterated on broken snapshots as CI caught regressions. The verification loop became visual and immediate.</p>
+<p>But coverage remained shallow. More than half of visual bugs landed on code paths with no snapshot tests at all, and almost no bug-fix PRs added new coverage retroactively. A significant portion of all bugs are non-visual entirely, where snapshots are structurally irrelevant.</p>
 <h3 id="caveats">Caveats</h3>
-<p>This analysis primarily measures software quality, quantified in retrospect by the number of bugs patched. That’s a lagging indicator — it tells us about regressions that <em>shipped</em>, not regressions that were <em>prevented</em> before merge or time saved during review. We don’t measure developer velocity or review effort directly.</p>
+<p>This analysis primarily measures software quality, quantified in retrospect by the number of bugs patched. That’s a lagging indicator, it tells us about regressions that <em>shipped</em>, not regressions that were <em>prevented</em> before merge or time saved during review. We don’t measure developer velocity or review effort directly.</p>
 <p>It also covers a single repository with a specific architecture (a Textual-based terminal UI with first-class SVG snapshot support). Several factors limit generalizability:</p>
 <ul>
 <li><strong>Framework dependency.</strong> Textual’s snapshot support is unusually clean — deterministic renders, no flakiness, cheap to run. Most UI frameworks don’t offer this out of the box, and the cost-benefit calculus may differ significantly where snapshot infrastructure requires more effort.</li>
