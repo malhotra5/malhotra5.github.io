@@ -87,22 +87,17 @@ The evidence above comes from areas where snapshots exist. How much of the codeb
 
 ### The bug rate
 
-Did snapshot tests reduce the bug rate? The raw timeline tells a complicated story.
+Did snapshot tests reduce the rate of bugs introduced by agent-authored code?
 
-<Figure src="/img/snapshot-analysis/5_bug_rate_timeline.png" alt="Critical vs UX regression bug rate over time" caption="Critical and UX regression bug rate over time" />
+To answer this, we need to know who *introduced* each bug — not just who wrote the fix. We ran `git blame` on the parent commit of every bug-fix PR to trace which prior PR last touched the lines being patched, then mapped that commit to its originating PR and author (see [Methodology](#bug-origin-tracing)). Of 73 critical and UX-regression bug-fixes, 62 were traced to an originating PR (55 with high confidence).
 
-Critical bugs (red) drop to zero by March 2026. UX regressions (orange) spike in the adoption month, settle through Feb–Apr, then spike again in May. At face value, UX regressions got worse.
+We normalize by cumulative UI PRs — the total number of TUI-touching PRs merged up to that month. This controls for codebase growth: as more UI code ships, there's more surface area to break. A flat normalized line means bugs are growing proportionally with the codebase; a declining line means they're growing slower.
 
-But the raw per-month rate (% of agent PRs that are UX bugs) is misleading — monthly
-sample sizes range from 5 to 63, and the May spike comes from just 3 bugs in a
-low-PR month. The right normalization: UX bugs per cumulative UI feature shipped.
-This controls for codebase growth and sample size.
+<Figure src="/img/snapshot-analysis/deep_10_bug_rate_with_context.png" alt="Agent-introduced bug rate normalized by cumulative UI work" caption="Agent-introduced bugs per cumulative UI PR. Pre-adoption, UX regressions were flat or rising (0.11–0.12) — bugs grew as fast as the codebase. Post-adoption, both lines decline steadily. The January spike coincides with a major feature push." />
 
-<Figure src="/img/snapshot-analysis/deep_10_bug_rate_with_context.png" alt="Normalized UX regression rate" caption="Normalized UX regression rate" />
+Pre-adoption, the agent-introduced UX regression rate was **flat or rising** (0.11 → 0.11 → 0.12) — bugs grew at least as fast as the codebase. Post-adoption, it reversed: 0.15 → 0.04 → 0.01 → 0.01 → 0.01. Agent-introduced critical bugs followed a similar trajectory, declining from 0.06 to near-zero by March.
 
-Normalized view: UX bugs per cumulative UI feature. Pre-adoption peaked at 0.45. The adoption month (Jan 2026) started at 0.44 — same level, coinciding with a huge feature push. The settled post-adoption rate (Feb–Apr) drops to 0.02–0.10, which is 4–20× lower. The May spike barely registers when normalized against the growing feature base.
-
-Still, the overall UI bug-to-feature ratio went from **0.60 to 0.95**. Essentially flat. Snapshot tests didn't reduce the total bug count because the majority of visual bugs are on uncovered paths. You can't prevent bugs in areas you don't cover.
+The trend reversal is the important signal. Cumulative normalization naturally declines over time, but it was *not* declining pre-adoption — it was getting worse. Something changed. Snapshot adoption is one of the things that changed, alongside codebase maturity, improved agent prompts, and team process stabilization. We can't isolate the causal contribution of snapshots, but the timing is consistent with a benefit.
 
 ### Where do bugs live?
 
@@ -231,6 +226,10 @@ output a JSON object with:
 
 We did not formally validate LLM accuracy against human labels for this study. Classification of PR types from structured metadata is a well-characterized task for modern LLMs, and prior work shows strong agreement with human judgment on similar labeling problems. Keyword heuristics are retained alongside LLM labels for comparison.
 
+### Bug origin tracing
+
+To attribute bugs to the author who *introduced* them (rather than who fixed them), we ran `git blame` on the parent commit of each bug-fix PR's merge commit. For every line the fix deleted or modified, we blamed the prior commit and mapped it to its originating PR via the `(#NNN)` squash-merge pattern in commit messages. The most-blamed PR is classified as the origin. Confidence is based on coverage: "high" if ≥50% of blamed lines trace to a single PR, "medium" if ≥25%. Of 73 bug-fix PRs analyzed, 62 were traced (55 high confidence, 7 medium). The 11 untraceable PRs were pure additions (no prior lines to blame). Non-code files (SVGs, lock files, snapshots) are excluded from blame.
+
 ### Indirect coverage analysis
 
 We read all 20 snapshot test files (\~2,500 lines) to build a coverage map of which test suites exercise which functional behaviors. For each of the 20 "file covered, path uncovered" bugs, we assessed whether a snapshot test would *actually produce different output* if the bug existed.
@@ -238,6 +237,7 @@ We read all 20 snapshot test files (\~2,500 lines) to build a coverage map of wh
 ### Limitations
 
 * **Agent authorship detection** — relies on co-author tags and bot usernames. PRs where a human manually committed agent-generated code would be counted as human-authored.
+* **Bug origin attribution** — `git blame` traces to the last commit that touched the patched lines, which may be a refactor rather than the commit that introduced the bug. Medium-confidence results (7 of 62) had multiple PRs sharing blame, making attribution less certain.
 * **CI log expiry** — only 9 of 29 failing PRs had logs available for test-level verification. The remaining 20 use a coarser heuristic (whether the merged PR contains any snapshot file changes), which can't distinguish updating the *failing* test's baseline from updating a different test's baseline.
 * **Indirect coverage is subjective** — different reviewers might classify 1-2 borderline cases differently, but the overall split (4 indirectly covered vs 16 uncovered) is robust.
 * **Single repository** — all findings are specific to [OpenHands-CLI](https://github.com/OpenHands/openhands-cli).
