@@ -198,7 +198,17 @@ call fails. The heuristic labels are retained in the CSV for comparison.</p>
 <li><strong>Suite reuse</strong> — extract test suite names from snapshot file paths and count unique PRs per suite</li>
 <li><strong>Review speed</strong> — compare <code>hours_to_first_review</code> between snapshot and non-snapshot PRs</li>
 </ul>
-<h3 id="step-4-indirect-coverage-analysis-manual--scripted">Step 4: Indirect coverage analysis (manual + scripted)</h3>
+<h3 id="step-4-ci-failure-mining-and-test-level-cross-reference">Step 4: CI failure mining and test-level cross-reference</h3>
+<p><code>scripts/mine_snapshot_ci.py</code> queries the GitHub Check Runs API for every commit in every post-adoption PR, extracting the “Run snapshot tests” result (success/failure/skipped). This produces the 128 PRs with snapshot CI data and the 29 that triggered at least one failure.</p>
+<p><code>scripts/mine_test_level_failures.py</code> goes deeper for PRs where CI logs are still available (~90 day retention). For each failing commit, it downloads the job log, extracts specific failing test names via pytest <code>FAILED</code> line parsing, maps each test to its snapshot directory, and checks whether that directory was modified in the final merged PR. This determines at the individual test level whether the resolution was a code fix (snapshot unchanged — regression caught) or a baseline update (snapshot updated — intentional change).</p>
+<p>Outputs are persisted as CSVs:</p>
+<ul>
+<li><code>data/snapshot_ci_results_v2.csv</code> — per-PR CI sequence and classification</li>
+<li><code>data/test_level_failures.csv</code> — per-test detail (PR, commit, failing test, resolution)</li>
+<li><code>data/test_level_summary.csv</code> — per-PR summary with refined classification</li>
+<li><code>data/pr_changed_snapshot_files.csv</code> — all snapshot files changed in each PR’s merge diff</li>
+</ul>
+<h3 id="step-5-indirect-coverage-analysis-manual--scripted">Step 5: Indirect coverage analysis (manual + scripted)</h3>
 <p>This was the most labor-intensive step. We cloned openhands-cli and read all 20 snapshot test
 files (~2,500 lines of test code), including <code>conftest.py</code> fixtures and trajectory
 replay helpers. From this, <code>scripts/analyze_indirect_coverage.py</code> builds:</p>
@@ -206,14 +216,19 @@ replay helpers. From this, <code>scripts/analyze_indirect_coverage.py</code> bui
 <li>A <strong>coverage map</strong> — which test suite exercises which functional behaviors (e.g., <code>TestConfirmationMode</code> exercises scrolling, confirmation panel, agent execution)</li>
 <li>A <strong>per-bug classification</strong> — for each of the 20 “file covered, path uncovered” bugs, whether a snapshot test would <em>actually produce different output</em> if the bug existed. Each classification includes a written rationale.</li>
 </ul>
-<h3 id="step-5-visualization">Step 5: Visualization</h3>
-<p><code>scripts/generate_deep_analysis_graphs.py</code> produces all 18 matplotlib graphs.
-<code>scripts/generate_report.py</code> assembles the self-contained HTML report with
-base64-embedded images. Both are runnable with <code>uv run</code>.</p>
+<h3 id="step-6-visualization">Step 6: Visualization</h3>
+<p>Graph scripts live alongside the analysis code:</p>
+<ul>
+<li><code>scripts/generate_deep_analysis_graphs.py</code> — coverage, bug domain, review speed, adoption timeline, and commit-level pattern graphs</li>
+<li><code>scripts/generate_ci_outcome_graph.py</code> — snapshot CI failure resolution by PR type</li>
+<li><code>scripts/generate_report.py</code> — self-contained HTML report with base64-embedded images</li>
+</ul>
+<p>All are runnable with <code>uv run</code>.</p>
 <h3 id="limitations">Limitations</h3>
 <ul>
 <li><strong>LLM classification accuracy</strong> — gpt-4o-mini misclassifies some edge cases (e.g., a PR titled “fix: add feature X” gets classified as bug-fix). We spot-checked ~30 PRs and found ~90% agreement with human judgment. The heuristic labels provide a second opinion.</li>
 <li><strong>Agent authorship detection</strong> — relies on co-author tags and known bot usernames. PRs where a human manually committed agent-generated code would be counted as human-authored.</li>
+<li><strong>CI log expiry</strong> — GitHub retains job logs for ~90 days. Only 9 of 29 failing PRs had logs available for test-level verification (March–May 2026). The remaining 20 use a coarser PR-level heuristic (whether the merged PR contains any snapshot file changes), which cannot distinguish between updating the <em>failing</em> test’s baseline vs. updating a different test’s baseline.</li>
 <li><strong>Indirect coverage is subjective</strong> — our B1 (indirectly covered) classifications are judgment calls about whether a snapshot would visibly change. Different reviewers might classify 1-2 borderline cases differently, but the overall split (4 B1 vs 16 B2) is robust.</li>
 <li><strong>Single repository</strong> — all findings are specific to openhands-cli. Generalizing to other agent-driven projects requires similar analysis in those codebases.</li>
 </ul>
@@ -313,7 +328,9 @@ useful. To make codebases more compatible with autonomous agents, we likely need
 <li><strong>Behavioral changes should fail in obvious and reliable ways</strong></li>
 </ol>
 <p>When these conditions are met, both humans and agents gain a much clearer signal about
-whether the system behaves as intended.</p>  </div> <!-- Citation --> <section class="citation-block mt-12 pt-8 border-t border-gray-200 dark:border-gray-700" data-astro-cid-kt4wdg4p> <div class="flex items-start justify-between" data-astro-cid-kt4wdg4p> <details class="citation-details flex-1" data-astro-cid-kt4wdg4p> <summary class="cursor-pointer select-none inline-flex items-center gap-1.5" data-astro-cid-kt4wdg4p> <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100" data-astro-cid-kt4wdg4p>Citation</h2> <svg class="citation-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-astro-cid-kt4wdg4p> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" data-astro-cid-kt4wdg4p></path> </svg> </summary> <div class="mt-3" data-astro-cid-kt4wdg4p> <pre class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs text-gray-700 dark:text-gray-300 overflow-x-auto font-mono leading-relaxed whitespace-pre" data-astro-cid-kt4wdg4p>@online{malhotrarohit2026blog,
+whether the system behaves as intended.</p>
+<hr/>
+<p><em>Disclosure: An AI agent (<a href="https://github.com/All-Hands-AI/OpenHands">OpenHands</a>) assisted with data mining, graph generation, and drafting portions of this post. All analysis decisions, interpretations, and editorial judgment are the author’s.</em></p>  </div> <!-- Citation --> <section class="citation-block mt-12 pt-8 border-t border-gray-200 dark:border-gray-700" data-astro-cid-kt4wdg4p> <div class="flex items-start justify-between" data-astro-cid-kt4wdg4p> <details class="citation-details flex-1" data-astro-cid-kt4wdg4p> <summary class="cursor-pointer select-none inline-flex items-center gap-1.5" data-astro-cid-kt4wdg4p> <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100" data-astro-cid-kt4wdg4p>Citation</h2> <svg class="citation-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-astro-cid-kt4wdg4p> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" data-astro-cid-kt4wdg4p></path> </svg> </summary> <div class="mt-3" data-astro-cid-kt4wdg4p> <pre class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs text-gray-700 dark:text-gray-300 overflow-x-auto font-mono leading-relaxed whitespace-pre" data-astro-cid-kt4wdg4p>@online{malhotrarohit2026blog,
   author = {Rohit Malhotra},
   title = {Do Snapshot Tests Help in Agent-Driven Development?},
   year = {2026},
