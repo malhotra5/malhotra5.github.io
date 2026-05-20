@@ -46,9 +46,9 @@ Bug-fix and feature PRs generated the most failure events (11 and 10 respectivel
 
 ### How do snapshot failures ultimately resolve?
 
-When a snapshot fails, the developer has two choices: update the baseline (acknowledging an intentional visual change) or fix their code (reverting an unintended regression). We classified each PR's resolution using CI logs where available and file-change heuristics for the rest (see [Methodology](#mining) for details).
+Of the 128 post-adoption PRs where the snapshot CI job ran (Jan–mid May 2026), **29 (23%)** triggered at least one snapshot failure. When a snapshot fails, a developer can update the baseline (acknowledging an intentional visual change), fix their code (reverting an unintended regression), or both. We classified each PR's resolution using CI logs where available (9 PRs) and file-level heuristics for the rest (see [Methodology](#mining) for details).
 
-<Figure src="/img/snapshot-analysis/deep_19_ci_outcomes.png" alt="Stacked bar chart showing how 29 PRs with snapshot failures resolved, by type. Features: 4 baseline, 4 code fix. CI/Docs: 5 code fix. Bug fix: 3 baseline, 1 merged. Dep bump: 1 baseline, 2 code fix. Refactor: 2 baseline, 1 merged. Version bump: 3 baseline. Test: 2 baseline, 1 merged." caption="How 29 PRs with snapshot failures resolved, broken down by PR type. Green = updated baseline (intentional change). Blue = fixed code (regression caught). Red = merged with CI still failing." />
+<Figure src="/img/snapshot-analysis/deep_19_ci_outcomes.png" alt="Stacked bar chart showing how 29 PRs with snapshot failures resolved, by type. Features: 1 baseline, 3 both, 4 code fix. CI/Docs: 5 code fix. Bug fix: 3 both, 1 merged. Refactor: 2 both, 1 merged. Dep bump: 2 both, 1 code fix. Version bump: 3 baseline. Test: 2 both, 1 merged." caption="How 29 PRs with snapshot failures resolved. Green = baseline only. Purple = both baseline + code change. Blue = code fix only. Red = merged with CI still failing." />
 
 The breakdown by type makes the pattern intuitive:
 
