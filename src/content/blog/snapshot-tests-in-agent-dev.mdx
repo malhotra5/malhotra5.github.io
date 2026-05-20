@@ -117,11 +117,13 @@ Feature PRs generated the most (24 snapshot-fix commits across 9 PRs). Refactors
 
 ### How do snapshot failures ultimately resolve?
 
-Of the **128 PRs with snapshot CI data** (late Jan–mid May 2026), **29 (23%)** triggered at least one snapshot failure. When a snapshot fails, the developer has two choices: update the baseline (acknowledging an intentional visual change) or fix their code (reverting an unintended regression). The choice depends on whether the change was intentional.
+Of the 128 PRs with snapshot CI data (late Jan–mid May 2026), **29 (23%)** triggered at least one snapshot failure. When a snapshot fails, the developer has two choices: update the baseline (acknowledging an intentional visual change) or fix their code (reverting an unintended regression).
+
+To classify each of these 29 PRs, we checked whether the failing test's snapshot file was updated in the final merged PR (baseline update) or left unchanged (code fix). GitHub retains CI logs for ~90 days, so we could only verify the specific failing test names for the **9 most recent PRs** (March–May 2026). For the remaining 20, we fall back to a coarser heuristic: whether the merged PR contains any snapshot file changes at all.
 
 <Figure src="/img/snapshot-analysis/deep_19_ci_outcomes.png" alt="Stacked bar chart showing how 29 PRs with snapshot failures resolved, by type. Features: 4 baseline, 4 code fix. CI/Docs: 5 code fix. Bug fix: 3 baseline, 1 merged. Dep bump: 1 baseline, 2 code fix. Refactor: 2 baseline, 1 merged. Version bump: 3 baseline. Test: 2 baseline, 1 merged." caption="How 29 PRs with snapshot failures resolved, broken down by PR type. Green = updated baseline (intentional change). Blue = fixed code (regression caught). Red = merged with CI still failing." />
 
-The breakdown by type makes the pattern clear:
+The breakdown by type makes the pattern intuitive:
 
 - **CI and docs PRs** are entirely blue — these PRs shouldn't change visual output, so every failure was a regression caught.
 - **Dependency bumps** are mostly blue — an upstream change broke the UI, and snapshots caught it.
