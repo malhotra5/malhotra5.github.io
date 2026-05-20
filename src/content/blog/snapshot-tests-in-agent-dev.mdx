@@ -125,18 +125,17 @@ Snapshot diffs on PRs make behavior concrete and reviewable at a glance. They ar
 
 On the [verification problem](#verification-is-an-ambiguous-and-time-consuming-task): snapshots automated the question "did the code break anything?" Developers iterated on broken snapshots as CI caught regressions. The verification loop became visual and immediate.
 
-But coverage remained shallow. More than half of visual bugs landed on code paths with no snapshot tests at all, and almost no bug-fix PRs added new coverage retroactively. A significant portion of all bugs are non-visual entirely, where snapshots are structurally irrelevant.
+But coverage remained shallow. More than half of visual bugs landed on code paths with no snapshot tests at all, and almost no bug-fix PRs added new coverage retroactively. A significant portion of all bugs are non-visual entirely, where snapshots are structurally irrelevant.&#x20;
 
-### Caveats
 
-This analysis primarily measures software quality, quantified in retrospect by the number of bugs patched. That's a lagging indicator, it tells us about regressions that *shipped*, not regressions that were *prevented* before merge or time saved during review. We don't measure developer velocity or review effort directly.
 
-It also covers a single repository with a specific architecture (a Textual-based terminal UI with first-class SVG snapshot support). Several factors limit generalizability:
+Finally it is difficult to generalize this exact approach to every codebase. It's no smoking gun when it comes to de-risking the use of code agents.&#x20;
 
-* **Framework dependency.** Textual's snapshot support is unusually clean — deterministic renders, no flakiness, cheap to run. Most UI frameworks don't offer this out of the box, and the cost-benefit calculus may differ significantly where snapshot infrastructure requires more effort.
-* **Small team, high agent usage.** OpenHands-CLI has a small number of contributors with \~68% agent-authored PRs. The forcing-function effect may be stronger (or weaker) in teams with different human/agent ratios or review cultures.
-* **Confounding factors.** Snapshot adoption coincided with a period of active feature development and team process maturation. We can't fully disentangle the effect of snapshots from other improvements happening in parallel (better test infrastructure, more experienced contributors, stabilizing codebase). The normalized regression rate drop is suggestive, not causal.
-* **Survivorship bias in CI data.** We only analyzed merged PRs. PRs that were abandoned or reworked heavily due to snapshot failures — potentially the strongest evidence of snapshots preventing bad changes — are invisible in this dataset.
+### Limitations
+
+This analysis primarily measures software quality, quantified in retrospect by the number of bugs patched. We don't measure developer velocity or review effort directly.
+
+For data collection the number of samples is quite low, and many CI logs had been deleted by GitHub before we could mine them. Snapshot adoption coincided with a period of active feature development and team process maturation. We can't fully disentangle the effect of snapshots from other improvements happening in parallel.
 
 ## Methodology
 
