@@ -153,7 +153,8 @@ would prevent the exact recurrence — the highest-value coverage extension poss
 <p>But coverage remained shallow. More than half of visual bugs landed on code paths with no snapshot tests at all, and almost no bug-fix PRs added new coverage retroactively. A significant portion of all bugs are non-visual entirely — API crashes, auth failures, dependency issues — where snapshots are structurally irrelevant.</p>
 <p>A handful of targeted tests (settings save→reload, new event type trajectories, notification capture) would close the majority of the visual coverage gap.</p>
 <h3 id="caveats">Caveats</h3>
-<p>This analysis covers a single repository with a specific architecture (a Textual-based terminal UI with first-class SVG snapshot support). Several factors limit generalizability:</p>
+<p>This analysis primarily measures software quality, quantified in retrospect by the number of bugs patched. That’s a lagging indicator — it tells us about regressions that <em>shipped</em>, not regressions that were <em>prevented</em> before merge or time saved during review. We don’t measure developer velocity or review effort directly.</p>
+<p>It also covers a single repository with a specific architecture (a Textual-based terminal UI with first-class SVG snapshot support). Several factors limit generalizability:</p>
 <ul>
 <li><strong>Framework dependency.</strong> Textual’s snapshot support is unusually clean — deterministic renders, no flakiness, cheap to run. Most UI frameworks don’t offer this out of the box, and the cost-benefit calculus may differ significantly where snapshot infrastructure requires more effort.</li>
 <li><strong>Small team, high agent usage.</strong> OpenHands-CLI has a small number of contributors with ~68% agent-authored PRs. The forcing-function effect may be stronger (or weaker) in teams with different human/agent ratios or review cultures.</li>
