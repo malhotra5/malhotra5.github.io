@@ -45,13 +45,11 @@ Feature PRs (green) climb to 100% — every UI feature now passes through a "did
 
 ### Snapshots break during development — and the signal is acted on
 
-We looked at commit messages within multi-commit PRs for snapshot-related keywords ("update snap", "regenerate", "baseline") that appear *after* the initial code changes — evidence that a developer wrote code, hit a snapshot failure, and iterated.
+GitHub retains CI status checks for every commit, not just the final one. We queried the "Run snapshot tests" check-run result for each commit in every post-adoption PR. Of the 29 PRs that ever triggered a snapshot failure, **26** eventually passed — the developer iterated until CI was green.
 
-Across 27 multi-commit snapshot PRs, **18 (67%)** show this pattern — 58 such commits total. Developers hit snapshot failures during development and iterate before pushing.
+<Figure src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot CI failures resolved during development, by PR type. Bug-fix: 11 failures across 3 PRs. Feature: 10 across 8. Dependency bump: 9 across 3. Refactor: 6 across 2." caption="CI snapshot failure events in PRs that eventually passed, by PR type. Each bar counts commits where the snapshot check failed before the developer resolved the issue." />
 
-<Figure src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot-fix commits by PR type. Feature PRs: 24 commits across 9 PRs. Bug fix: 12 across 6. Refactor: 11 across 2. Test: 11 across 3." caption="Snapshot-fix commits that appear later in a PR, by PR type. Evidence that developers iterate on snapshot failures during development, not just at CI." />
-
-Feature PRs generated the most (24 snapshot-fix commits across 9 PRs). Refactors generated 11 — code restructuring that wasn't intended to change visual output was caught doing exactly that.
+Bug-fix and feature PRs generated the most failure events (11 and 10 respectively). Dependency bumps triggered 9 — an upstream change broke the UI, and snapshots caught it. Refactors generated 6 — code restructuring that wasn't intended to change visual output was caught doing exactly that.
 
 ### How do snapshot failures ultimately resolve?
 
