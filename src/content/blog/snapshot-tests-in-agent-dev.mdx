@@ -1,7 +1,7 @@
 ---
 title: Do Snapshot Tests Help in Agent-Driven Development?
 description: >-
-  An empirical analysis of 311 pull requests in the Openhands-CLI repository to
+  An empirical analysis of 311 pull requests in the OpenHands-CLI repository to
   determine if snapshot tests improve the software development process when
   using Agents.
 date: May 19, 2026
@@ -40,7 +40,7 @@ I hypothesize that if application behavior is visually observable, and any chang
 So we need to address each during the results sections"
 />
 
-To test this hypothesis, I [mined](#step-1-mining-github-api--json) all 311 merged PRs from the [Openhands-CLI](https://github.com/OpenHands/openhands-cli) repository (Sep 2025 – May 2026), [classified](#step-2-classification-llm--heuristics--csv) each by type, authorship, and snapshot involvement, then analyzed [commit-level history](#step-3-snapshot-specific-analysis-heuristic) to understand *how* snapshot tests are actually used. Snapshot tests were adopted in January 2026. For the anatomy of a snapshot test, see the [Appendix](#appendix-snapshot-testing-in-the-openhands-cli).
+To test this hypothesis, I [mined](#mining) all 311 merged PRs from the [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) repository (Sep 2025 – May 2026), [classified](#classification) each by type, authorship, and snapshot involvement, then analyzed commit-level history to understand *how* snapshot tests are actually used. Snapshot tests were adopted in January 2026. For the anatomy of a snapshot test, see the [Appendix](#appendix-snapshot-testing-in-openhands-cli).
 
 <Figure src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Monthly PR volume by authorship (agent vs human), Sep 2025 – May 2026." caption="Monthly PR volume by authorship (agent vs human), Sep 2025 – May 2026." />
 
@@ -217,7 +217,7 @@ The full pipeline, data, and graphs are reproducible from [snapshot-tests-analys
 
 ### Mining
 
-We pulled every merged PR from [openhands-cli](https://github.com/OpenHands/openhands-cli) via the GitHub REST API: PR metadata, file-level diffs, full commit history, review data, linked issues, and authorship signals (co-author tags, bot usernames). This produced 311 PRs with 42 fields each. No LLM involved.
+We pulled every merged PR from [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) via the GitHub REST API: PR metadata, file-level diffs, full commit history, review data, linked issues, and authorship signals (co-author tags, bot usernames). This produced 311 PRs with 42 fields each. No LLM involved.
 
 For CI analysis, we queried the Check Runs API for every commit in every post-adoption PR to extract the "Run snapshot tests" result. For the 29 PRs that triggered failures, we downloaded CI job logs (where still available — GitHub retains these ~90 days), parsed out specific failing test names, and cross-referenced each against the files changed in the final merged PR to determine whether resolution was a code fix or baseline update.
 
@@ -251,12 +251,12 @@ We read all 20 snapshot test files (~2,500 lines) to build a coverage map of whi
 * **Agent authorship detection** — relies on co-author tags and bot usernames. PRs where a human manually committed agent-generated code would be counted as human-authored.
 * **CI log expiry** — only 9 of 29 failing PRs had logs available for test-level verification. The remaining 20 use a coarser heuristic (whether the merged PR contains any snapshot file changes), which can't distinguish updating the *failing* test's baseline from updating a different test's baseline.
 * **Indirect coverage is subjective** — different reviewers might classify 1-2 borderline cases differently, but the overall split (4 indirectly covered vs 16 uncovered) is robust.
-* **Single repository** — all findings are specific to openhands-cli.
+* **Single repository** — all findings are specific to [OpenHands-CLI](https://github.com/OpenHands/openhands-cli).
 
-## Appendix: Snapshot Testing in the OpenHands CLI
+## Appendix: Snapshot Testing in OpenHands-CLI
 
 I experimented with snapshot testing in the
-[OpenHands command-line interface (CLI)](https://github.com/OpenHands/openhands-cli)
+[OpenHands-CLI](https://github.com/OpenHands/openhands-cli)
 codebase. The CLI is built using
 [Textual](https://textual.textualize.io/),
 a Python library for building terminal UIs. One advantage of Textual is that it provides
