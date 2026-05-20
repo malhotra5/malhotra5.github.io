@@ -36,11 +36,10 @@ Originally on Substack ↗
 <h2 id="verification-is-an-ambiguous-and-time-consuming-task">Verification is an ambiguous and time consuming task</h2>
 <p>I hypothesized there are two problems with respect to verification:</p>
 <ol>
-<li><strong>Determining intended behavior.</strong> We’re loosing a high quality source of truth as many tickets produced via agents are walls of text and often slightly inaccurate. Reviewers depend on the legitimacy of this, and also the agent itself for future iterations of work. </li>
-<li><strong>Verifying implemented behavior.</strong> Manual quality assurance (QA) reveals problems, and is time consuming. With rapid heaps of code being generated this process doesn’t scale well. </li>
+<li><strong>What is the application supposed to do?</strong> Agent-generated tickets and PR descriptions are walls of text that are often slightly inaccurate. Reviewers depend on this as the source of truth, and so does the agent itself during future iterations. When the source of truth is prose, it’s ambiguous by nature.</li>
+<li><strong>Did the code actually do it?</strong> Manual QA reveals problems but is time consuming. With the volume of code agents generate, it doesn’t scale.</li>
 </ol>
-<p>I hypothesize that if application behavior is visually observable, and any change in existing behavior are obvious, we make it <strong>easier to verify changes and safer to use agents in future development efforts.</strong> <a href="https://en.wikipedia.org/wiki/A_picture_is_worth_a_thousand_words">A picture is worth a thousand words</a>.</p>
-
+<p>Snapshot tests address both problems with the same mechanism. A committed snapshot <em>is</em> the source of truth for current behavior — not prose, but a visual artifact that shows exactly what the application looks like. And when code changes, snapshot diffs verify whether behavior changed intentionally or broke silently. <a href="https://en.wikipedia.org/wiki/A_picture_is_worth_a_thousand_words">A picture is worth a thousand words</a>.</p>
 <h2 id="analyzing-whether-visualizing-application-behavior-improves-verification">Analyzing whether visualizing application behavior improves verification </h2>
 
 <p>To test this hypothesis, I <a href="#mining">mined</a> all 311 merged PRs from the <a href="https://github.com/OpenHands/openhands-cli">OpenHands-CLI</a> repository (Sep 2025 – May 2026), <a href="#classification">classified</a> each by type, authorship, and snapshot involvement, then analyzed commit-level history to understand <em>how</em> snapshot tests are actually used. Snapshot tests were adopted in January 2026. For the anatomy of a snapshot test, see the <a href="#appendix-snapshot-testing-in-openhands-cli">Appendix</a>.</p>
@@ -149,7 +148,8 @@ When a visual bug is fixed, adding a snapshot that captures the corrected render
 would prevent the exact recurrence — the highest-value coverage extension possible.</p>
 <h2 id="verdict">Verdict</h2>
 <p><strong>Snapshot tests work where they exist — but coverage is shallow.</strong></p>
-<p>Where snapshots existed, they acted as a forcing function: every feature PR had to acknowledge visual changes, developers iterated on broken snapshots during development, and the UX regression rate dropped meaningfully in the post-adoption period. Snapshots didn’t just catch regressions in CI — they changed how developers worked, making visual impact an explicit part of the development loop.</p>
+<p>On the <a href="#verification-is-an-ambiguous-and-time-consuming-task">source of truth problem</a>: where snapshots existed, committed baselines replaced prose as the definition of “what the application does.” Feature PRs couldn’t ship without explicitly showing their visual impact — the snapshot diff <em>is</em> the specification, not a ticket description. This made behavior concrete and reviewable at a glance.</p>
+<p>On the <a href="#verification-is-an-ambiguous-and-time-consuming-task">verification problem</a>: snapshots automated the question “did the code break anything?” Developers iterated on broken snapshots during development, CI caught regressions, and the UX regression rate dropped meaningfully in the post-adoption period. The verification loop became visual and immediate rather than manual and ambiguous.</p>
 <p>But coverage remained shallow. More than half of visual bugs landed on code paths with no snapshot tests at all, and almost no bug-fix PRs added new coverage retroactively. A significant portion of all bugs are non-visual entirely — API crashes, auth failures, dependency issues — where snapshots are structurally irrelevant.</p>
 <p>A handful of targeted tests (settings save→reload, new event type trajectories, notification capture) would close the majority of the visual coverage gap.</p>
 <h3 id="caveats">Caveats</h3>
