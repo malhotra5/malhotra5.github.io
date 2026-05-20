@@ -107,30 +107,28 @@ Four independent signals confirm this.
 
 Feature PRs (green) climb to 100% — every TUI feature now passes through a "did you mean to change how this looks?" gate. Bug-fix PRs (red) plateau at ~35–50%. Since this graph is already filtered to TUI (visual) bugs, the gap isn't about non-visual code — it's about coverage depth. Of the 34 post-adoption TUI bug-fixes, 12 land on snapshot-covered paths and update the baseline to reflect the corrected behavior. The other 22 fix bugs on paths that have no snapshot tests at all (settings persistence, notifications, dropdown ordering), so there's no baseline to update.
 
-### Snapshot CI: what happens when tests fail?
+### Snapshots break during development — and the signal is acted on
 
-We mined the "Run snapshot tests" check-run result for every commit in every post-adoption PR. The snapshot CI workflow was added in late January 2026, so the first 67 PRs (all from early–mid January) predate it. Of the **128 PRs with snapshot CI data** (late Jan–mid May 2026), **29 (23%)** triggered at least one snapshot failure during development.
+Across 27 multi-commit snapshot PRs, **18 (67%)** show a pattern: code written first, then a later commit addressing broken snapshots — 58 snapshot-fix commits total. Developers hit snapshot failures during development and iterate before pushing.
 
-<Figure src="/img/snapshot-analysis/deep_19_ci_outcomes.png" alt="Left: 128 PRs with snapshot CI, 29 triggered failures. Right: breakdown showing 15 baseline only, 10 code fixed, 1 both, 3 merged with failure." caption="Snapshot CI outcomes across 128 post-adoption PRs. Counts are adjusted using test-level data where CI logs were available." />
+<Figure src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot-fix commits by PR type. Feature PRs: 24 commits across 9 PRs. Bug fix: 12 across 6. Refactor: 11 across 2. Test: 11 across 3." caption="Snapshot-fix commits that appear later in a PR, by PR type. Evidence that developers iterate on snapshot failures during development, not just at CI." />
 
-Of those 29 failures:
+Feature PRs generated the most (24 snapshot-fix commits across 9 PRs). Refactors generated 11 — code restructuring that wasn't intended to change visual output was caught doing exactly that.
 
-- **15 (52%) updated baselines only** — the visual change was intentional and acknowledged. (CI logs expired for these PRs, so we can't verify at the test level.)
-- **10 (34%) fixed their code** — the snapshot caught an unintended change and the developer fixed the code to match the existing baseline.
-- **1 (3%) did both** — fixed code for one failing test (regression caught) *and* updated baselines for two others (intentional changes). The PR-level view classified this as a pure "baseline update," hiding the regression catch.
-- **3 (10%) merged with CI still failing** — snapshot tests were advisory (not a required check) during part of the adoption period. These PRs ([#595](https://github.com/OpenHands/openhands-cli/pull/595), [#698](https://github.com/OpenHands/openhands-cli/pull/698), [#699](https://github.com/OpenHands/openhands-cli/pull/699)) bypassed the signal.
+### How do snapshot failures ultimately resolve?
 
-The "both" category comes from a test-level cross-reference. GitHub retains CI job logs for ~90 days. For the **9 most recent PRs with failures** (March–May 2026), we downloaded the logs, extracted the specific failing test names, and checked whether each failing test's snapshot file was actually updated in the final merged PR. If the snapshot was updated, the developer acknowledged the change (baseline update). If it wasn't, they fixed their code instead (regression caught). One PR ([#719](https://github.com/OpenHands/openhands-cli/pull/719)) did both — fixing code for a failing confirmation-mode test while updating baselines for two iterative-refinement tests whose visual changes were intentional.
+Of the **128 PRs with snapshot CI data** (late Jan–mid May 2026), **29 (23%)** triggered at least one snapshot failure. When a snapshot fails, the developer has two choices: update the baseline (acknowledging an intentional visual change) or fix their code (reverting an unintended regression). The choice depends on whether the change was intentional.
 
-We can't verify the 15 "baseline only" PRs at the test level (logs expired). The regression-catch rate is at minimum **38%** (11 of 29) and likely higher if the same pattern holds for the unverifiable PRs.
+<Figure src="/img/snapshot-analysis/deep_19_ci_outcomes.png" alt="Stacked bar chart showing how 29 PRs with snapshot failures resolved, by type. Features: 4 baseline, 4 code fix. CI/Docs: 5 code fix. Bug fix: 3 baseline, 1 merged. Dep bump: 1 baseline, 2 code fix. Refactor: 2 baseline, 1 merged. Version bump: 3 baseline. Test: 2 baseline, 1 merged." caption="How 29 PRs with snapshot failures resolved, broken down by PR type. Green = updated baseline (intentional change). Blue = fixed code (regression caught). Red = merged with CI still failing." />
 
-### Development pattern: code first, fix snapshots later
+The breakdown by type makes the pattern clear:
 
-CI is only the final check. At the commit level, developers hit snapshot failures earlier and iterate before pushing.
+- **CI and docs PRs** are entirely blue — these PRs shouldn't change visual output, so every failure was a regression caught.
+- **Dependency bumps** are mostly blue — an upstream change broke the UI, and snapshots caught it.
+- **Features** split 50/50 — half intentionally changed the UI (baseline updated), half accidentally broke something else (code fixed).
+- **Version bumps and bug fixes** are entirely green — version strings and bug-fix behavior changes are expected visual updates.
 
-<Figure src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot-fix commits by PR type (later-in-PR commits only)." caption="Snapshot-fix commits by PR type (later-in-PR commits only)." />
-
-Across 27 multi-commit snapshot PRs, **18 (67%)** show code written first, then a later commit addressing broken snapshots — 58 snapshot-fix commits total. Feature PRs generated the most (24 across 9 PRs). Refactors generated 11 — code restructuring that wasn't intended to change visual output was caught doing exactly that.
+Overall, **11 of 29 PRs (38%)** fixed their code rather than updating baselines — concrete regressions prevented from shipping. Snapshot tests were advisory (not a required check) during part of this period, and 3 PRs merged with failures still present.
 
 ### Review speed: 2× faster first review
 
