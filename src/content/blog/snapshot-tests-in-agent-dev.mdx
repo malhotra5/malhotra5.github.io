@@ -4,7 +4,7 @@ description: >-
   An empirical analysis of 311 pull requests in the OpenHands-CLI repository to
   determine if snapshot tests improve the software development process when
   using Agents.
-date: May 19, 2026
+date: May 20, 2026
 image: /img/snapshot-analysis/deep_10_bug_rate_with_context.png
 readTime: 12 min read
 originalUrl: >-
@@ -91,9 +91,9 @@ We normalize by cumulative UI PRs, the total number of TUI-touching PRs merged u
 
 <Figure src="/img/snapshot-analysis/deep_10_bug_rate_with_context.png" alt="Agent-introduced bug rate normalized by cumulative UI work" caption="Agent-introduced bugs per cumulative UI PR. Pre-adoption, UX regressions were flat or rising (0.11–0.12) — bugs grew as fast as the codebase. Post-adoption, both lines decline steadily. The January spike coincides with a major feature push." />
 
-Pre-adoption, the agent-introduced UX regression rate was **flat or rising** — bugs grew at least as fast as the codebase. Post-adoption, it reversed: 0.15 → 0.04 → 0.01 → 0.01 → 0.01. Agent-introduced critical bugs followed a similar trajectory, declining to near-zero by March.
+Pre-adoption, the agent-introduced UX regression rate was **flat or rising**. Post-adoption, it reversed. Agent-introduced critical bugs followed a similar trajectory, declining to near-zero by March.
 
-We can't isolate the causal contribution of snapshots, but the timing is consistent with a benefit. Codebase maturity, improved agent prompts, and team process stabilization could also affect bug rates.
+We can't isolate the causal contribution of snapshots from other factors e.g codebase maturity, agent drive code reviews. But timing is consistent with a benefit.
 
 ## Snapshot coverage has a level of indirection
 
