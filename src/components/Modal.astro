@@ -3,9 +3,10 @@ interface Props {
   id: string;
   title: string;
   image: string;
+  url?: string;
 }
 
-const { id, title, image } = Astro.props;
+const { id, title, image, url } = Astro.props;
 ---
 
 <div id={id} class="modal-overlay" data-modal>
@@ -13,7 +14,18 @@ const { id, title, image } = Astro.props;
     <button class="text-gray-400 hover:text-accent mb-6 text-sm transition-colors" data-modal-close>
       ← Back to Projects
     </button>
-    <h4 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">{title}</h4>
+    <h4 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+      {url ? (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="border-b border-dotted border-gray-400 hover:border-accent hover:text-accent transition-colors"
+        >{title} ↗</a>
+      ) : (
+        title
+      )}
+    </h4>
     <div class="rounded-lg overflow-hidden">
       <img src={image} alt={title} class="w-full h-auto object-cover" loading="lazy" />
     </div>
