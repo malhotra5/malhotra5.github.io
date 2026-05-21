@@ -4,6 +4,7 @@ import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
 import Figure from '../../components/Figure.astro';
 import Comment from '../../components/Comment.astro';
 import Highlight from '../../components/Highlight.astro';
+import Img from '../../components/Img.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -29,5 +30,5 @@ const { title, description, date, image, imageCaption, readTime, originalUrl, ta
   tags={tags}
   author={author}
 >
-  <Content components={{ Figure, Comment, Highlight }} />
+  <Content components={{ Figure, Comment, Highlight, img: Img }} />
 </BlogPostLayout>
