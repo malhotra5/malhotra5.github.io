@@ -10,7 +10,6 @@ interface Props {
   ogImage?: string;
   currentPage?: string;
   transparentNav?: boolean;
-  darkBg?: boolean;
 }
 
 const {
@@ -19,7 +18,6 @@ const {
   ogImage,
   currentPage = '',
   transparentNav = false,
-  darkBg = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -51,6 +49,19 @@ const ogImageURL = ogImage ? new URL(ogImage, Astro.site).href : undefined;
       rel="stylesheet"
     />
 
+    <!-- Theme init — runs before paint to prevent FOUC -->
+    <script is:inline>
+      (function () {
+        var saved = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+
     <!-- Google Tag Manager -->
     <script is:inline>
       (function (w, d, s, l, i) {
@@ -67,7 +78,7 @@ const ogImageURL = ogImage ? new URL(ogImage, Astro.site).href : undefined;
 
     <title>{title}</title>
   </head>
-  <body class:list={[darkBg && 'bg-dark']}>
+  <body>
     <!-- Google Tag Manager (noscript) -->
     <noscript>
       <iframe
