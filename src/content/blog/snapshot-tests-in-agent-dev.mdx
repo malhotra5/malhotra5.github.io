@@ -182,12 +182,12 @@ We read all 20 snapshot test files (\~2,500 lines) to build a coverage map of wh
 
 ### Anatomy of a snapshot
 
-The [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) is built using [Textual](https://textual.textualize.io/), a Python library for building terminal UIs. Textual has excellent support for snapshot testing, rendering widgets to SVG and comparing them across runs. The codebase uses two types of snapshots
+The [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) is built using [Textual](https://textual.textualize.io/), a Python library for building terminal UIs. Textual has excellent support for [snapshot testing](https://github.com/Textualize/pytest-textual-snapshot), rendering widgets to SVG and comparing them across runs. The codebase uses two types of snapshots
 
 1. **Component snapshots**: capture standalone rendering of individual components, sometimes under different configurations.
 2. **Behavior snapshots**: iteratively capture a sequence of snapshots over time during interactive flows, effectively emulating a short video.
 
-Once snapshots are committed to the repository, they become part of the system history. Future pull requests automatically check against them. If behavior changes, the snapshot test fails. The failure is visually obvious, showing exactly how the behavior differs from the expected output. Agents do well generating these tests.
+Once snapshots are committed to the repository, they become part of the system history. Future pull requests automatically check against them. If behavior changes, the snapshot test fails. The failure is visually obvious, showing exactly how the behavior differs from the expected output.
 
 <Figure src="/img/snapshot-analysis/before_vs_after_snapshot.png" alt="Before and after snapshots example" />
 
@@ -195,7 +195,7 @@ Here is the SVG after creating a new conversation in the CLI. The left has the n
 
 <Figure src="/img/snapshot-analysis/snapshot_diff.png" alt="Snapshot diff view example" />
 
-Image diff demonstrates the changes. In this specific case, the buggy behavior fixed is where a the token metrics for the conversation don't reset when creating a new conversation. In the new snapshot, the token metrics reset properly to 0. This is also an example of indirect coverage for the input component.
+Image diff help identify changes. In this specific example, the buggy behavior fixed is where a the token metrics for the conversation don't reset when creating a new conversation. In the new snapshot, the token metrics reset to 0. This is also an example of indirect coverage for the input component.
 
 ### Example Snapshot Test
 
