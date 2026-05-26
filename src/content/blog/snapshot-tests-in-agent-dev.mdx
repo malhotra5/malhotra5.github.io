@@ -109,7 +109,18 @@ Narrowing to the 35 post-adoption UI bug-fixes, we checked whether each bug live
 
 <Figure src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Coverage breakdown of post-adoption UI bugs" caption="Of 35 post-adoption UI bug-fixes: 12 (34%) hit directly covered paths, 4 (11%) are indirectly covered by tests that exercise the same flow, 16 (46%) are in modules with snapshot coverage for other behaviors but not the bug's path, and 3 (9%) are in fully uncovered areas." />
 
-12 bugs (34%) are directly covered, the bug-fix PR updated snapshot baselines. 4 more (11%) are indirectly covered, a snapshot test exercises a flow through the bug's code path but the PR didn't modify snapshot files (e.g., a conversation-switching test implicitly exercises persistence logic). The remaining 19 (54%) are uncovered: 16 in "adjacent" paths where the module has snapshot tests for other behaviors but not the one that broke, and 3 in areas with no snapshot coverage at all.
+12 bugs (34%) are directly covered — the bug-fix PR updated snapshot baselines. 4 more (11%) are indirectly covered — a snapshot test exercises a flow through the bug's code path but the PR didn't modify snapshot files (e.g., a conversation-switching test implicitly exercises persistence logic). The remaining 19 (54%) are uncovered: 16 in "adjacent" paths where the module has snapshot tests for other behaviors but not the one that broke, and 3 in areas with no snapshot coverage at all.
+
+### Did bugs slip through existing coverage?
+
+"Directly covered" means the fix PR touched snapshot files — but that doesn't mean coverage existed when the bug was *introduced*. Using the [git blame origin data](#bug-origin-tracing), we checked whether snapshot tests were in place at the time each bug was created:
+
+- **2 bugs** traced to a pre-adoption origin (PR #141, Nov 2025). No snapshots existed. These are legacy bugs discovered after coverage was added.
+- **4 bugs** traced to the first days of adoption (Jan 10–12). The specific paths weren't snapshot-tested yet — coverage was still being built out.
+- **3 bugs** traced to origin PRs that did touch snapshot files. But if the snapshot directly covered that behavior, it should have failed when the bug was introduced. The fact that it didn't means the coverage was adjacent (the module had tests for other behaviors, not the one that broke) or the baseline was updated as part of a larger change without recognizing the side-effect.
+- **3 bugs** were untraceable (pure additions in the fix PR).
+
+Zero bugs demonstrably slipped through direct snapshot coverage. The 12 "directly covered" classification reflects the fix PR updating baselines — in most cases because coverage was added *after* the bug existed, not because existing coverage failed to prevent it.
 
 ## Verdict
 
@@ -117,7 +128,7 @@ Snapshot diffs on PRs make behavior concrete and reviewable at a glance. They ar
 
 On the [verification problem](#verification-is-an-ambiguous-and-time-consuming-task): snapshots automated the question "did the code break anything?" Developers iterated on broken snapshots as CI caught regressions. The verification loop became visual and immediate.
 
-However, coverage is shallow, and the overall PR data available to analyze is sparse. More than half of visual bugs landed on code paths with no snapshot tests at all, and almost no bug-fix PRs added new coverage retroactively. A significant portion of all bugs are non-visual entirely, where snapshots are structurally irrelevant. At the time, my intuition significantly overestimated their impact. I expected snapshot tests to drive much larger improvements than what the data actually shows.&#x20;
+Where direct coverage exists, we found no evidence of bugs slipping through — every "covered" bug traced back to a time before the relevant snapshot test existed. But coverage is shallow. More than half of visual bugs landed on paths with no relevant snapshot coverage, and almost no one backfilled coverage afterward. A significant portion of all bugs are non-visual entirely, where snapshots are structurally irrelevant. At the time, my intuition significantly overestimated their impact. I expected snapshot tests to drive much larger improvements than what the data actually shows.&#x20;
 
 Ultimately, it seems difficult to generalize the approach. Snapshot testing is not a silver bullet for de-risking agent related code changes. In hindsight, this limitation is not surprising considering that reliable software systems are rarely the result of any single testing strategy&#x20;
 
