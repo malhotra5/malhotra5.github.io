@@ -85,11 +85,20 @@ Originally on Substack ↗
 <h3 id="whats-actually-covered">What’s actually covered?</h3>
 <p>Narrowing to the 35 post-adoption UI bug-fixes, we checked whether each bug lives on a code path that snapshot tests actually guard, even indirectly. We <a href="#indirect-coverage-analysis">read every snapshot test file</a> and classified each bug by whether a snapshot test would produce visibly different output if the bug existed. </p>
 <figure> <img src="/pr-preview/pr-6/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Coverage breakdown of post-adoption UI bugs"> <figcaption>Of 35 post-adoption UI bug-fixes: 12 (34%) hit directly covered paths, 4 (11%) are indirectly covered by tests that exercise the same flow, 16 (46%) are in modules with snapshot coverage for other behaviors but not the bug&#39;s path, and 3 (9%) are in fully uncovered areas.</figcaption> </figure>
-<p>12 bugs (34%) are directly covered, the bug-fix PR updated snapshot baselines. 4 more (11%) are indirectly covered, a snapshot test exercises a flow through the bug’s code path but the PR didn’t modify snapshot files (e.g., a conversation-switching test implicitly exercises persistence logic). The remaining 19 (54%) are uncovered: 16 in “adjacent” paths where the module has snapshot tests for other behaviors but not the one that broke, and 3 in areas with no snapshot coverage at all.</p>
+<p>12 bugs (34%) are directly covered — the bug-fix PR updated snapshot baselines. 4 more (11%) are indirectly covered — a snapshot test exercises a flow through the bug’s code path but the PR didn’t modify snapshot files (e.g., a conversation-switching test implicitly exercises persistence logic). The remaining 19 (54%) are uncovered: 16 in “adjacent” paths where the module has snapshot tests for other behaviors but not the one that broke, and 3 in areas with no snapshot coverage at all.</p>
+<h3 id="did-bugs-slip-through-existing-coverage">Did bugs slip through existing coverage?</h3>
+<p>“Directly covered” means the fix PR touched snapshot files — but that doesn’t mean coverage existed when the bug was <em>introduced</em>. Using the <a href="#bug-origin-tracing">git blame origin data</a>, we checked whether snapshot tests were in place at the time each bug was created:</p>
+<ul>
+<li><strong>2 bugs</strong> traced to a pre-adoption origin (PR #141, Nov 2025). No snapshots existed. These are legacy bugs discovered after coverage was added.</li>
+<li><strong>4 bugs</strong> traced to the first days of adoption (Jan 10–12). The specific paths weren’t snapshot-tested yet — coverage was still being built out.</li>
+<li><strong>3 bugs</strong> traced to origin PRs that did touch snapshot files. But if the snapshot directly covered that behavior, it should have failed when the bug was introduced. The fact that it didn’t means the coverage was adjacent (the module had tests for other behaviors, not the one that broke) or the baseline was updated as part of a larger change without recognizing the side-effect.</li>
+<li><strong>3 bugs</strong> were untraceable (pure additions in the fix PR).</li>
+</ul>
+<p>Zero bugs demonstrably slipped through direct snapshot coverage. The 12 “directly covered” classification reflects the fix PR updating baselines — in most cases because coverage was added <em>after</em> the bug existed, not because existing coverage failed to prevent it.</p>
 <h2 id="verdict">Verdict</h2>
 <p>Snapshot diffs on PRs make behavior concrete and reviewable at a glance. They are intentionally updated by the PR author and acknowledged by the reviewer, thereby partially addressing the <a href="#verification-is-an-ambiguous-and-time-consuming-task">source of truth problem</a>.</p>
 <p>On the <a href="#verification-is-an-ambiguous-and-time-consuming-task">verification problem</a>: snapshots automated the question “did the code break anything?” Developers iterated on broken snapshots as CI caught regressions. The verification loop became visual and immediate.</p>
-<p>However, coverage is shallow, and the overall PR data available to analyze is sparse. More than half of visual bugs landed on code paths with no snapshot tests at all, and almost no bug-fix PRs added new coverage retroactively. A significant portion of all bugs are non-visual entirely, where snapshots are structurally irrelevant. At the time, my intuition significantly overestimated their impact. I expected snapshot tests to drive much larger improvements than what the data actually shows. </p>
+<p>Where direct coverage exists, we found no evidence of bugs slipping through — every “covered” bug traced back to a time before the relevant snapshot test existed. But coverage is shallow. More than half of visual bugs landed on paths with no relevant snapshot coverage, and almost no one backfilled coverage afterward. A significant portion of all bugs are non-visual entirely, where snapshots are structurally irrelevant. At the time, my intuition significantly overestimated their impact. I expected snapshot tests to drive much larger improvements than what the data actually shows. </p>
 <p>Ultimately, it seems difficult to generalize the approach. Snapshot testing is not a silver bullet for de-risking agent related code changes. In hindsight, this limitation is not surprising considering that reliable software systems are rarely the result of any single testing strategy </p>
 <h2 id="methodology">Methodology</h2>
 <p>The full pipeline, data, and graphs are reproducible from <a href="https://github.com/malhotra5/snapshot-tests-analysis" target="_blank" rel="noopener noreferrer">snapshot-tests-analysis</a>.</p>
@@ -191,7 +200,7 @@ Originally on Substack ↗
   month = {May},
   day = {20},
   url = {https://malhotra5.github.io/pr-preview/pr-6/blog/snapshot-tests-in-agent-dev/},
-  urldate = {2026-05-21},
+  urldate = {2026-05-26},
   note = {Blog post},
   organization = {Rohit Malhotra&#39;s Blog}
 }</pre> </div> </details> <button class="copy-btn p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors" data-citation="@online{malhotrarohit2026blog,
@@ -201,7 +210,7 @@ Originally on Substack ↗
   month = {May},
   day = {20},
   url = {https://malhotra5.github.io/pr-preview/pr-6/blog/snapshot-tests-in-agent-dev/},
-  urldate = {2026-05-21},
+  urldate = {2026-05-26},
   note = {Blog post},
   organization = {Rohit Malhotra's Blog}
 }" aria-label="Copy citation" title="Copy citation" data-astro-cid-kt4wdg4p> <svg class="copy-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-astro-cid-kt4wdg4p> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" data-astro-cid-kt4wdg4p></path> </svg> <svg class="check-icon w-5 h-5 hidden text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-astro-cid-kt4wdg4p> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" data-astro-cid-kt4wdg4p></path> </svg> </button> </div> </section>  <script type="module">document.querySelectorAll(".copy-btn").forEach(e=>{e.addEventListener("click",async()=>{const i=e.getAttribute("data-citation")||"";await navigator.clipboard.writeText(i);const c=e.querySelector(".copy-icon"),t=e.querySelector(".check-icon");c&&t&&(c.classList.add("hidden"),t.classList.remove("hidden"),setTimeout(()=>{c.classList.remove("hidden"),t.classList.add("hidden")},2e3))})});</script> </div> </article>  </main> <footer class="py-12 text-center bg-gray-100 dark:bg-dark border-t border-gray-200 dark:border-gray-700"> <div class="max-w-6xl mx-auto px-6"> <p class="text-gray-500 dark:text-gray-400 text-sm">Rohit Malhotra, 2026</p> <a href="mailto:rohit.malh5@gmail.com" class="text-gray-500 dark:text-gray-500 hover:text-accent text-sm border-b border-dotted border-gray-400 dark:border-gray-500 hover:border-accent transition-colors">
