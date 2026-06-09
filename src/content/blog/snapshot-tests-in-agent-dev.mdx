@@ -21,7 +21,7 @@ Agents are now employed liberally in all parts of the software development cycle
 
 I hypothesized there are two problems with respect to verification:
 
-1. **What is the application supposed to do?** Agent-generated tickets and PR descriptions are a summary of everything; sometimes inaccurate or outdated. Reviewers depend on this as the source of truth, and so does the agent itself during future iterations.&#x20;
+1. **What is the application supposed to do?** Agent-generated tickets and PR descriptions are a summary of everything; sometimes inaccurate or outdated. Reviewers depend on this as the source of truth, and also the agent itself during future iterations.&#x20;
 2. **Did the code actually do it?** Manual QA reveals problems but is time consuming. With the volume of code agents generate, it doesn't scale.
 
 [Snapshot tests](#appendix), I hypothesize, address both problems with the same mechanism. If application behavior is visually observable, and any change in existing behavior is obvious, we make it **easier to verify changes and safer to use agents in future development efforts.**  [A picture is worth a thousand words](https://en.wikipedia.org/wiki/A_picture_is_worth_a_thousand_words).
@@ -35,6 +35,19 @@ To test this hypothesis, I [mined](#mining) all 311 merged PRs from the [OpenHan
 <Figure src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Monthly snapshot involvement across all PRs, Sep 2025 – May 2026." caption="Snapshots were introduced in January 2026, predominantly authored by agents. Not every PR includes snapshot changes, either because the change isn't UI-related or because coverage wasn't added." />
 
 ## Where Coverage Exists, It Works
+
+More than half of visual bugs landed on paths with no relevant snapshot coverage, and almost no one backfilled coverage afterward.&#x20;
+
+
+
+For the other visual bugs, we found that&#x20;
+
+* **2 bugs** traced to a pre-adoption origin (PR #141, Nov 2025). No snapshots existed. These are legacy bugs discovered after coverage was added.
+* **4 bugs** traced to the first days of adoption (Jan 10–12). The specific paths weren't snapshot-tested yet — coverage was still being built out.
+* **3 bugs** traced to origin PRs that did touch snapshot files. But the existing coverage was adjacent (the module had tests for other behaviors, not the one that broke) or the baseline was updated as part of a larger change without recognizing the side-effect.
+* **3 bugs** were untraceable (pure additions in the fix PR).
+
+Zero bugs demonstrably slipped through direct snapshot coverage. Let's explore deeper into how existing coverage protects behaviors.
 
 ### Snapshots break during development, indicating changes in behavior
 
@@ -110,17 +123,6 @@ Narrowing to the 35 post-adoption UI bug-fixes, we checked whether each bug live
 <Figure src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Coverage breakdown of post-adoption UI bugs" caption="Of 35 post-adoption UI bug-fixes: 12 (34%) hit directly covered paths, 4 (11%) are indirectly covered by tests that exercise the same flow, 16 (46%) are in modules with snapshot coverage for other behaviors but not the bug's path, and 3 (9%) are in fully uncovered areas." />
 
 12 bugs (34%) are directly covered — the bug-fix PR updated snapshot baselines. 4 more (11%) are indirectly covered — a snapshot test exercises a flow through the bug's code path but the PR didn't modify snapshot files (e.g., a conversation-switching test implicitly exercises persistence logic). The remaining 19 (54%) are uncovered: 16 in "adjacent" paths where the module has snapshot tests for other behaviors but not the one that broke, and 3 in areas with no snapshot coverage at all.
-
-### Did bugs slip through existing coverage?
-
-"Directly covered" means the fix PR touched snapshot files — but that doesn't mean coverage existed when the bug was *introduced*. Using the [git blame origin data](#bug-origin-tracing), we checked whether snapshot tests were in place at the time each bug was created:
-
-- **2 bugs** traced to a pre-adoption origin (PR #141, Nov 2025). No snapshots existed. These are legacy bugs discovered after coverage was added.
-- **4 bugs** traced to the first days of adoption (Jan 10–12). The specific paths weren't snapshot-tested yet — coverage was still being built out.
-- **3 bugs** traced to origin PRs that did touch snapshot files. But if the snapshot directly covered that behavior, it should have failed when the bug was introduced. The fact that it didn't means the coverage was adjacent (the module had tests for other behaviors, not the one that broke) or the baseline was updated as part of a larger change without recognizing the side-effect.
-- **3 bugs** were untraceable (pure additions in the fix PR).
-
-Zero bugs demonstrably slipped through direct snapshot coverage. The 12 "directly covered" classification reflects the fix PR updating baselines — in most cases because coverage was added *after* the bug existed, not because existing coverage failed to prevent it.
 
 ## Verdict
 
