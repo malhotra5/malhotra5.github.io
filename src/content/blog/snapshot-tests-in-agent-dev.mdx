@@ -34,20 +34,31 @@ To test this hypothesis, I [mined](#mining) all 311 merged PRs from the [OpenHan
 
 <Figure src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Monthly snapshot involvement across all PRs, Sep 2025 – May 2026." caption="Snapshots were introduced in January 2026, predominantly authored by agents. Not every PR includes snapshot changes, either because the change isn't UI-related or because coverage wasn't added." />
 
-## Where Coverage Exists, It Works
+## Snapshot coverage has a level of indirection
 
-More than half of visual bugs landed on paths with no relevant snapshot coverage, and almost no one backfilled coverage afterward.&#x20;
+Not all bugs are visual. Snapshot tests help with bugs that change rendered output. Counting all bug-fixes against snapshot coverage inflates the count.
 
+<Figure src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes" caption="UI widgets & screens is the largest category (38 bugs), but 27 bugs (35%) are entirely non-visual — CLI core, config/state, API/auth — where snapshots are structurally irrelevant." />
 
+35% of bugs are in code that snapshots *can't* cover (API auth, CLI argument parsing, dependency pinning). The relevant denominator for evaluating snapshot effectiveness is the visual bug-fixes only.
 
-For the other visual bugs, we found that&#x20;
+### What's actually covered?
 
-* **2 bugs** traced to a pre-adoption origin (PR #141, Nov 2025). No snapshots existed. These are legacy bugs discovered after coverage was added.
-* **4 bugs** traced to the first days of adoption (Jan 10–12). The specific paths weren't snapshot-tested yet — coverage was still being built out.
-* **3 bugs** traced to origin PRs that did touch snapshot files. But the existing coverage was adjacent (the module had tests for other behaviors, not the one that broke) or the baseline was updated as part of a larger change without recognizing the side-effect.
-* **3 bugs** were untraceable (pure additions in the fix PR).
+Narrowing to the 35 post-adoption UI bug-fixes, we checked whether each bug lives on a code path that snapshot tests actually guard, even indirectly. We [read every snapshot test file](#indirect-coverage-analysis) and classified each bug by whether a snapshot test would produce visibly different output if the bug existed.&#x20;
 
-Zero bugs demonstrably slipped through direct snapshot coverage. Let's explore deeper into how existing coverage protects behaviors.
+<Figure src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Coverage breakdown of post-adoption UI bugs" caption="Of 35 post-adoption UI bug-fixes: 12 (34%) hit directly covered paths, 4 (11%) are indirectly covered by tests that exercise the same flow, 16 (46%) are in modules with snapshot coverage for other behaviors but not the bug's path, and 3 (9%) are in fully uncovered areas." />
+
+For 12 bug-fixes (34%), the fix PR also added or updated snapshot baselines — not because existing coverage caught the bug, but because developers added new coverage or corrected baselines as part of the fix. 4 more (11%) are indirectly covered — a snapshot test exercises a flow through the bug's code path but the PR didn't modify snapshot files (e.g., a conversation-switching test implicitly exercises persistence logic). The remaining 19 (54%) are uncovered: 16 in "adjacent" paths where the module has snapshot tests for other behaviors but not the one that broke, and 3 in areas with no snapshot coverage at all. **More than half of visual bugs landed on paths with no relevant snapshot coverage, and almost no one backfilled coverage afterward.**
+
+### Snapshots capture buggy states as source of truth
+
+The 12 bug-fixes that updated snapshots are easy to misread as "coverage existed and failed to catch the bug." They didn't. We [traced the origin](#bug-origin-tracing) of each bug and found that coverage either didn't exist when the bug was introduced (6 bugs predated coverage for their specific path), was adjacent rather than direct (3 bugs were in modules with tests for other behaviors), or was untraceable (3 bugs were pure additions). In every case, the fix PR was adding *new* coverage or updating baselines that had captured the buggy state as "correct."
+
+This reveals a fundamental property: snapshots detect *changes* in behavior, not *correctness* of behavior. If a baseline is set while a bug exists, the snapshot faithfully preserves the buggy state as the expected output. Zero bugs demonstrably slipped through direct snapshot coverage — but only because coverage was rarely in place early enough to be tested.
+
+## Coverage Guards Existing Behavior
+
+Given the coverage gaps above, how do snapshots perform on the paths they *do* guard? The CI data tells a clear story.
 
 ### Snapshots break during development, indicating changes in behavior
 
@@ -83,7 +94,7 @@ These snapshot updates to PRs change over time. We'll take new UI related PRs an
 
 <Figure src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month." caption="Percentage of feature and bug-fix PRs that include snapshot changes and/or add new snapshots, by month." />
 
-New feature PRs (green) climb to 100%. Eventually every UI feature passed through a "did you mean to change how this looks?" gate. Bug fix PRs (red) plateau at \~35–50%. We'd expect every bug fix to update existing behavior at the very least, or add missing coverage. The discrepancy is explained in coverage analysis section.&#x20;
+New feature PRs (green) climb to 100%. Eventually every UI feature passed through a "did you mean to change how this looks?" gate. Bug fix PRs (red) plateau at \~35–50%. We'd expect every bug fix to update existing behavior at the very least, or add missing coverage. The discrepancy is explained by the [shallow coverage](#whats-actually-covered) documented above — most bug-fix paths simply don't have snapshot tests yet.&#x20;
 
 ### Review speed: 2× faster first review
 
@@ -107,22 +118,6 @@ We normalize by cumulative UI PRs, the total number of TUI-touching PRs merged u
 Pre-adoption, the agent-introduced UX regression rate was flat or rising. Post-adoption, it reversed. Agent-introduced critical bugs followed a similar trajectory, declining to near-zero by March.
 
 Note that we can't confidently isolate snapshots as the sole reason for this as other factors are at interplay e.g codebase maturity, agent drive code reviews.
-
-## Snapshot coverage has a level of indirection
-
-Not all bugs are visual. Snapshot tests help with bugs that change rendered output. Counting all bug-fixes against snapshot coverage inflates the count.
-
-<Figure src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes" caption="UI widgets & screens is the largest category (38 bugs), but 27 bugs (35%) are entirely non-visual — CLI core, config/state, API/auth — where snapshots are structurally irrelevant." />
-
-35% of bugs are in code that snapshots *can't* cover (API auth, CLI argument parsing, dependency pinning). The relevant denominator for evaluating snapshot effectiveness is the visual bug-fixes only.
-
-### What's actually covered?
-
-Narrowing to the 35 post-adoption UI bug-fixes, we checked whether each bug lives on a code path that snapshot tests actually guard, even indirectly. We [read every snapshot test file](#indirect-coverage-analysis) and classified each bug by whether a snapshot test would produce visibly different output if the bug existed.&#x20;
-
-<Figure src="/img/snapshot-analysis/deep_18_reclassified_coverage.png" alt="Coverage breakdown of post-adoption UI bugs" caption="Of 35 post-adoption UI bug-fixes: 12 (34%) hit directly covered paths, 4 (11%) are indirectly covered by tests that exercise the same flow, 16 (46%) are in modules with snapshot coverage for other behaviors but not the bug's path, and 3 (9%) are in fully uncovered areas." />
-
-12 bugs (34%) are directly covered — the bug-fix PR updated snapshot baselines. 4 more (11%) are indirectly covered — a snapshot test exercises a flow through the bug's code path but the PR didn't modify snapshot files (e.g., a conversation-switching test implicitly exercises persistence logic). The remaining 19 (54%) are uncovered: 16 in "adjacent" paths where the module has snapshot tests for other behaviors but not the one that broke, and 3 in areas with no snapshot coverage at all.
 
 ## Verdict
 
