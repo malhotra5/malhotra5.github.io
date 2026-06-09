@@ -40,7 +40,7 @@ Not all bugs are visual. Snapshot tests help with bugs that change rendered outp
 
 <Figure src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes" caption="UI widgets & screens is the largest category (38 bugs), but 27 bugs (35%) are entirely non-visual — CLI core, config/state, API/auth — where snapshots are structurally irrelevant." />
 
-35% of bugs are in code that snapshots *can't* cover (API auth, CLI argument parsing, dependency pinning). The relevant denominator for evaluating snapshot effectiveness is the visual bug-fixes only.
+35% of bugs are in code that snapshots *can't* cover (API auth, CLI argument parsing, dependency pinning). We consider visual bug-fixes only when evaluating snapshots' effectiveness.
 
 ### What's actually covered?
 
@@ -48,11 +48,11 @@ Narrowing to the 35 post-adoption UI bug-fixes, we [examined which snapshot base
 
 <Figure src="/img/snapshot-analysis/reclassified_coverage_v2.png" alt="Empirical coverage breakdown of post-adoption UI bugs" caption="Of 35 post-adoption UI bug-fixes: 5 (14%) are directly covered by a test targeting the buggy behavior, 7 (20%) are indirectly covered by tests that capture the bug's visual effect in a broader flow, and 23 (66%) are uncovered — no snapshot test was sensitive to the bug." />
 
-**More than half of visual bug fixes landed on paths with no relevant snapshot coverage, and the bug fixes didn't backfill coverage either.**
+**More than half of visual bug-fixes landed on paths with no snapshot coverage and didn't backfill coverage either.**
 
-For fixes that are directly or indirectly covered,  either *new* coverage was added or existing baselines were updated. Any existing snapshots had captured the buggy state as "correct."
+For fixes that are directly or indirectly covered, either new coverage was added or existing baselines were updated. Any existing snapshots had captured the buggy state as "correct."
 
-&#x20;This reveals a fundamental property: **snapshots detect *changes* in behavior, not *correctness* of behavior**.
+This reveals a fundamental property: **snapshots detect *changes* in behavior, not *correctness* of behavior**.
 
 ## Coverage Guards Existing Behavior
 
@@ -76,7 +76,7 @@ The breakdown by type makes the pattern intuitive:
 
 * **Features**: show the full spectrum. Some updated baselines for intentional UI changes, some fixed code regressions, and many did both.
 * **CI / Docs**: are entirely code-fix. These PRs shouldn't change visual output.
-* **Bug fixes**: are predominantly "both". Fixing a bug changes behavior, so the baseline needs updating to reflect the corrected state.
+* **Bug-fixes**: are predominantly "both". Fixing a bug changes behavior, so the baseline needs updating to reflect the corrected state.
 * **Refactors**: typically means changing the underlying application code without any behavioral changes. The refactors here also introduced new baselines.&#x20;
 * **Dependency bumps**: every upstream change caused a regression. Some required legitimate baseline updates alongside a fix.
 * **App Version bumps**: the app renders its version in the UI, so these are expected visual changes.
@@ -123,9 +123,9 @@ Snapshot diffs on PRs make behavior concrete and reviewable at a glance. They ar
 
 On the [verification problem](#verification-is-an-ambiguous-and-time-consuming-task): snapshots automated the question "did the code break anything?" Developers iterated on broken snapshots as CI caught regressions. The verification loop became visual and immediate.
 
-Where direct coverage exists, we found no evidence of bugs slipping through — every "covered" bug traced back to a time before the relevant snapshot test existed. Bug-fix PRs that updated snapshots either added new direct coverage (14%) or updated baselines for tests that indirectly captured the bug's visual effect in a broader flow (20%). But coverage is shallow: two-thirds of visual bugs were fixed where no snapshot test was sensitive to the bug, and almost no one backfilled coverage afterward. A significant portion of all bugs are non-visual entirely, where snapshots are structurally irrelevant. At the time, my intuition significantly overestimated their impact. I expected snapshot tests to drive much larger improvements than what the data actually shows.&#x20;
+The data suggests the effectiveness of snapshot testing was ultimately constrained less by the technique itself and more by the challenge of maintaining meaningful coverage, which could be explained by a combination of poor habits, cost of writing snapshot tests, test suite bloat for trivial paths, etc. Once coverage exists, and the snapshot capture truly intended behavior, we find no evidence of bugs slipping through. Two-thirds of visual bugs occurred on code paths where no snapshot test was sensitive to the bug, and almost no bug-fix PRs backfilled coverage afterward. A significant portion of all bugs are non-visual entirely.&#x20;
 
-Ultimately, it seems difficult to generalize the approach. Snapshot testing is not a silver bullet for de-risking agent related code changes. In hindsight, this limitation is not surprising considering that reliable software systems are rarely the result of any single testing strategy&#x20;
+At the time, my intuition significantly overestimated their impact. I expected snapshot tests to drive much larger improvements than what the data actually shows. Snapshot testing is not a silver bullet for de-risking agent related code changes. In hindsight, this limitation is not surprising considering that reliable software systems are rarely the result of any single testing strategy.&#x20;
 
 ## Methodology
 
