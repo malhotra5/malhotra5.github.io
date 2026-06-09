@@ -20,7 +20,7 @@ Agents are now employed liberally in all parts of the software development cycle
 
 I hypothesized there are two problems with respect to verification:
 
-1. **What is the application supposed to do?** Agent-generated tickets and PR descriptions are a summary of everything; sometimes inaccurate or outdated. Reviewers depend on this as the source of truth, and also the agent itself during future iterations.&#x20;
+1. **What is the application supposed to do?** Agent-generated artifacts (tickets, PR descriptions) are a summary of everything; sometimes inaccurate or outdated. The artifacts are source of truth for reviewers and agents.&#x20;
 2. **Did the code actually do it?** Manual QA reveals problems but is time consuming. With the volume of code agents generate, it doesn't scale.
 
 [Snapshot tests](#appendix), I hypothesize, address both problems with the same mechanism. If application behavior is visually observable, and any change in existing behavior is obvious, we make it **easier to verify changes and safer to use agents in future development efforts.**  [A picture is worth a thousand words](https://en.wikipedia.org/wiki/A_picture_is_worth_a_thousand_words).
@@ -35,7 +35,7 @@ To test this hypothesis, I [mined](#mining) all 311 merged PRs from the [OpenHan
 
 ## Snapshot coverage has a level of indirection
 
-Not all bugs are visual. Snapshot tests help with bugs that change rendered output. Counting all bug-fixes against snapshot coverage inflates the count.
+Not all bugs are visual. Counting all bug-fixes against snapshot coverage inflates the count.
 
 <Figure src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes" caption="UI widgets & screens is the largest category (38 bugs), but 27 bugs (35%) are entirely non-visual — CLI core, config/state, API/auth — where snapshots are structurally irrelevant." />
 
@@ -43,7 +43,7 @@ Not all bugs are visual. Snapshot tests help with bugs that change rendered outp
 
 ### What's actually covered?
 
-Narrowing to the 35 post-adoption UI bug-fixes, we [examined which snapshot baselines](#indirect-coverage-analysis) each bug-fix PR actually updated, then classified each bug by whether the updated test specifically targets the buggy behavior (direct) or captures its visual effect as part of a broader flow (indirect). Bug-fix PRs that didn't update any snapshots have no empirical evidence of coverage sensitivity.
+Narrowing to the 35 post-adoption UI bug-fixes, we [examined which snapshot baselines](#indirect-coverage-analysis) each bug-fix PR actually updated, then classified each bug by whether the updated test specifically targets the buggy behavior (direct), captures its visual effect as part of a broader flow (indirect), or neither.
 
 <Figure src="/img/snapshot-analysis/reclassified_coverage_v2.png" alt="Empirical coverage breakdown of post-adoption UI bugs" caption="Of 35 post-adoption UI bug-fixes: 5 (14%) are directly covered by a test targeting the buggy behavior, 7 (20%) are indirectly covered by tests that capture the bug's visual effect in a broader flow, and 23 (66%) are uncovered — no snapshot test was sensitive to the bug." />
 
@@ -91,7 +91,7 @@ These snapshot updates to PRs change over time. We'll take new UI related PRs an
 
 <Figure src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month." caption="Percentage of feature and bug-fix PRs that include snapshot changes and/or add new snapshots, by month." />
 
-New feature PRs (green) climb to 100%. Eventually every UI feature passed through a "did you mean to change how this looks?" gate. Bug fix PRs (red) plateau at \~35–50%. We'd expect every bug fix to update existing behavior at the very least, or add missing coverage. The discrepancy is explained by the [shallow coverage](#whats-actually-covered) documented above — most bug-fix paths simply don't have snapshot tests yet.&#x20;
+New feature PRs (green) climb to 100%. Eventually every UI feature passed through a "did you mean to change how this looks?" gate. Bug fix PRs (red) plateau at \~35–50%. We'd expect every bug fix to update existing behavior at the very least, or add missing coverage. The discrepancy is explained by the [shallow coverage](#whats-actually-covered) documented above.
 
 ### Review speed: 2× faster first review
 
