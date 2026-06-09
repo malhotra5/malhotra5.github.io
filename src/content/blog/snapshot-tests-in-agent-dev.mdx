@@ -48,15 +48,11 @@ Narrowing to the 35 post-adoption UI bug-fixes, we [examined which snapshot base
 
 <Figure src="/img/snapshot-analysis/reclassified_coverage_v2.png" alt="Empirical coverage breakdown of post-adoption UI bugs" caption="Of 35 post-adoption UI bug-fixes: 5 (14%) are directly covered by a test targeting the buggy behavior, 7 (20%) are indirectly covered by tests that capture the bug's visual effect in a broader flow, and 23 (66%) are uncovered — no snapshot test was sensitive to the bug." />
 
-For 12 bug-fixes (34%), the fix PR added or updated snapshot baselines. Of those, 5 updated tests that specifically target the buggy behavior, and 7 updated tests that capture the bug's visual effect as part of a broader flow (e.g., a collapsible-state bug in a settings file showing up across 10 snapshots in 5 unrelated test suites that render conversation events). **The remaining 23 (66%) are uncovered — the fix was made where no snapshot test was sensitive to the bug, and almost no one backfilled coverage afterward.**
+**More than half of visual bug fixes landed on paths with no relevant snapshot coverage, and the bug fixes didn't backfill coverage either.**
 
-### Snapshots capture buggy states as source of truth
+For fixes that are directly or indirectly covered,  either *new* coverage was added or existing baselines were updated. Any existing snapshots had captured the buggy state as "correct."
 
-The 12 bug-fixes that updated snapshots are easy to misread as "coverage existed and failed to catch the bug." They didn't. We [traced the origin](#bug-origin-tracing) of each bug and found that coverage either didn't exist when the bug was introduced (6 bugs predated coverage for their specific path), was adjacent rather than direct (3 bugs were in modules with tests for other behaviors), or was untraceable (3 bugs were pure additions). In every case, the fix PR was adding *new* coverage or updating baselines that had captured the buggy state as "correct."
-
-The indirect coverage cases illustrate this most clearly. When a collapsible-state bug in a settings file was introduced, 5 unrelated test suites all rendered conversation events with the buggy default state. Each test passed, because each baseline faithfully captured what was there. When the bug was fixed, all 10 snapshots broke — not because the tests were designed to check collapsible state, but because the visual output changed. The tests detected the *change*, not the *correctness*.
-
-This reveals a fundamental property: **snapshots detect *changes* in behavior, not *correctness* of behavior.** If a baseline is set while a bug exists, the snapshot faithfully preserves the buggy state as the expected output. Zero bugs demonstrably slipped through direct snapshot coverage — but only because coverage was rarely in place early enough to be tested.
+&#x20;This reveals a fundamental property: **snapshots detect *changes* in behavior, not *correctness* of behavior**.
 
 ## Coverage Guards Existing Behavior
 
