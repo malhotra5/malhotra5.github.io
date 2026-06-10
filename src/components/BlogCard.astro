@@ -41,7 +41,7 @@ const { title, description, date, slug, image, readTime, tags = [] } = Astro.pro
     {image && (
       <div class="w-full md:w-64 lg:w-72 shrink-0 aspect-[2/1] md:aspect-auto overflow-hidden bg-gray-100 dark:bg-gray-800 order-first md:order-last">
         <img
-          src={image}
+          src={base(image)}
           alt={title}
           class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
           loading="lazy"
