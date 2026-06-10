@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
+import { base } from '../utils/base';
 ---
 
 <BaseLayout title="Rohit Malhotra" currentPage="about" transparentNav={true}>
@@ -26,7 +27,7 @@ import SectionHeading from '../components/SectionHeading.astro';
       <div class="grid md:grid-cols-2 gap-12 items-center">
         <div class="flex justify-center">
           <img
-            src="/img/me2.png"
+            src={base('/img/me-n-espio.jpg')}
             alt="Rohit Malhotra"
             class="w-full max-w-md rounded-lg"
             loading="lazy"
