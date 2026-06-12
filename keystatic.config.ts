@@ -1,6 +1,7 @@
 import React from 'react';
 import { config, fields, collection } from '@keystatic/core';
-import { block } from '@keystatic/core/content-components';
+import { block, mark } from '@keystatic/core/content-components';
+import { highlighterIcon } from '@keystar/ui/icon/icons/highlighterIcon';
 
 export default config({
   storage: { kind: 'local' },
@@ -103,6 +104,56 @@ export default config({
                       props.value.caption,
                     ),
                 );
+              },
+            }),
+            Comment: block({
+              label: 'Comment',
+              description: 'An editorial note — visible in the editor, hidden on the site',
+              schema: {
+                note: fields.text({
+                  label: 'Note',
+                  multiline: true,
+                  validation: { isRequired: true },
+                }),
+              },
+              ContentView: (props) =>
+                React.createElement(
+                  'div',
+                  {
+                    style: {
+                      margin: '0.5rem 0',
+                      padding: '0.75rem 1rem',
+                      background: '#FFF9E5',
+                      borderLeft: '4px solid #F5C518',
+                      borderRadius: '4px',
+                      fontSize: '0.875rem',
+                      color: '#6B5900',
+                      whiteSpace: 'pre-wrap' as const,
+                    },
+                  },
+                  React.createElement(
+                    'span',
+                    {
+                      style: {
+                        fontWeight: 'bold',
+                        marginRight: '0.5rem',
+                      },
+                    },
+                    '📝 Note:',
+                  ),
+                  props.value.note,
+                ),
+            }),
+            Highlight: mark({
+              label: 'Highlight',
+              icon: highlighterIcon,
+              tag: 'span',
+              style: { backgroundColor: '#FFF176', padding: '0 2px', borderRadius: '2px' },
+              schema: {
+                note: fields.text({
+                  label: 'Note',
+                  description: 'Optional comment on this highlight',
+                }),
               },
             }),
           },

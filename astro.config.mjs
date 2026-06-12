@@ -9,4 +9,9 @@ export default defineConfig({
   integrations: [tailwind(), mdx(), react(), keystatic()],
   site: 'https://malhotra5.github.io',
   adapter: node({ mode: 'standalone' }),
+  vite: {
+    server: {
+      allowedHosts: ['.prod-runtime.all-hands.dev'],
+    },
+  },
 });

@@ -1,0 +1,248 @@
+---
+title: Do Snapshot Tests Help in Agent-Driven Development?
+description: >-
+  An empirical analysis of 311 pull requests in the OpenHands-CLI repository to
+  determine if snapshot tests improve the software development process when
+  using Agents.
+date: May 20, 2026
+image: /img/snapshot-analysis/deep_10_bug_rate_with_context.png
+readTime: 12 min read
+originalUrl: >-
+  https://rohitmalh.substack.com/p/e1ec40f1-a3e7-4e02-9ad2-fb7e7b6da735?postPreview=paid&updated=2026-05-19T03%3A08%3A27.445Z&audience=everyone&free_preview=false&freemail=true
+tags:
+  - AI Agents
+  - Snapshot Tests
+  - Empirical Analysis
+---
+Agents are now employed liberally in all parts of the software development cycle. They generate code and surrounding artifacts e.g. ticket descriptions, PR descriptions, documentation, Slack comments. Seemingly we're developing applications faster than ever. In reality, we experience neither increased velocity nor improved product quality. The time saved is spent reviewing and verifying code, as agents frequently break things. So I'm in pursuit of finding improved ways to verify code such that using agents is safe for everyone.
+
+## Verification is an ambiguous and time consuming task
+
+I hypothesized there are two problems with respect to verification:
+
+1. **What is the application supposed to do?** Agent-generated artifacts (tickets, PR descriptions) are a summary of everything; sometimes inaccurate or outdated. The artifacts are source of truth for reviewers and agents.&#x20;
+2. **Did the code actually do it?** Manual QA reveals problems but is time consuming. With the volume of code agents generate, it doesn't scale.
+
+[Snapshot tests](#appendix), I hypothesize, address both problems with the same mechanism. If application behavior is visually observable, and any change in existing behavior is obvious, we make it **easier to verify changes and safer to use agents in future development efforts.**  [A picture is worth a thousand words](https://en.wikipedia.org/wiki/A_picture_is_worth_a_thousand_words).
+
+## The Dataset
+
+To test this hypothesis, I [mined](#mining) all 311 merged PRs from the [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) repository (Sep 2025 – May 2026), [classified](#classification) each by type, authorship, and snapshot involvement, then analyzed commit-level history to understand *how* snapshot tests are actually used. Snapshot tests were adopted in January 2026.&#x20;
+
+<Figure src="/img/snapshot-analysis/agent_prs_over_time.png" alt="Monthly PR volume by authorship (agent vs human), Sep 2025 – May 2026." caption="68% of PRs are agent-authored with a relatively consistent ratio over time - a reasonable baseline for investigating effects of snapshot adoption." />
+
+<Figure src="/img/snapshot-analysis/3_snapshot_adoption_timeline.png" alt="Monthly snapshot involvement across all PRs, Sep 2025 – May 2026." caption="Snapshots were introduced in January 2026, predominantly authored by agents. Not every PR includes snapshot changes, either because the change isn't UI-related or because coverage wasn't added." />
+
+## Snapshot coverage has a level of indirection
+
+Not all bugs are visual. Counting all bug-fixes against snapshot coverage inflates the count.
+
+<Figure src="/img/snapshot-analysis/deep_16_bugfix_domain.png" alt="Bug-fix PRs categorized for visual vs non-visual fixes" caption="UI widgets & screens is the largest category (38 bugs), but 27 bugs (35%) are entirely non-visual — CLI core, config/state, API/auth — where snapshots are structurally irrelevant." />
+
+35% of bugs are in code that snapshots *can't* cover (API auth, CLI argument parsing, dependency pinning). We consider visual bug-fixes only when evaluating snapshots' effectiveness.
+
+### What's actually covered?
+
+Narrowing to the 35 post-adoption UI bug-fixes, we [examined which snapshot baselines](#indirect-coverage-analysis) each bug-fix PR actually updated, then classified each bug by whether the updated test specifically targets the buggy behavior (direct), captures its visual effect as part of a broader flow (indirect), or neither.
+
+<Figure src="/img/snapshot-analysis/reclassified_coverage_v2.png" alt="Empirical coverage breakdown of post-adoption UI bugs" caption="Of 35 post-adoption UI bug-fixes: 5 (14%) are directly covered by a test targeting the buggy behavior, 7 (20%) are indirectly covered by tests that capture the bug's visual effect in a broader flow, and 23 (66%) are uncovered — no snapshot test was sensitive to the bug." />
+
+**More than half of visual bug-fixes landed on paths with no snapshot coverage and didn't backfill coverage either.**
+
+For fixes that are directly or indirectly covered, either new coverage was added or existing baselines were updated. Any existing snapshots had captured the buggy state as "correct."
+
+This reveals a fundamental property: **snapshots detect *changes* in behavior, not *correctness* of behavior**.
+
+## Coverage Guards Existing Behavior
+
+Given the coverage gaps above, how do snapshots perform on the paths they *do* guard? The CI data tells a clear story.
+
+### Snapshots break during development, indicating changes in behavior
+
+Out of 311 PRs, we have 128 post snapshot adoption PRs with CI data. **29 out of 128 (23%)** triggered at least one snapshot failure.
+
+<Figure src="/img/snapshot-analysis/deep_14_snapshot_guarding.png" alt="Snapshot CI failures resolved during development, by PR type. Bug-fix: 11 failures across 3 PRs. Feature: 10 across 8. Dependency bump: 9 across 3. Refactor: 6 across 2." caption="CI snapshot failure events in PRs that eventually passed, by PR type. Each bar counts commits where the snapshot check failed before the developer resolved the issue." />
+
+Bug-fix and feature PRs generated the most failure events. Even routine changes, like dependency bumps, can cause failing CI checks.&#x20;
+
+### How do snapshot failures ultimately resolve?
+
+When a snapshot fails, a developer can update the baseline (acknowledging an intentional visual change), fix their code (reverting an unintended regression), or both. We classified each PR's resolution using CI logs where available (9 PRs) and file-level heuristics for the rest (see [Methodology](#mining) for details).
+
+<Figure src="/img/snapshot-analysis/deep_19_ci_outcomes.png" alt="Stacked bar chart showing how 29 PRs with snapshot failures resolved, by type. Features: 1 baseline, 3 both, 4 code fix. CI/Docs: 5 code fix. Bug fix: 3 both, 1 merged. Refactor: 2 both, 1 merged. Dep bump: 2 both, 1 code fix. Version bump: 3 baseline. Test: 2 both, 1 merged." caption="How 29 PRs with snapshot failures resolved. Green = baseline only. Purple = both baseline + code change. Blue = code fix only. Red = merged with CI still failing." />
+
+The breakdown by type makes the pattern intuitive:
+
+* **Features**: show the full spectrum. Some updated baselines for intentional UI changes, some fixed code regressions, and many did both.
+* **CI / Docs**: are entirely code-fix. These PRs shouldn't change visual output.
+* **Bug-fixes**: are predominantly "both". Fixing a bug changes behavior, so the baseline needs updating to reflect the corrected state.
+* **Refactors**: typically means changing the underlying application code without any behavioral changes. The refactors here also introduced new baselines.&#x20;
+* **Dependency bumps**: every upstream change caused a regression. Some required legitimate baseline updates alongside a fix.
+* **App Version bumps**: the app renders its version in the UI, so these are expected visual changes.
+* **Test**: test infrastructure changes that unexpectedly affected snapshot output. Two resolved with both baseline and code updates; one merged with failure.
+
+Some PRs were merged with failures, as snapshot tests weren't a required CI check at the time.&#x20;
+
+Overall 10% fixed code to prevent a regression in PRs. 41% fixed code to prevent regression and updated existing/added new baselines in the same PR.&#x20;
+
+### Snapshots force explicit acknowledgment for visual changes
+
+These snapshot updates to PRs change over time. We'll take new UI related PRs and bug-fixes for example.
+
+<Figure src="/img/snapshot-analysis/deep_4_forcing_function.png" alt="Percentage of feature and bug-fix PRs that include snapshot changes, by month." caption="Percentage of feature and bug-fix PRs that include snapshot changes and/or add new snapshots, by month." />
+
+New feature PRs (green) climb to 100%. Eventually every UI feature passed through a "did you mean to change how this looks?" gate. Bug fix PRs (red) plateau at \~35–50%. We'd expect every bug fix to update existing behavior at the very least, or add missing coverage. The discrepancy is explained by the [shallow coverage](#whats-actually-covered) documented above.
+
+### Review speed: 2× faster first review
+
+PRs with snapshot changes get first review in **0.9 hours** vs
+**1.7 hours** for non-snapshot PRs, despite being 8× larger by file count.
+
+<Figure src="/img/snapshot-analysis/deep_6_review_speed.png" alt="Review speed comparison" caption="Snapshot PRs get first review ~2× faster." />
+
+This is correlational, not causal. Snapshot PRs may be faster to review because SVG diffs provide instant visual understanding, or involve the same reviewers, or have different complexity profiles. The data doesn't distinguish these explanations.
+
+## Bug rate spikes at snapshot test adoption period
+
+Did snapshot tests reduce the rate of bugs introduced by agent-authored code?
+
+To answer this, we need to know who *introduced* each bug. We ran `git blame` on the parent commit of every bug-fix PR to trace which prior PR last touched the lines being patched, then mapped that commit to its originating PR and author. Of 73 critical and UX-regression bug-fixes, 62 were traced to an originating PR (55 with high confidence).
+
+We normalize by cumulative UI PRs, the total number of TUI-touching PRs merged up to that month. This controls for codebase growth. A flat normalized line means bugs are growing proportionally with the codebase; a declining line means they're growing slower.
+
+<Figure src="/img/snapshot-analysis/deep_10_bug_rate_with_context.png" alt="Agent-introduced bug rate normalized by cumulative UI work" caption="Agent-introduced bugs per cumulative UI PR. Pre-adoption, UX regressions were flat or rising (0.11–0.12) — bugs grew as fast as the codebase. Post-adoption, both lines decline steadily. The January spike coincides with a major feature push." />
+
+Pre-adoption, the agent-introduced UX regression rate was flat or rising. Post-adoption, it reversed. Agent-introduced critical bugs followed a similar trajectory, declining to near-zero by March.
+
+Note that we can't confidently isolate snapshots as the sole reason for this as other factors are at interplay e.g codebase maturity, agent drive code reviews.
+
+## Verdict
+
+Snapshot diffs on PRs make behavior concrete and reviewable at a glance. They are intentionally updated by the PR author and acknowledged by the reviewer, thereby partially addressing the [source of truth problem](#verification-is-an-ambiguous-and-time-consuming-task).
+
+On the [verification problem](#verification-is-an-ambiguous-and-time-consuming-task): snapshots automated the question "did the code break anything?" Developers iterated on broken snapshots as CI caught regressions. The verification loop became visual and immediate.
+
+The data suggests the effectiveness of snapshot testing was ultimately constrained less by the technique itself and more by the challenge of maintaining meaningful coverage, which could be explained by a combination of poor habits, cost of writing snapshot tests, test suite bloat for trivial paths, etc. Once coverage exists, and the snapshot capture truly intended behavior, we find no evidence of bugs slipping through. Two-thirds of visual bugs occurred on code paths where no snapshot test was sensitive to the bug, and almost no bug-fix PRs backfilled coverage afterward. A significant portion of all bugs are non-visual entirely.&#x20;
+
+At the time, my intuition significantly overestimated their impact. I expected snapshot tests to drive much larger improvements than what the data actually shows. Snapshot testing is not a silver bullet for de-risking agent related code changes. In hindsight, this limitation is not surprising considering that reliable software systems are rarely the result of any single testing strategy.&#x20;
+
+## Methodology
+
+The full pipeline, data, and graphs are reproducible from [snapshot-tests-analysis](https://github.com/malhotra5/snapshot-tests-analysis).
+
+### Mining
+
+We pulled every merged PR from [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) via the GitHub REST API: PR metadata, file-level diffs, full commit history, review data, linked issues, and authorship signals (co-author tags, bot usernames). This produced 311 PRs with 42 fields each. No LLM involved.
+
+For CI analysis, we queried the Check Runs API for every commit in every post-adoption PR to extract the "Run snapshot tests" result. For the 29 PRs that triggered failures, we downloaded CI job logs (where still available — GitHub retains these \~90 days), parsed out specific failing test names, and cross-referenced each against the files changed in the final merged PR to determine whether resolution was a code fix or baseline update.
+
+### Classification
+
+Each PR was classified by type, bug severity, snapshot involvement, and whether it touches UI code. We ran two classifiers in parallel:
+
+1. **Keyword heuristics** — title pattern matching ("fix" → bug-fix, "feat" → feature, etc.) and file path matching for snapshot involvement.
+2. **LLM** (gpt-4o-mini) — given the PR title, description, file list, and linked issues, outputs a JSON classification with rationale. The prompt:
+
+```
+Given a PR's title, description, file list, and linked issues,
+output a JSON object with:
+{
+  "pr_type": one of "bug-fix", "feature", "refactor", "test",
+             "ci", "docs", "dependency-bump", "version-bump", "other",
+  "bug_severity": one of "critical", "ux-regression", "polish",
+  "touches_ui": true/false,
+  "rationale": "1-2 sentence explanation"
+}
+```
+
+We did not formally validate LLM accuracy against human labels for this study. Classification of PR types from structured metadata is a well-characterized task for modern LLMs, and prior work shows strong agreement with human judgment on similar labeling problems. Keyword heuristics are retained alongside LLM labels for comparison.
+
+### Bug origin tracing
+
+To attribute bugs to the author who *introduced* them (rather than who fixed them), we ran `git blame` on the parent commit of each bug-fix PR's merge commit. For every line the fix deleted or modified, we blamed the prior commit and mapped it to its originating PR via the `(#NNN)` squash-merge pattern in commit messages. The most-blamed PR is classified as the origin. Confidence is based on coverage: "high" if ≥50% of blamed lines trace to a single PR, "medium" if ≥25%. Of 73 bug-fix PRs analyzed, 62 were traced (55 high confidence, 7 medium). The 11 untraceable PRs were pure additions (no prior lines to blame). Non-code files (SVGs, lock files, snapshots) are excluded from blame.
+
+### Indirect coverage analysis
+
+For each of the 12 bug-fix PRs that updated snapshot baselines, we examined which specific test suites were updated (from the SVG file paths under `__snapshots__/`) and cross-referenced against the bug's code changes. If the updated test specifically targets the buggy behavior (e.g., a history panel bug updating `TestHistoryPanelFlow`), we classified it as direct. If the test captures the bug's visual effect as part of a broader flow (e.g., a settings-store bug showing up in `TestConfirmationMode` because conversation events render collapsible sections), we classified it as indirect. Bug-fix PRs that didn't update any snapshot files are classified as uncovered — the absence of baseline changes is empirical evidence that no snapshot test was sensitive to the bug.
+
+### Limitations
+
+* **Quality measured by bug count** — this analysis measures software quality in retrospect by the number of bugs patched. It doesn't account for open bugs that aren't being fixed, and we don't measure developer velocity or review effort directly.
+* **Small sample, confounded timeline** — the number of samples is low, and many CI logs had been deleted by GitHub before we could mine them. Snapshot adoption coincided with active feature development and team process maturation. We can't fully disentangle the effect of snapshots from other improvements happening in parallel.
+* **Agent authorship detection** — relies on co-author tags and bot usernames. PRs where a human manually committed agent-generated code would be counted as human-authored.
+* **Bug origin attribution** — `git blame` traces to the last commit that touched the patched lines, which may be a refactor rather than the commit that introduced the bug. Medium-confidence results (7 of 62) had multiple PRs sharing blame, making attribution less certain.
+* **CI log expiry** — only 9 of 29 failing PRs had logs available for test-level verification. The remaining 20 use a coarser heuristic (whether the merged PR contains any snapshot file changes), which can't distinguish updating the *failing* test's baseline from updating a different test's baseline.
+* **Direct vs indirect classification is subjective** — determining whether an updated snapshot test "specifically targets" the buggy behavior or captures it as part of a broader flow requires judgment. Different reviewers might classify 1-2 borderline cases differently, but the overall split (5 direct, 7 indirect, 23 uncovered) is robust.
+* **Single repository** — all findings are specific to [OpenHands-CLI](https://github.com/OpenHands/openhands-cli).
+
+## Appendix
+
+### Anatomy of a snapshot
+
+The [OpenHands-CLI](https://github.com/OpenHands/openhands-cli) is built using [Textual](https://textual.textualize.io/), a Python library for building terminal UIs. Textual has excellent support for [snapshot testing](https://github.com/Textualize/pytest-textual-snapshot), rendering widgets to SVG and comparing them across runs. The codebase uses two types of snapshots
+
+1. **Component snapshots**: capture standalone rendering of individual components, sometimes under different configurations.
+2. **Behavior snapshots**: iteratively capture a sequence of snapshots over time during interactive flows, effectively emulating a short video.
+
+Once snapshots are committed to the repository, they become part of the system history. Future pull requests automatically check against them. If behavior changes, the snapshot test fails. The failure is visually obvious, showing exactly how the behavior differs from the expected output.
+
+<Figure src="/img/snapshot-analysis/before_vs_after_snapshot.png" alt="Before and after snapshots example" />
+
+Here is the SVG after creating a new conversation in the CLI. The left has the new snapshot and the right has the baseline.&#x20;
+
+<Figure src="/img/snapshot-analysis/snapshot_diff.png" alt="Snapshot diff view example" />
+
+Image diff help identify changes. In this specific example, the buggy behavior fixed is where a the token metrics for the conversation don't reset when creating a new conversation. In the new snapshot, the token metrics reset to 0. This is also an example of indirect coverage for the input component.
+
+### Example Snapshot Test
+
+```python
+import pytest
+from textual.pilot import Pilot
+from .helpers import type_text, wait_for_app_ready, wait_for_idle
+from openhands.sdk.security.confirmation_policy import NeverConfirm
+from openhands_cli.tui.textual_app import OpenHandsApp
+
+
+class TestEchoHelloWorld:
+    """Test echo hello world conversation."""
+
+    # Specify pre-seed LLM responses trajectory
+    @pytest.mark.parametrize(
+        "mock_llm_with_trajectory",
+        ["simple_echo_hello_world"],
+        indirect=True,
+    )
+    def test_echo_hello_world_conversation(
+        self,
+        snap_compare,
+        mock_llm_with_trajectory,
+    ):
+        async def run_conversation(pilot: Pilot):
+            """Simulate user typing and submitting a command."""
+            await wait_for_app_ready(pilot)
+            await type_text(pilot, "echo hello world")
+            await pilot.press("enter")
+            await wait_for_idle(pilot)
+
+        # Use fixed conversation ID from fixture
+        # for deterministic snapshots
+        app = OpenHandsApp(
+            exit_confirmation=False,
+            initial_confirmation_policy=NeverConfirm(),
+            resume_conversation_id=mock_llm_with_trajectory[
+                "conversation_id"
+            ],
+        )
+
+        # Run simulation + take snapshot
+        assert snap_compare(
+            app,
+            terminal_size=(120, 40),
+            run_before=run_conversation,
+        )
+```
+
+---
+
+*Disclosure: An AI agent ([OpenHands](https://github.com/All-Hands-AI/OpenHands)) assisted with data mining, graph generation, and drafting portions of this post.*
